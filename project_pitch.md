@@ -25,9 +25,9 @@ The project is about wanting to create a website with three different components
 ## Pitch
 **Title**: 
 
-"Hitchhiker's guide to the galaxy"
-"Space News"
-(both ideas are drafts and subject to change)
+- "Hitchhiker's guide to the galaxy"
+- "Space News"
+- (both ideas are drafts and subject to change)
 
 **What is the need or problem? For whom?**
 
@@ -39,12 +39,12 @@ Gaining knowledge for daily activities in space. For space enthusiasts, curious 
 - [Moon API](https://dev.qweather.com/en/docs/api/astronomy/moon-and-moon-phase/)
   
 **What is your goal for the project**
-- Being able to retrieve data from an API.
-- Serving external NASA/Moon data in an aesthetically pleasing interface and providing a great user experience.
+- Being able to retrieve data from an API
+- Serving external NASA/Moon data in an aesthetically pleasing interface and providing a great user experience
   
 **What would be different if the problem was solved?**
-- Bringing (more) joy to nerds.
-- Having all the important information at one place and not having to access different sources.
+- Bringing (more) joy to nerds
+- Having all the important information at one place and not having to access different sources
 
 **What are the approaches to solving the problem? Which ones have you already tried**
 - Solving each component completely before going to the next one
@@ -64,4 +64,4 @@ Displaying important information about
 - Near Earth object studies
 - Mars
 - Moon
-(see deliverables)
+- (see deliverables)
