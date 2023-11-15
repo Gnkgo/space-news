@@ -1,0 +1,128 @@
+\documentclass{article}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[a4paper, hmargin = 1.5cm, head = 4cm, bottom = 2cm]{geometry}
+
+
+
+\pagestyle{fancy}
+\lhead{\includegraphics[width=0.27\textwidth]{assets/eth_logo.pdf}}
+\rhead{Fundamentals of Webengineering}
+\lfoot{Herbstsemester 2023}
+\rfoot{\thepage}
+\cfoot{}
+\renewcommand{\footrulewidth}{1pt}
+
+\begin{document}
+
+
+\begin{titlepage}
+    \thispagestyle{fancy}
+    \renewcommand{\headrulewidth}{1pt}
+
+    \center
+    \vspace*{1.0cm}
+    \Large Project Pitch - Fundamentals of Webengineering \\[.5 cm]
+    \large
+    \normalsize
+    Valentin Baal, Informatik B. Sc. 5. Semester \\
+    \texttt{vabaal@student.ethz.ch}  \\[0.4cm]
+    Joanna Brodbeck, Informatik B. Sc. 5 Semester \\
+    \texttt{jbrodbec@student.ethz.ch}  \\[0.4cm]
+    Nick Troxler, Informatik B. Sc. 5 Semester \\
+    \texttt{ntroxler@student.ethz.ch}    \\ [0.4cm]
+    \texttt{}\\[1cm]
+
+    \noindent\rule{\textwidth}{0.4 pt}
+
+
+    \vfill
+    % \normalsize
+
+\end{titlepage}
+
+\section*{Project Pitch}
+\subsection*{Project Idea}
+The project is about wanting to create a website with three different
+components: Earth, Mars, and Moon. Each component can be accessed to show more
+data about the associated celestial body. For Earth, we want to show the
+current asteroids and comets and where they can be found. For Mars, a weather
+forecast will be shown. For the Moon, its current state (phase, special
+phenomena) will be displayed.
+
+\subsection*{Deliverables}
+\begin{itemize}
+    \item \textbf{Earth}
+          \begin{itemize}
+              \item Interactive world map where events like wildfires, storms, etc., are displayed.
+          \end{itemize}
+    \item \textbf{Near Earth Object Studies}
+          \begin{itemize}
+              \item Asteroids
+              \item Comets
+              \item Fireballs
+              \item NHATS (Human-Accessible NEOs Data)
+          \end{itemize}
+    \item \textbf{Mars}
+          \begin{itemize}
+              \item Display the weather; like a weather forecast for Mars
+              \item Show pictures of Mars at the moment (taken from the Mars Rover)
+          \end{itemize}
+    \item \textbf{Moon}
+          \begin{itemize}
+              \item Super Moon
+              \item Blue Moon
+              \item Red Moon
+              \item New Moon
+              \item Eclipse
+          \end{itemize}
+\end{itemize}
+\newpage
+\subsection*{Pitch}
+\subsubsection*{Title}
+\begin{itemize}
+    \item "Hitchhiker's Guide to the Galaxy"
+    \item "Space News"
+    \item (Both ideas are drafts and subject to change)
+\end{itemize}
+\subsubsection*{What is the need or problem? For whom?}
+Gaining knowledge for daily activities in space. For space enthusiasts, curious people, and aliens.
+\textbf{What resources are (not) available (input)?}
+\begin{itemize}
+    \item \href{https://api.nasa.gov/}{NASA API}
+    \item \href{https://dev.qweather.com/en/docs/api/astronomy/moon-and-moon-phase/}{Moon API}
+\end{itemize}
+\subsubsection*{What is your goal for the project}
+Being able to retrieve data from an API. Serving external NASA/Moon data in an aesthetically pleasing interface and providing a great user experience.
+\subsubsection*{What would be different if the problem was solved?}
+Bringing (more) joy to nerds. Having all the important information in one place and not having to access different sources.
+\subsubsection*{What are the approaches to solving the problem? Which ones have you already tried?}
+\begin{itemize}
+    \item Solving each component completely before going to the next one
+          \begin{itemize}
+              \item This makes sure that we do not have a lot of unfinished projects
+              \item Can react fast if we notice that one component takes longer than expected
+          \end{itemize}
+    \item Having a git repository to share the code and see what the others are doing
+    \item Splitting up work and working efficiently
+    \item So far, nothing has been done for the website
+\end{itemize}
+
+\subsubsection*{What are the limitations? What do you have to pay attention to?}
+\begin{itemize}
+    \item Time management (not overdoing oneself)
+    \item Missing data from NASA (APIs in general)
+\end{itemize}
+
+\subsubsection*{What is the scope of the project?}
+Displaying important information about
+\begin{itemize}
+    \item Earth
+    \item Near Earth object studies
+    \item Mars
+    \item Moon
+    \item (see deliverables)
+\end{itemize}
+
+\end{document}
