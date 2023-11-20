@@ -6,17 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="/src/client/css/base.css"/>
     <link rel="stylesheet" type="text/css" href="/src/client/css/home.css"/>
+    <script src="/src/client/ts/home.ts" type="module"></script>
     <title>Space News</title>
   </head>
   <body>
     <img id="sun" src="/src/client/img/sun.png"></img>
-    <img id="earth" src="/src/client/img/earth.png"></img>
-    <img id="moon" src="/src/client/img/moon.png"></img>
+    <div id="earth-and-moon-container">
+        <img id="earth" src="/src/client/img/earth.png"></img>
+        <div id="moon-container">
+            <img id="moon" src="/src/client/img/moon.png"></img>
+        </div>
+    </div>
     <img id="mars" src="/src/client/img/mars.png"></img>
     <svg>
-        <ellipse cx="50%" cy="50%" rx="37%"/>
-        <ellipse cx="50%" cy="50%" rx="28%"/>
-        <ellipse cx="74.5%" cy="74.5%" rx="11%"/>
+        <ellipse id="mars-orbit" cx="50%" cy="50%" rx="28%"/>
+        <ellipse id="earth-orbit" cx="50%" cy="50%" rx="12%"/>
+        <ellipse id="moon-orbit" cx="74.5%" cy="74.5%" rx="11%"/>
     </svg>
   </body>
 </html>
