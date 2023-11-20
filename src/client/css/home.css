@@ -1,0 +1,13 @@
+body {
+    background-image: url('/src/client/img/star_background.jpg');
+    background-size: cover; /* Adjust as needed */
+    background-position: center; /* Adjust as needed */
+    height: 100vh; /* This ensures that the background covers the entire viewport height */
+    margin: 0; /* Remove default margin */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff; /* Set text color to contrast with the background */
+    font-family: Arial, sans-serif; /* Set the font-family as needed */
+
+}
