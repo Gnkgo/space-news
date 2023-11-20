@@ -1,14 +1,12 @@
 import express from "express";
 import ViteExpress from "vite-express";
+import path from "path";
 
 // creates the expres app do not change
 const app = express();
 
-// add your routes here
-
-// example route which returns a message
-app.get("/hello", async function (_req, res) {
-  res.status(200).json({ message: "Hello World!" });
+app.get('/', (_req, res) => {
+  res.sendFile(path.resolve('src', 'client', 'html', 'home.html'));
 });
 
 // Do not change below this line
