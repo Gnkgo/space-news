@@ -10,7 +10,7 @@ moon?.addEventListener('click', () => showPlanetInformation('moon'));
 
 //Add click-eventlistener for sun gimmick
 const sun = document.getElementById('sun');
-
+sun?.addEventListener('click', showSunEasterEgg);
 
 
 function showPlanetInformation(planet: string){
@@ -39,4 +39,8 @@ function showPlanetInformation(planet: string){
         default:
             break;
     }
+}
+
+function showSunEasterEgg(){
+    
 }
