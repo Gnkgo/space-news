@@ -1,3 +1,8 @@
+:root {
+    --earth-orbit-time: 180s;
+    --mars-orbit-time: calc((687/365) * var(--earth-orbit-time));
+}
+
 body {
     background-image: url('/src/client/img/star_background.jpg');
     background-size: cover;
@@ -21,11 +26,12 @@ body {
         height: 25vh;
         justify-content: center;
         align-items: center;
-        animation: orbitEarth 120s infinite linear;
+        animation: orbitEarth var(--earth-orbit-time) infinite linear;
 
         > img#earth {
-            width: 40%;
+            width: 10vh;
             position: absolute;
+            z-index: 1;
         }
 
         & div#moon-container {
@@ -54,7 +60,7 @@ body {
     & img#mars {
         width: 8vh;
         position: absolute;
-        animation: orbitMars 240s linear infinite;
+        animation: orbitMars var(--mars-orbit-time) linear infinite;
     }
 
     & div > img#earth:hover, div div > img#moon:hover, img#mars:hover {
