@@ -19,8 +19,14 @@ function showPlanetInformation(planet: string){
 
     switch (planet) {
         case 'mars':
-            body.innerHTML = '<h1>Mars</h1>'
             body.style.backgroundImage = 'none';
+            const marsDiv = document.createElement('div');
+            marsDiv.id = 'marsID';
+            const script = document.createElement('script');
+            script.src = "/src/client/ts/mars.ts";
+
+            body.appendChild(marsDiv);
+            body.appendChild(script);
             break;
         case 'nea':
             body.innerHTML = '<h1>NEA</h1>'

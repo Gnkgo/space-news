@@ -1,4 +1,4 @@
-import "./mars.css";
+
 
 const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX '
 const weatherURL = `https://mars.nasa.gov/rss/api/?feed=weather&category=insight_temperature&feedtype=json&ver=1.0`;
@@ -29,7 +29,7 @@ async function getRoverPhotos(api: string): Promise<any> {
 }
 
 async function renderRoverPhotos(): Promise<void> {
-  const appElement = document.getElementById("app");
+  const appElement = document.getElementById("marsID");
   const photoData = await getRoverPhotos(roverApiUrl);
   let photo;
   console.log("CHECK");
@@ -88,6 +88,7 @@ async function getWeatherData(): Promise<any> {
 
 async function init(): Promise<void> {
   try {
+    console.log("Initializing weather app");
     const weatherData = await getWeatherData();
     renderWeather(weatherData);
   } catch (error) {
@@ -96,29 +97,32 @@ async function init(): Promise<void> {
 }
 
 function renderWeather(data: any): void {
-  const appElement = document.getElementById("app");
-
+  const appElement = document.getElementById("marsID");
+ 
   if (appElement) {
-    data.sol_keys.forEach((solKey: string) => {
-      const outerWeatherBox = document.createElement("div");
-      outerWeatherBox.className = "weather-box-outer";
+    const maxSol: string = data.sol_keys.reduce((max: string, solKey: string) => {
+      return parseInt(solKey, 10) > parseInt(max, 10) ? solKey : max;
+    }, data.sol_keys[0]);
 
-      const innerWeatherBox = document.createElement("div");
-      innerWeatherBox.className = "weather-box";
+    const outerWeatherBox = document.createElement("div");
+    outerWeatherBox.className = "weather-box-outer";
 
-      innerWeatherBox.innerHTML = `
-        <h2>Sol ${solKey}</h2>
-        <p>Average Temperature: ${data[solKey].AT.av} °C</p>
-        <p>Horizontal Wind Speed: ${data[solKey].HWS.av} m/s</p>
-        <p>Atmospheric Pressure: ${data[solKey].PRE.av} Pa</p>
-        <p>Season: ${data[solKey].Season}</p>
-      `;
+    const innerWeatherBox = document.createElement("div");
+    innerWeatherBox.className = "weather-box";
 
-      outerWeatherBox.appendChild(innerWeatherBox);
-      appElement.appendChild(outerWeatherBox);
-    });
+    innerWeatherBox.innerHTML = `
+      <h2>Sol ${maxSol}</h2>
+      <p>Average Temperature: ${data[maxSol].AT.av} °C</p>
+      <p>Horizontal Wind Speed: ${data[maxSol].HWS.av} m/s</p>
+      <p>Atmospheric Pressure: ${data[maxSol].PRE.av} Pa</p>
+      <p>Season: ${data[maxSol].Season}</p>
+    `;
+
+    outerWeatherBox.appendChild(innerWeatherBox);
+    appElement.appendChild(outerWeatherBox);
   }
 }
+
 
 
 init();
