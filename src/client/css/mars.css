@@ -1,0 +1,29 @@
+.photo-box {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  width: 350px;
+  line-height: 1.5rem;
+}
+
+.weather-box {
+  background-color: rgba(255, 255, 255, 0.8);
+  /* Adjust the last value (alpha) for transparency */
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 200px;
+  /* Occupy the available width */
+  line-height: 1rem;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+}
+
+
+.weather-box-outer {
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 1rem;
+
+}
