@@ -19,7 +19,7 @@
 
 ## Split up Workload
 
-### Deadlines: 
+### Deadlines
 - 23. November First Standup 
 - 7. December Meeting with TA
 
@@ -47,7 +47,7 @@
 - Transitions to different satellites
 
 
-#### Goals until 7. December
+#### Goals until 7. December:
 Website in 2D without animation but with full information
 1. /moon.html
    1. visibility
