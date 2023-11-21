@@ -10,40 +10,51 @@ body {
     overflow: hidden;
 
     & img#sun {
-        width: 8%;
+        width: 15vh;
         position: absolute;
     }
     
     & div#earth-and-moon-container {
         display: flex;
         position: absolute;
-        width: 100vw;
-        height: 100vh;
+        width: 25vh;
+        height: 25vh;
         justify-content: center;
         align-items: center;
+        animation: orbitEarth 120s infinite linear;
 
         > img#earth {
-            width: 6%;
+            width: 40%;
             position: absolute;
-            animation: orbitEarth 90s infinite linear;
         }
 
         & div#moon-container {
             display: flex;
+            justify-content: center;
+            align-items: center;
             position: absolute;
-            width: 100%;
+            width: inherit;
+            height: inherit;
 
             > img#moon {
-                width: 5%;
+                width: 25%;
+                position: absolute;
+                animation: orbitMoon 60s infinite linear;
+                z-index: 1;
+            }
+
+            & #moon-svg-container {
+                width: 26vh;
+                height: 26vh;
                 position: absolute;
             }
         }
     }
 
     & img#mars {
-        width: 5%;
+        width: 8vh;
         position: absolute;
-        animation: orbitMars 120s linear infinite;
+        animation: orbitMars 240s linear infinite;
     }
 
     & div > img#earth:hover, div div > img#moon:hover, img#mars:hover {
@@ -64,24 +75,36 @@ body {
 
 @keyframes orbitEarth {
     0% { 
-        transform: rotate(0deg)  
-              translateY(200%) rotate(0deg); 
+        transform: rotate(-30deg)  
+              translateY(110%) rotate(30deg); 
     } 
 
     100% { 
-        transform: rotate(360deg)  
-              translateY(200%) rotate(-360deg); 
+        transform: rotate(330deg)  
+              translateY(110%) rotate(-330deg); 
     } 
 }
 
 @keyframes orbitMars {
     0% { 
-        transform: rotate(0deg)  
-              translateY(550%) rotate(0deg); 
+        transform: rotate(120deg)  
+              translateY(45vh) rotate(-120deg); 
     } 
 
     100% { 
-        transform: rotate(360deg)  
-              translateY(550%) rotate(-360deg); 
+        transform: rotate(480deg)  
+              translateY(45vh) rotate(-480deg); 
+    } 
+}
+
+@keyframes orbitMoon {
+    0% { 
+        transform: rotate(210deg)  
+              translateY(200%) rotate(-210deg); 
+    } 
+
+    100% { 
+        transform: rotate(570deg)  
+              translateY(200%) rotate(-570deg); 
     } 
 }
