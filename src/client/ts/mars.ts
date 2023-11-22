@@ -1,10 +1,6 @@
-
-
 const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX'
 const weatherURL = 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json';
 const roverName = "curiosity";
-
-
 
 interface SolEntry {
   id: string;
@@ -14,6 +10,8 @@ interface SolEntry {
   season: string;
   min_temp: string;
   max_temp: string;
+  min_temp_fahrenheit?: string; 
+  max_temp_fahrenheit?: string; 
   pressure: string;
   pressure_string: string;
   abs_humidity: string;
@@ -65,19 +63,15 @@ async function renderRoverPhotos(): Promise<void> {
   const main = document.getElementById("main");
   const photoData = await getRoverPhotos(roverApiUrl);
   let photo;
-  console.log("photolog");
   if (main) {
-    console.log("CHECK");
     if (photoData.photos.length > 0) {
       console.log(photoData.photos.length, "photos");
       photo = photoData.photos[Math.floor(Math.random() * photoData.photos.length)]; // Take the first photo
     } else {
-      console.log("backup");
       const photoDataBackUp = await getRoverPhotos(backUpURL);
       console.log(photoDataBackUp.photos.length, "photos");
       const index = Math.floor(Math.random() * photoDataBackUp.photos.length);
-      photo = photoDataBackUp.photos[2];
-      console.log("index", index);
+      photo = photoDataBackUp.photos[index];
     }
 
     document.body.style.backgroundImage = `url('${photo.img_src}')`;
@@ -88,10 +82,26 @@ async function renderRoverPhotos(): Promise<void> {
   }
 }
 
+function celsiusToFahrenheit(celsius: number): number {
+  return (celsius * 9 / 5) + 32;
+}
+
 async function getWeatherData(): Promise<MarsData> {
   try {
     const response = await fetch(weatherURL);
     const data = await response.json() as MarsData;
+
+    // Calculate and assign Fahrenheit temperatures
+    data.soles.forEach(sol => {
+      if (sol.min_temp) {
+        sol.min_temp_fahrenheit = celsiusToFahrenheit(parseFloat(sol.min_temp)).toFixed(2);
+      }
+
+      if (sol.max_temp) {
+        sol.max_temp_fahrenheit = celsiusToFahrenheit(parseFloat(sol.max_temp)).toFixed(2);
+      }
+    });
+
     console.log("Weather data fetched successfully", data);
     return data;
   } catch (error) {
@@ -103,6 +113,7 @@ async function getWeatherData(): Promise<MarsData> {
 async function init(): Promise<void> {
   try {
     console.log("Initializing weather app");
+    createTemperatureToggleBox(); // Call the function to create the temperature toggle box
 
     const weatherData = await getWeatherData();
     renderWeather(weatherData);
@@ -114,20 +125,48 @@ async function init(): Promise<void> {
     console.error("Error initializing weather app", error);
   }
 }
+let isCelsius = true;
 
-function todayBox() {
-  const body = document.body
-  const box = document.createElement("div");
-  box.id = "box";
-  
-
+async function toggleTemperatureUnit() {
+  isCelsius = !isCelsius;
+  const weatherData = await getWeatherData();
+  renderWeather(weatherData); // Assuming weatherData is a global variable or accessible within the scope
 }
+
+function createTemperatureToggleBox() {
+  const body = document.body;
+  const temperatureToggleBox = document.createElement("div");
+  temperatureToggleBox.id = "temperatureToggleBox";
+
+  const celsiusButton = document.createElement("button");
+  celsiusButton.textContent = "C";
+  celsiusButton.addEventListener("click", () => {
+    if (!isCelsius) {
+      toggleTemperatureUnit();
+    }
+  });
+
+  const fahrenheitButton = document.createElement("button");
+  fahrenheitButton.textContent = "F";
+  fahrenheitButton.addEventListener("click", () => {
+    if (isCelsius) {
+      toggleTemperatureUnit();
+    }
+  });
+
+  temperatureToggleBox.appendChild(celsiusButton);
+  temperatureToggleBox.appendChild(fahrenheitButton);
+
+  body?.appendChild(temperatureToggleBox);
+}
+
 
 
 function renderWeather(data: MarsData): void {
   const appElement = document.getElementById("main");
 
   if (appElement && data.soles.length > 0) {
+    appElement.innerHTML = '';
     const outerWeatherBox = document.createElement("div");
     outerWeatherBox.className = "weather-box-outer";
 
@@ -144,17 +183,25 @@ function renderWeather(data: MarsData): void {
       innerWeatherBox.appendChild(solElement);
 
 
+      if (isCelsius) {
       innerWeatherBox.innerHTML += `
         <p>Min.: ${sol.min_temp} °C</p>
         <p>Max.: ${sol.max_temp} °C</p>
-        <p>Weather: ${sol.atmo_opacity}</p>
-        <p>UV: ${sol.local_uv_irradiance_index}</p>
+      `;
+      } else {
+        innerWeatherBox.innerHTML += `
+        <p>Min.: ${sol.min_temp_fahrenheit} °F</p>
+        <p>Max.: ${sol.max_temp_fahrenheit} °F</p>
+      `;
+      }
+
+      innerWeatherBox.innerHTML +=  `
+      <p>Weather: ${sol.atmo_opacity}</p>
+      <p>UV: ${sol.local_uv_irradiance_index}</p>
       `;
       currentDate = sol.terrestrial_date;
       outerWeatherBox.appendChild(innerWeatherBox);
     }
-
-
     appElement.appendChild(outerWeatherBox);
   }
 }
