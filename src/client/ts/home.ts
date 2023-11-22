@@ -10,23 +10,33 @@ moon?.addEventListener('click', () => showPlanetInformation('moon'));
 
 //Add click-eventlistener for sun gimmick
 const sun = document.getElementById('sun');
-sun?.addEventListener('click', showSunEasterEgg);
+
 
 
 function showPlanetInformation(planet: string){
     const body = document.body;
     body.innerHTML = '';
+    const head = document.head;
 
     switch (planet) {
         case 'mars':
-            body.style.backgroundImage = 'none';
-            const marsDiv = document.createElement('div');
-            marsDiv.id = 'marsID';
+            // Add link to mars.css
+            const marsStylesheet = document.createElement('link');
+            marsStylesheet.rel = 'stylesheet';
+            marsStylesheet.type = 'text/css';
+            marsStylesheet.href = '/src/client/css/mars.css';
+            head.appendChild(marsStylesheet);
+
+            const main = document.createElement('main'); // Change 'div' to 'main'
+            main.id = 'main';
             const script = document.createElement('script');
             script.src = "/src/client/ts/mars.ts";
 
-            body.appendChild(marsDiv);
+
+            body.appendChild(main);
             body.appendChild(script);
+
+
             break;
         case 'nea':
             fetch('/nea.html')

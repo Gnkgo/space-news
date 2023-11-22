@@ -1,22 +1,50 @@
 //import {apiKey, getFormattedDate} from './api';
 
- const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX';
- function getFormattedDate() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const day = String(today.getDate()).padStart(2, '0');
-  
-    return `${year}-${month}-${day}`;
-}
-
-const weatherURL = `https://mars.nasa.gov/rss/api/?feed=weather&category=insight_temperature&feedtype=json&ver=1.0`;
+const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX'
+const weatherURL = 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json';
 const roverName = "curiosity";
 
-const backupDate = "2021-08-01";
+
+interface SolEntry {
+  id: string;
+  terrestrial_date: string;
+  sol: string;
+  ls: string;
+  season: string;
+  min_temp: string;
+  max_temp: string;
+  pressure: string;
+  pressure_string: string;
+  abs_humidity: string;
+  wind_speed: string;
+  wind_direction: string;
+  atmo_opacity: string;
+  sunrise: string;
+  sunset: string;
+  local_uv_irradiance_index: string;
+  min_gts_temp: string;
+  max_gts_temp: string;
+}
+
+interface MarsData {
+  descriptions: Record<string, string>;
+  soles: SolEntry[];
+}
+
+let currentDate: string = "";
+let currentDateSol: string = "";
+
+function getFormattedDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+const backupDate = "2023-11-01";
 const todayDate = getFormattedDate();
-const backUpURL = `https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${backupDate}&api_key=${apiKey}`;
-const roverApiUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${todayDate}&api_key=${apiKey}`;
+
 
 async function getRoverPhotos(api: string): Promise<any> {
   try {
@@ -30,37 +58,39 @@ async function getRoverPhotos(api: string): Promise<any> {
 }
 
 async function renderRoverPhotos(): Promise<void> {
-  const appElement = document.getElementById("marsID");
+  const backUpURL = `https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${currentDate}&api_key=${apiKey}`;
+  const roverApiUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${todayDate}&api_key=${apiKey}`;
+
+  const main = document.getElementById("main");
   const photoData = await getRoverPhotos(roverApiUrl);
   let photo;
-  console.log("CHECK");
-  if (appElement) {
-    console.log("APP ELEMENT");
+  console.log("photolog");
+  if (main) {
+    console.log("CHECK");
     if (photoData.photos.length > 0) {
-      console.log("PICTURES");
-      photo = photoData.photos[0]; // Take the first photo
+      console.log(photoData.photos.length, "photos");
+      photo = photoData.photos[Math.floor(Math.random() * photoData.photos.length)]; // Take the first photo
     } else {
-      console.log("NO PICTURES");
+      console.log("backup");
       const photoDataBackUp = await getRoverPhotos(backUpURL);
-      photo = photoDataBackUp.photos[0];
+      console.log(photoDataBackUp.photos.length, "photos");
+      const index = Math.floor(Math.random() * photoDataBackUp.photos.length);
+      photo = photoDataBackUp.photos[2];
+      console.log("index", index);
     }
 
-    // Inside the renderRoverPhotos function after setting the photoBox content
     document.body.style.backgroundImage = `url('${photo.img_src}')`;
     document.body.style.backgroundSize = "cover";
     document.body.style.backgroundPosition = "center";
     document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.overflow = "hidden"; // Optional: To hide scrollbars if needed
+    document.body.style.overflow = "hidden";
   }
 }
 
-renderRoverPhotos();
-
-
-async function getWeatherData(): Promise<any> {
+async function getWeatherData(): Promise<MarsData> {
   try {
     const response = await fetch(weatherURL);
-    const data = await response.json();
+    const data = await response.json() as MarsData;
     console.log("Weather data fetched successfully", data);
     return data;
   } catch (error) {
@@ -72,40 +102,84 @@ async function getWeatherData(): Promise<any> {
 async function init(): Promise<void> {
   try {
     console.log("Initializing weather app");
+
     const weatherData = await getWeatherData();
     renderWeather(weatherData);
+    renderRoverPhotos();
+    createTitle(`Mars Weather`);
+    createText("The weather data is collected by NASA which is currently on Mars. The data is updated every day. Note that the weather is due to storms and other inconveniences not always available and has a delay up to two weeks.")
+    createFooter();
   } catch (error) {
     console.error("Error initializing weather app", error);
   }
 }
 
-function renderWeather(data: any): void {
-  const appElement = document.getElementById("marsID");
- 
-  if (appElement) {
-    const maxSol: string = data.sol_keys.reduce((max: string, solKey: string) => {
-      return parseInt(solKey, 10) > parseInt(max, 10) ? solKey : max;
-    }, data.sol_keys[0]);
+function todayBox() {
+  const body = document.body
+  const box = document.createElement("div");
+  box.id = "box";
+  
 
+}
+
+
+function renderWeather(data: MarsData): void {
+  const appElement = document.getElementById("main");
+
+  if (appElement && data.soles.length > 0) {
     const outerWeatherBox = document.createElement("div");
     outerWeatherBox.className = "weather-box-outer";
 
-    const innerWeatherBox = document.createElement("div");
-    innerWeatherBox.className = "weather-box";
 
-    innerWeatherBox.innerHTML = `
-      <h2>Sol ${maxSol}</h2>
-      <p>Average Temperature: ${data[maxSol].AT.av} °C</p>
-      <p>Horizontal Wind Speed: ${data[maxSol].HWS.av} m/s</p>
-      <p>Atmospheric Pressure: ${data[maxSol].PRE.av} Pa</p>
-      <p>Season: ${data[maxSol].Season}</p>
-    `;
+    for (let i = Math.min(data.soles.length, 6); i >= 0; i--) {
 
-    outerWeatherBox.appendChild(innerWeatherBox);
+      const sol = data.soles[i];
+      if (sol == undefined) return;
+      const innerWeatherBox = document.createElement("div");
+      innerWeatherBox.className = "weather-box";
+
+      const solElement = document.createElement("h2");
+      solElement.textContent = `Sol ${sol.sol}`;
+      innerWeatherBox.appendChild(solElement);
+
+
+      innerWeatherBox.innerHTML += `
+        <p>Min.: ${sol.min_temp} °C</p>
+        <p>Max.: ${sol.max_temp} °C</p>
+        <p>Weather: ${sol.atmo_opacity}</p>
+        <p>UV: ${sol.local_uv_irradiance_index}</p>
+      `;
+      currentDate = sol.terrestrial_date;
+      outerWeatherBox.appendChild(innerWeatherBox);
+    }
+
+
     appElement.appendChild(outerWeatherBox);
   }
 }
 
 
+
+
+function createTitle(title: string) {
+  const body = document.body;
+  const titleElement = document.createElement("h1");
+  titleElement.textContent = title;
+  body?.appendChild(titleElement);
+}
+
+function createText(text: string) {
+  const body = document.body;
+  const textElement = document.createElement("p");
+  textElement.textContent = text;
+  body?.appendChild(textElement);
+}
+
+function createFooter() {
+  const body = document.body;
+  const footer = document.createElement("footer");  
+  footer.textContent = "© 2023 by DeValdi - Gnkgo - Nick20500";
+  body?.appendChild(footer);
+}
 
 init();
