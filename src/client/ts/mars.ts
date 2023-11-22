@@ -1,14 +1,8 @@
-const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX'
+import {apiKey, getFormattedDate} from './api';
+
 const weatherURL = `https://mars.nasa.gov/rss/api/?feed=weather&category=insight_temperature&feedtype=json&ver=1.0`;
 const roverName = "curiosity";
-function getFormattedDate() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const day = String(today.getDate()).padStart(2, '0');
 
-  return `${year}-${month}-${day}`;
-}
 
 const backupDate = "2021-08-01";
 const todayDate = getFormattedDate();
@@ -48,24 +42,6 @@ async function renderRoverPhotos(): Promise<void> {
     document.body.style.backgroundPosition = "center";
     document.body.style.backgroundRepeat = "no-repeat";
     document.body.style.overflow = "hidden"; // Optional: To hide scrollbars if needed
-
-
-    //const photoBox = document.createElement("div");
-    //photoBox.className = "photo-box";
-//
-    //// Display the image and other relevant information
-    //photoBox.innerHTML = `
-    //    <img src="${photo.img_src}" alt="Mars Rover Photo">
-    //    <p>Sol: ${photo.sol}</p>
-    //    <p>Earth Date: ${photo.earth_date}</p>
-    //    <p>Camera: ${photo.camera.full_name}</p>
-    //  `;
-//
-    //// Append the photoBox to the 'app' element
-    //appElement.appendChild(photoBox);
-
-    // Set the background image of the body element
-
   }
 }
 
