@@ -1,0 +1,5 @@
+div#nea-container {
+    & img#nea {
+        height: 75vh;
+    }
+}

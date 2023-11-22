@@ -39,8 +39,12 @@ function showPlanetInformation(planet: string){
 
             break;
         case 'nea':
-            body.innerHTML = '<h1>NEA</h1>'
-            body.style.backgroundImage = 'none';
+            fetch('/nea.html')
+                .then(response => response.text())
+                .then(html => {
+                    body.innerHTML = html;
+                })
+                .catch(error => console.error('Error loading nea.html:', error));
             break;
         case 'moon':
             body.innerHTML = '<h1>moon</h1>'
@@ -49,4 +53,8 @@ function showPlanetInformation(planet: string){
         default:
             break;
     }
+}
+
+function showSunEasterEgg(){
+
 }
