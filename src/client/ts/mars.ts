@@ -1,18 +1,10 @@
+
+
 const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX'
 const weatherURL = 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json';
 const roverName = "curiosity";
 
-function formatDate(inputDate: string): string {
-  const dateObject = new Date(inputDate);
 
-  const options: Intl.DateTimeFormatOptions = {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  };
-
-  return dateObject.toLocaleDateString('en-CH', options);
-}
 
 interface SolEntry {
   id: string;
