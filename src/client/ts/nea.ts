@@ -1,15 +1,36 @@
-import {apiKey, getFormattedDate} from './api';
+import {getFormattedDate} from './api';
 
-const dateToday = getFormattedDate();
-const dateInAWeek = '2023-11-29';
-const neoAPIURL = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${dateToday}&end_date=${dateInAWeek}&api_key=${apiKey}`;
+interface CadJson {
+    signature: {
+      version: string;
+      source: string;
+    };
+    count: number;
+    fields: string[];
+    data: Array<Array<string | number>>;
+  }
+  
 
-fetch(neoAPIURL)
-  .then((res: Response) => {
-    // Handle the response here
-    console.log(res.json());
-  })
-  .catch((error) => {
-    // Handle errors
-    console.log("Error: " + error)
-  });
+const minDate = getFormattedDate();
+const maxDate = '30';
+const distMax = '0.01';
+const cadApiUrl = `/nasa-cad-api?date-min=${minDate}&date-max=${maxDate}&dist-max=${distMax}`;
+
+console.log("start fetching neo stuff");
+getCloseApproachData(cadApiUrl);
+
+async function getCloseApproachData(cadApiUrl: string){
+    try{
+        const res = await fetch(cadApiUrl);
+        const cad = await res.json() as CadJson;
+        processCloseApproachData(cad);
+    } catch (error){
+        console.log("Error: " + error)
+    }
+}
+
+function processCloseApproachData(cadJson: CadJson){
+    for (const elem of cadJson.data){
+        console.log("The Object: " + elem[0] + " will approach the earth on the: " + elem[3] + " in a distance of: " + elem[5] + "au with a velocity of: " + elem[7] + "km/s");
+    }
+}
