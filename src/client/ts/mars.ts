@@ -1,3 +1,5 @@
+//import {apiKey, getFormattedDate} from './api';
+
 const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX'
 const weatherURL = 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json';
 const roverName = "curiosity";
