@@ -1,8 +1,17 @@
-import {apiKey, getFormattedDate} from './api';
+//import {apiKey, getFormattedDate} from './api';
+
+ const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX';
+ function getFormattedDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(today.getDate()).padStart(2, '0');
+  
+    return `${year}-${month}-${day}`;
+}
 
 const weatherURL = `https://mars.nasa.gov/rss/api/?feed=weather&category=insight_temperature&feedtype=json&ver=1.0`;
 const roverName = "curiosity";
-
 
 const backupDate = "2021-08-01";
 const todayDate = getFormattedDate();
