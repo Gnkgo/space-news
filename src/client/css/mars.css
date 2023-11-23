@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-body {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 27pt 1fr 1fr 1fr 27pt; /* Use 1fr for the remaining space */
-  grid-template-areas: 
-    ". . . buttons"
-    "title title . ."
-    "paragraph paragraph today-weather-box-outer today-weather-box-outer"
-    "weather-boxes weather-boxes weather-boxes weather-boxes"
-    "footer footer footer footer";
-
-  gap: px;
-
-}
-=======
->>>>>>> 04051dde1a66d0e9a689074f03a5dff3c1754311
 
 .today-weather-box-outer {
 
