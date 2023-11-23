@@ -47,5 +47,5 @@ function showPlanetInformation(planet: string) {
 
 
 function showSunEasterEgg(sunImg: HTMLImageElement) {
-    sunImg.style.width = '20vh';
+    sunImg.style.animation = 'sunEasterEgg 0.6s ease-in-out';
 }

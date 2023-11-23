@@ -17,6 +17,7 @@ body {
         justify-content: center;
 
         & img#sun {
+            z-index: 1;
             width: 15vh;
             position: absolute;
         }
@@ -117,4 +118,17 @@ body {
         transform: rotate(570deg)  
               translateY(200%) rotate(-570deg); 
     } 
+}
+
+@keyframes sunEasterEgg {
+    0% {
+        width: 15vh;
+    }
+    40% {
+        width: 20vh;
+    }
+    100% {
+        width: 15vh;
+    }
+    
 }
