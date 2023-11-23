@@ -128,10 +128,9 @@ async function toggleTemperatureUnit() {
 }
 
 function createTemperatureToggleBox() {
+  const body = document.body;
   const temperatureToggleBox = document.createElement("div");
   temperatureToggleBox.id = "temperatureToggleBox";
-  const todayWeather = document.getElementById("today-weather-box-outer");
-
 
   const celsiusButton = document.createElement("button");
   celsiusButton.textContent = "C";
@@ -151,7 +150,7 @@ function createTemperatureToggleBox() {
   temperatureToggleBox.appendChild(celsiusButton);
   temperatureToggleBox.appendChild(fahrenheitButton);
 
-  todayWeather?.appendChild(temperatureToggleBox);
+  body?.appendChild(temperatureToggleBox);
 
 }
 
@@ -253,7 +252,7 @@ function todayWeather(data: MarsData): void {
     }
 
     const innerWeatherBox = document.createElement("div");
-    innerWeatherBox.id = "weather-box";
+    innerWeatherBox.id = "today-weather-box";
     innerWeatherBox.className = "weather-box"; // Add a class for styling
 
     const title = document.createElement("h3");
