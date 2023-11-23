@@ -1,7 +1,6 @@
 import express from "express";
 import ViteExpress from "vite-express";
 import path from "path";
-import { CADReq } from "../common/types";
 
 // creates the expres app do not change
 const app = express();

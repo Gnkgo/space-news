@@ -18,24 +18,42 @@ function showPlanetInformation(planet: string) {
     body.innerHTML = '';
     const head = document.head;
 
+    const baseStyleSheet = document.createElement('link');
+    baseStyleSheet.rel = 'stylesheet';
+    baseStyleSheet.type = 'text/css';
+    baseStyleSheet.href = '/src/client/css/base.css';
+
+    const componentStyleSheet = document.createElement('link');
+    componentStyleSheet.rel = 'stylesheet';
+    componentStyleSheet.type = 'text/css';
+    componentStyleSheet.href = '/src/client/css/component.css';
+    head.appendChild(componentStyleSheet);
+
     switch (planet) {
         case 'mars':
-
             const marsStylesheet = document.createElement('link');
             marsStylesheet.rel = 'stylesheet';
             marsStylesheet.type = 'text/css';
             marsStylesheet.href = '/src/client/css/mars.css';
+
+            head.appendChild(baseStyleSheet);
+
+            head.appendChild(componentStyleSheet);
+
             head.appendChild(marsStylesheet);
 
-            const main = document.createElement('main'); // Change 'div' to 'main'
+    
+            const main = document.createElement('main');
             main.id = 'main';
+    
             const script = document.createElement('script');
-            script.src = "/src/client/ts/mars.ts";
-
+            script.type = 'module';
+            script.src = '/src/client/ts/mars.ts';
+    
             body.appendChild(main);
             body.appendChild(script);
-
             break;
+    
         case 'nea':
             fetch('/nea.html')
                 .then(response => response.text())
@@ -45,7 +63,12 @@ function showPlanetInformation(planet: string) {
                 .catch(error => console.error('Error loading nea.html:', error));
             break;
         case 'moon':
-            // Add link to mars.css
+            
+        
+            head.appendChild(baseStyleSheet);
+
+            head.appendChild(componentStyleSheet);
+
             const moonStyleSheet = document.createElement('link');
             moonStyleSheet.rel = 'stylesheet';
             moonStyleSheet.type = 'text/css';

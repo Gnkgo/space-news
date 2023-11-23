@@ -1,8 +1,13 @@
-//import {apiKey, getFormattedDate} from './api';
+import { apiKey } from './api';
+import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit } from './base';
 
-const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX'
+const backupDate = "2023-10-01";
 const weatherURL = 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json';
 const roverName = "curiosity";
+let isCelsius = true;
+let isSol = true;
+let currentDate: string = "";
+let currentDateSol: string = "";
 
 interface SolEntry {
   id: string;
@@ -12,8 +17,8 @@ interface SolEntry {
   season: string;
   min_temp: string;
   max_temp: string;
-  min_temp_fahrenheit?: string; 
-  max_temp_fahrenheit?: string; 
+  min_temp_fahrenheit?: string;
+  max_temp_fahrenheit?: string;
   pressure: string;
   pressure_string: string;
   abs_humidity: string;
@@ -32,20 +37,21 @@ interface MarsData {
   soles: SolEntry[];
 }
 
-let currentDate: string = "";
-let currentDateSol: string = "";
-
-function getFormattedDate() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const day = String(today.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+async function init(): Promise<void> {
+  try {
+    console.log("Initializing weather app");
+    createTemperatureToggleBox(); // Call the function to create the temperature toggle box
+    createDateToggle();
+    const weatherData = await getWeatherData();
+    renderWeather(weatherData);
+    renderRoverPhotos();
+    createTitle(`Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
+    createText("The weather data is collected by NASA which is currently on Mars. The data is updated every day. Note that the weather is due to storms and other inconveniences not always available and has a delay up to two weeks.")
+    createFooter();
+  } catch (error) {
+    console.error("Error initializing weather app", error);
+  }
 }
-
-const backupDate = "2023-11-01";
-const todayDate = getFormattedDate();
-
 
 async function getRoverPhotos(api: string): Promise<any> {
   try {
@@ -59,8 +65,8 @@ async function getRoverPhotos(api: string): Promise<any> {
 }
 
 async function renderRoverPhotos(): Promise<void> {
-  const backUpURL = `https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${currentDate}&api_key=${apiKey}`;
-  const roverApiUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${todayDate}&api_key=${apiKey}`;
+  const backUpURL = `https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${backupDate}&api_key=${apiKey}`;
+  const roverApiUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/${roverName}/photos?earth_date=${currentDate}&api_key=${apiKey}`;
 
   const main = document.getElementById("main");
   const photoData = await getRoverPhotos(roverApiUrl);
@@ -82,10 +88,6 @@ async function renderRoverPhotos(): Promise<void> {
     document.body.style.backgroundRepeat = "no-repeat";
     document.body.style.overflow = "hidden";
   }
-}
-
-function celsiusToFahrenheit(celsius: number): number {
-  return (celsius * 9 / 5) + 32;
 }
 
 async function getWeatherData(): Promise<MarsData> {
@@ -112,33 +114,24 @@ async function getWeatherData(): Promise<MarsData> {
   }
 }
 
-async function init(): Promise<void> {
-  try {
-    console.log("Initializing weather app");
-    createTemperatureToggleBox(); // Call the function to create the temperature toggle box
-
-    const weatherData = await getWeatherData();
-    renderWeather(weatherData);
-    renderRoverPhotos();
-    createTitle(`Mars Weather`);
-    createText("The weather data is collected by NASA which is currently on Mars. The data is updated every day. Note that the weather is due to storms and other inconveniences not always available and has a delay up to two weeks.")
-    createFooter();
-  } catch (error) {
-    console.error("Error initializing weather app", error);
-  }
+async function toggleDateUnit() {
+  isSol = !isSol;
+  const weatherData = await getWeatherData();
+  renderWeather(weatherData);
+  createTitle(`Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
 }
-let isCelsius = true;
 
 async function toggleTemperatureUnit() {
   isCelsius = !isCelsius;
   const weatherData = await getWeatherData();
-  renderWeather(weatherData); // Assuming weatherData is a global variable or accessible within the scope
+  renderWeather(weatherData);
 }
 
 function createTemperatureToggleBox() {
-  const body = document.body;
   const temperatureToggleBox = document.createElement("div");
   temperatureToggleBox.id = "temperatureToggleBox";
+  const todayWeather = document.getElementById("today-weather-box-outer");
+
 
   const celsiusButton = document.createElement("button");
   celsiusButton.textContent = "C";
@@ -147,7 +140,6 @@ function createTemperatureToggleBox() {
       toggleTemperatureUnit();
     }
   });
-
   const fahrenheitButton = document.createElement("button");
   fahrenheitButton.textContent = "F";
   fahrenheitButton.addEventListener("click", () => {
@@ -159,9 +151,37 @@ function createTemperatureToggleBox() {
   temperatureToggleBox.appendChild(celsiusButton);
   temperatureToggleBox.appendChild(fahrenheitButton);
 
-  body?.appendChild(temperatureToggleBox);
+  todayWeather?.appendChild(temperatureToggleBox);
+
 }
 
+
+function createDateToggle() {
+  const body = document.body;
+  const dateToggleBox = document.createElement("div");
+  dateToggleBox.id = "dateToggleBox";
+
+  const solButton = document.createElement("button");
+  solButton.textContent = "Sol";
+  solButton.addEventListener("click", () => {
+    if (!isSol) {
+      toggleDateUnit();
+    }
+  });
+
+  const earthButton = document.createElement("button");
+  earthButton.textContent = "Earth";
+  earthButton.addEventListener("click", () => {
+    if (isSol) {
+      toggleDateUnit();
+    }
+  });
+
+  dateToggleBox.appendChild(solButton);
+  dateToggleBox.appendChild(earthButton);
+
+  body?.appendChild(dateToggleBox);
+}
 
 
 function renderWeather(data: MarsData): void {
@@ -173,20 +193,25 @@ function renderWeather(data: MarsData): void {
     outerWeatherBox.className = "weather-box-outer";
 
 
-    for (let i = Math.min(data.soles.length, 6); i >= 0; i--) {
+    for (let i = Math.min(data.soles.length, 6); i > 0; i--) {
 
       const sol = data.soles[i];
       if (sol == undefined) return;
       const innerWeatherBox = document.createElement("div");
       innerWeatherBox.className = "weather-box";
 
-      const solElement = document.createElement("h2");
-      solElement.textContent = `Sol ${sol.sol}`;
-      innerWeatherBox.appendChild(solElement);
+
+      const title = document.createElement("h3");
+      if (isSol) {
+        title.textContent = `Sol ${sol.sol}`;
+      } else {
+        title.textContent = `${formatDate(sol.terrestrial_date)}`;
+      }
+      innerWeatherBox.appendChild(title);
 
 
       if (isCelsius) {
-      innerWeatherBox.innerHTML += `
+        innerWeatherBox.innerHTML += `
         <p>Min.: ${sol.min_temp} °C</p>
         <p>Max.: ${sol.max_temp} °C</p>
       `;
@@ -197,39 +222,79 @@ function renderWeather(data: MarsData): void {
       `;
       }
 
-      innerWeatherBox.innerHTML +=  `
+      innerWeatherBox.innerHTML += `
       <p>Weather: ${sol.atmo_opacity}</p>
       <p>UV: ${sol.local_uv_irradiance_index}</p>
       `;
-      currentDate = sol.terrestrial_date;
+
       outerWeatherBox.appendChild(innerWeatherBox);
     }
+    todayWeather(data);
     appElement.appendChild(outerWeatherBox);
   }
 }
 
-
-
-
-function createTitle(title: string) {
+function todayWeather(data: MarsData): void {
   const body = document.body;
-  const titleElement = document.createElement("h1");
-  titleElement.textContent = title;
-  body?.appendChild(titleElement);
+  if (body && data.soles.length > 0) {
+    const sol = data.soles[0];
+    if (sol == undefined) return;
+
+    let outerWeatherBox = document.getElementById("today-weather-box-outer");
+
+    if (!outerWeatherBox) {
+      outerWeatherBox = document.createElement("div");
+      outerWeatherBox.id = "today-weather-box-outer";
+      outerWeatherBox.className = "today-weather-box-outer";
+    } else {
+      // Remove the existing box from the body
+      outerWeatherBox.parentNode?.removeChild(outerWeatherBox);
+      outerWeatherBox.innerHTML = ''; // Clear inner HTML
+    }
+
+    const innerWeatherBox = document.createElement("div");
+    innerWeatherBox.id = "weather-box";
+    innerWeatherBox.className = "weather-box"; // Add a class for styling
+
+    const title = document.createElement("h3");
+    if (isSol) {
+      title.textContent = `Sol ${sol.sol}`;
+    } else {
+      title.textContent = `${formatDate(sol.terrestrial_date)}`;
+    }
+    innerWeatherBox.appendChild(title);
+
+    if (isCelsius) {
+      innerWeatherBox.innerHTML += `
+        <p>Min.: ${sol.min_temp} °C</p>
+        <p>Max.: ${sol.max_temp} °C</p>
+      `;
+    } else {
+      innerWeatherBox.innerHTML += `
+        <p>Min.: ${sol.min_temp_fahrenheit} °F</p>
+        <p>Max.: ${sol.max_temp_fahrenheit} °F</p>
+      `;
+    }
+
+    innerWeatherBox.innerHTML += `
+      <p>Weather: ${sol.atmo_opacity}</p>
+      <p>UV: ${sol.local_uv_irradiance_index}</p>
+      <p>Wind: ${sol.wind_speed} m/s</p>
+      <p>Pressure: ${sol.pressure} Pa</p>
+      <p>Humidity: ${sol.abs_humidity} %</p>
+      <p>Sunrise: ${sol.sunrise}</p>
+      <p>Sunset: ${sol.sunset}</p>
+    `;
+
+    currentDate = sol.terrestrial_date;
+    currentDateSol = sol.sol;
+    
+    // Append the new box to the body
+    outerWeatherBox.appendChild(innerWeatherBox);
+    body.appendChild(outerWeatherBox);
+  }
 }
 
-function createText(text: string) {
-  const body = document.body;
-  const textElement = document.createElement("p");
-  textElement.textContent = text;
-  body?.appendChild(textElement);
-}
 
-function createFooter() {
-  const body = document.body;
-  const footer = document.createElement("footer");  
-  footer.textContent = "© 2023 by DeValdi - Gnkgo - Nick20500";
-  body?.appendChild(footer);
-}
 
 init();
