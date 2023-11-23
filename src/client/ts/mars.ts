@@ -8,6 +8,7 @@ let isCelsius = true;
 let isSol = true;
 let currentDate: string = "";
 let currentDateSol: string = "";
+const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 
 interface SolEntry {
   id: string;
@@ -40,6 +41,7 @@ interface MarsData {
 async function init(): Promise<void> {
   try {
     console.log("Initializing weather app");
+<<<<<<< HEAD
     createTemperatureToggleBox(); // Call the function to create the temperature toggle box
     createDateToggle();
     const weatherData = await getWeatherData();
@@ -48,6 +50,18 @@ async function init(): Promise<void> {
     createTitle(`Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
     createText("Welcome to Mars Weather Forecast! Get daily updates on Martian weather collected by NASA's mission. Note: Weather data may be delayed or unavailable due to storms and other challenges. Explore temperature, atmospheric conditions, UV levels, and more. Discover the unique weather dynamics of Mars with our reliable reports!");
     createFooter();
+=======
+    if(marsContainer){
+      createTemperatureToggleBox(marsContainer); // Call the function to create the temperature toggle box
+      createDateToggle(marsContainer);
+      const weatherData = await getWeatherData();
+      renderWeather(weatherData);
+      renderRoverPhotos();
+      createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
+      createText(marsContainer, "The weather data is collected by NASA which is currently on Mars. The data is updated every day. Note that the weather is due to storms and other inconveniences not always available and has a delay up to two weeks.")
+      createFooter();
+    }
+>>>>>>> 04051dde1a66d0e9a689074f03a5dff3c1754311
   } catch (error) {
     console.error("Error initializing weather app", error);
   }
@@ -118,7 +132,7 @@ async function toggleDateUnit() {
   isSol = !isSol;
   const weatherData = await getWeatherData();
   renderWeather(weatherData);
-  createTitle(`Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
+  createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
 }
 
 async function toggleTemperatureUnit() {
@@ -127,11 +141,17 @@ async function toggleTemperatureUnit() {
   renderWeather(weatherData);
 }
 
+<<<<<<< HEAD
 function createTemperatureToggleBox() {
   const body = document.body;
   const buttonBox = document.createElement("div");
   buttonBox.id = "button-box";
   buttonBox.className = "button-box";
+=======
+function createTemperatureToggleBox(divContainer: HTMLDivElement) {
+  const temperatureToggleBox = document.createElement("div");
+  temperatureToggleBox.id = "temperatureToggleBox";
+>>>>>>> 04051dde1a66d0e9a689074f03a5dff3c1754311
 
   
   const celsiusButton = document.createElement("button");
@@ -155,13 +175,23 @@ function createTemperatureToggleBox() {
   buttonBox.appendChild(celsiusButton);
   buttonBox.appendChild(fahrenheitButton);
 
+<<<<<<< HEAD
   body?.appendChild(buttonBox);
+=======
+  divContainer.appendChild(temperatureToggleBox);
+>>>>>>> 04051dde1a66d0e9a689074f03a5dff3c1754311
 
 }
 
 
+<<<<<<< HEAD
 function createDateToggle() {
   const buttonBox = document.getElementById("button-box");
+=======
+function createDateToggle(divContainer: HTMLDivElement) {
+  const dateToggleBox = document.createElement("div");
+  dateToggleBox.id = "dateToggleBox";
+>>>>>>> 04051dde1a66d0e9a689074f03a5dff3c1754311
 
   const solButton = document.createElement("button");
   solButton.className = "buttonChange";
@@ -181,8 +211,15 @@ function createDateToggle() {
     }
   });
 
+<<<<<<< HEAD
   buttonBox?.appendChild(solButton);
   buttonBox?.appendChild(earthButton);
+=======
+  dateToggleBox.appendChild(solButton);
+  dateToggleBox.appendChild(earthButton);
+
+  divContainer.appendChild(dateToggleBox);
+>>>>>>> 04051dde1a66d0e9a689074f03a5dff3c1754311
 }
 
 

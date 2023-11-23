@@ -16,6 +16,16 @@ const maxDate = '30';
 const distMax = '0.01';
 const cadApiUrl = `/nasa-cad-api?date-min=${minDate}&date-max=${maxDate}&dist-max=${distMax}`;
 
+const neaContainer = document.getElementById('nea-container');
+fetch('/nea.html')
+                .then(response => response.text())
+                .then(html => {
+                    if(neaContainer){
+                        neaContainer.innerHTML = html;
+                    }
+                })
+                .catch(error => console.error('Error loading nea.html:', error));
+
 console.log("start fetching neo stuff");
 getCloseApproachData(cadApiUrl);
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -12,6 +13,8 @@ body {
   gap: px;
 
 }
+=======
+>>>>>>> 04051dde1a66d0e9a689074f03a5dff3c1754311
 
 .today-weather-box-outer {
 
@@ -159,4 +162,18 @@ body > p {
   .weather-box-outer .weather-box:nth-child(n+4) {
     display: none; /* Hide weather boxes beyond the third one on small screens */
   }
+}
+div#mars-container {
+  display: none;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 10px auto auto 1fr auto; /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-areas: 
+    ". . . buttons"
+    "title title . today-weather-box-outer"
+    "paragraph paragraph . today-weather-box-outer"
+    "weather-boxes weather-boxes weather-boxes weather-boxes"
+    "footer footer footer footer";
+
+  gap: 10px;
+  min-height: 100vh; /* Ensure body takes up at least the full viewport height */
 }

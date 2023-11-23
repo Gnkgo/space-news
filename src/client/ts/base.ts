@@ -18,8 +18,7 @@ export function formatDate(inputDate: string | undefined): string {
     return formattedDate;
 }
 
-export function createTitle(title: string, isSol: boolean, dateEarth: string, dateSol: string) {
-    const body = document.body;
+export function createTitle(marsContainer: HTMLDivElement, title: string, isSol: boolean, dateEarth: string, dateSol: string) {
     let titleBox = document.getElementById("title-box");
 
     if (!titleBox) {
@@ -43,14 +42,13 @@ export function createTitle(title: string, isSol: boolean, dateEarth: string, da
     titleBox?.appendChild(titleElement);
     titleBox?.appendChild(dateElement);
 
-    body?.appendChild(titleBox);
+    marsContainer.appendChild(titleBox);
 }
 
-export function createText(text: string) {
-    const body = document.body;
+export function createText(divContainer: HTMLDivElement, text: string) {
     const textElement = document.createElement("p");
     textElement.textContent = text;
-    body?.appendChild(textElement);
+    divContainer.appendChild(textElement);
 }
 
 export function createFooter() {

@@ -1,80 +1,79 @@
+  
+body>main {
+  grid-area: weather-boxes;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+}
 
+.weather-box-outer {
+  display: flex;
+}
+.weather-box {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%; /* Make the weather-box take full width within its container */
+  line-height: 0.65;
+  padding: 3px;
+  color: white;
+  margin: 5px;
+}
 
-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: auto auto 1fr auto; /* Adjusted rows to include 1fr for the remaining space */
-    grid-template-areas: 
-      "title title . ."
-      "paragraph paragraph . ."
-      "weather-boxes weather-boxes weather-boxes weather-boxes"
-      "footer footer footer footer";
-  
-    gap: 10px;
-    min-height: 100vh; /* Ensure body takes up at least the full viewport height */
-  }
-  
-  body>main {
-    grid-area: weather-boxes;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 10px;
-  }
-  
-  .weather-box-outer {
-    display: flex;
-  }
-  .weather-box {
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    width: 100%; /* Make the weather-box take full width within its container */
-    line-height: 0.65;
-    padding: 3px;
-    color: white;
-    margin: 5px;
-  }
-  
-  body > h1 {
-    grid-area: title;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    font-size: 2rem;
-    margin: 10px;
-    font-weight: 300;
-    color: white;
-    padding: 10px;
-    width: 330px;
-  }
-  
-  body > h2 {
-    font-size: 1.5rem;
-    margin: 0;
-    color: white;
-  }
-  
-  body > p {
-    grid-area: paragraph;
-    font-size: 1rem;
-    margin: 10px;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    color: white;
-  }
-  
-  footer {
-    grid-area: footer;
-    background-color: rgba(0, 0, 0, 0.6);
-    color: white;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    font-weight: 300;
-    color: white;
-    padding: 10px;
-  
-  }
+body > h1 {
+  grid-area: title;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-size: 2rem;
+  margin: 10px;
+  font-weight: 300;
+  color: white;
+  padding: 10px;
+  width: 330px;
+}
+
+body > h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+}
+
+body > p {
+  grid-area: paragraph;
+  font-size: 1rem;
+  margin: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  color: white;
+}
+
+footer {
+  grid-area: footer;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-weight: 300;
+  color: white;
+  padding: 10px;
+
+}
+
+div#moon-container {
+  display: none;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto auto 1fr auto; /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-areas: 
+    "title title . ."
+    "paragraph paragraph . ."
+    "weather-boxes weather-boxes weather-boxes weather-boxes"
+    "footer footer footer footer";
+
+  gap: 10px;
+  min-height: 100vh; /* Ensure body takes up at least the full viewport height */
+}
   
