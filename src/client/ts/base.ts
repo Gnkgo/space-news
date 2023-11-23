@@ -46,8 +46,6 @@ export function createTitle(title: string, isSol: boolean, dateEarth: string, da
     body?.appendChild(titleBox);
 }
 
-  
-
 export function createText(text: string) {
     const body = document.body;
     const textElement = document.createElement("p");
@@ -58,10 +56,13 @@ export function createText(text: string) {
 export function createFooter() {
     const body = document.body;
     const footer = document.createElement("footer");
-    footer.textContent = "© 2023 by DeValdi - Gnkgo - Nick20500";
+    footer.textContent = "© 2023 by DeValdi - Gnkgo - Nick";
     body?.appendChild(footer);
 }
 
+/**
+ * Test
+ */
 export function celsiusToFahrenheit(celsius: number): number {
     return (celsius * 9 / 5) + 32;
   }

@@ -46,7 +46,7 @@ async function init(): Promise<void> {
     renderWeather(weatherData);
     renderRoverPhotos();
     createTitle(`Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
-    createText("The weather data is collected by NASA which is currently on Mars. The data is updated every day. Note that the weather is due to storms and other inconveniences not always available and has a delay up to two weeks.")
+    createText("Welcome to Mars Weather Forecast! Get daily updates on Martian weather collected by NASA's mission. Note: Weather data may be delayed or unavailable due to storms and other challenges. Explore temperature, atmospheric conditions, UV levels, and more. Discover the unique weather dynamics of Mars with our reliable reports!");
     createFooter();
   } catch (error) {
     console.error("Error initializing weather app", error);
@@ -129,10 +129,14 @@ async function toggleTemperatureUnit() {
 
 function createTemperatureToggleBox() {
   const body = document.body;
-  const temperatureToggleBox = document.createElement("div");
-  temperatureToggleBox.id = "temperatureToggleBox";
+  const buttonBox = document.createElement("div");
+  buttonBox.id = "button-box";
+  buttonBox.className = "button-box";
 
+  
   const celsiusButton = document.createElement("button");
+  celsiusButton.className = "buttonChange";
+
   celsiusButton.textContent = "C";
   celsiusButton.addEventListener("click", () => {
     if (!isCelsius) {
@@ -140,6 +144,7 @@ function createTemperatureToggleBox() {
     }
   });
   const fahrenheitButton = document.createElement("button");
+  fahrenheitButton.className = "buttonChange";
   fahrenheitButton.textContent = "F";
   fahrenheitButton.addEventListener("click", () => {
     if (isCelsius) {
@@ -147,20 +152,19 @@ function createTemperatureToggleBox() {
     }
   });
 
-  temperatureToggleBox.appendChild(celsiusButton);
-  temperatureToggleBox.appendChild(fahrenheitButton);
+  buttonBox.appendChild(celsiusButton);
+  buttonBox.appendChild(fahrenheitButton);
 
-  body?.appendChild(temperatureToggleBox);
+  body?.appendChild(buttonBox);
 
 }
 
 
 function createDateToggle() {
-  const body = document.body;
-  const dateToggleBox = document.createElement("div");
-  dateToggleBox.id = "dateToggleBox";
+  const buttonBox = document.getElementById("button-box");
 
   const solButton = document.createElement("button");
+  solButton.className = "buttonChange";
   solButton.textContent = "Sol";
   solButton.addEventListener("click", () => {
     if (!isSol) {
@@ -169,6 +173,7 @@ function createDateToggle() {
   });
 
   const earthButton = document.createElement("button");
+  earthButton.className = "buttonChange";
   earthButton.textContent = "Earth";
   earthButton.addEventListener("click", () => {
     if (isSol) {
@@ -176,10 +181,8 @@ function createDateToggle() {
     }
   });
 
-  dateToggleBox.appendChild(solButton);
-  dateToggleBox.appendChild(earthButton);
-
-  body?.appendChild(dateToggleBox);
+  buttonBox?.appendChild(solButton);
+  buttonBox?.appendChild(earthButton);
 }
 
 
@@ -278,9 +281,7 @@ function todayWeather(data: MarsData): void {
     innerWeatherBox.innerHTML += `
       <p>Weather: ${sol.atmo_opacity}</p>
       <p>UV: ${sol.local_uv_irradiance_index}</p>
-      <p>Wind: ${sol.wind_speed} m/s</p>
       <p>Pressure: ${sol.pressure} Pa</p>
-      <p>Humidity: ${sol.abs_humidity} %</p>
       <p>Sunrise: ${sol.sunrise}</p>
       <p>Sunset: ${sol.sunset}</p>
     `;

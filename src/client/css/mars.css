@@ -1,39 +1,65 @@
 body {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 10px auto auto 1fr auto; /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-rows: 27pt 1fr 1fr 1fr 27pt; /* Use 1fr for the remaining space */
   grid-template-areas: 
     ". . . buttons"
-    "title title . today-weather-box-outer"
-    "paragraph paragraph . today-weather-box-outer"
+    "title title . ."
+    "paragraph paragraph today-weather-box-outer today-weather-box-outer"
     "weather-boxes weather-boxes weather-boxes weather-boxes"
     "footer footer footer footer";
 
-  gap: 10px;
-  min-height: 100vh; /* Ensure body takes up at least the full viewport height */
+  gap: px;
+
 }
 
 .today-weather-box-outer {
+
   grid-area: today-weather-box-outer;
+  display: flex;
+  justify-content: center; /* Center the content horizontally */
+  align-items: center; /* Center the content vertically */
   & .weather-box {
+    line-height: 0.8;
+    & h3{
+      font-size: 20pt;
+      margin: 8pt;
+    }
+
+    & p {
+      margin: 8pt;
+      font-size: 12pt;
+    }
     margin: 0;
-    width: 150px;;
+    width: 270px;;
   }
 }
 
-.buttons {
+.buttonChange {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%; /* Make the weather-box take full width within its container */
+  line-height: 0.65;
+  padding: 4px;
+  color: white;
+  margin-right: 5px;
+}
+
+.button-box {
   grid-area: buttons;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin: 10px;
+  margin-right: 10px;
+  margin-top: 0;
 }
 
 body>main {
   grid-area: weather-boxes;
   flex-wrap: wrap;
   gap: 10px;
-  padding: 10px;
 }
 
 .title-box{
@@ -45,7 +71,7 @@ body>main {
   margin: 10px;
   font-weight: 300;
   padding: 10px;
-  width: 330px;
+  width: 215px;
   & h1 {
     font-size: 2rem;
     margin: 0;
@@ -67,10 +93,16 @@ body>main {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 100%; /* Make the weather-box take full width within its container */
-  line-height: 0.65;
+  line-height: 0.8; /* Adjust this value to increase line height */
+
   padding: 4px;
   color: white;
   margin: 5px;
+
+  & h3{
+    font-size: 16pt;
+    margin: 7pt;
+  }
 
   & p {
     font-size: 9pt;
@@ -89,3 +121,42 @@ body > p {
   color: white;
 }
 
+/* Media query for screens smaller than 660px */
+@media only screen and (max-width: 800px) {
+  body {
+    grid-template-columns: 1fr; /* Adjust to a single column layout for small screens */
+  }
+
+  body > .title-box {
+    width: 180px; /* Make the title-box take full width on small screens */
+    & h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  body > p {
+    font-size: 0.8rem;
+    /* Your shortened content for small screens */
+    content: "NASA data on Mars weather, updated daily. Note: Weather availability may be affected by storms, with up to a two-week delay.";
+  }
+
+  body > .today-weather-box-outer {
+    justify-content: center;
+    align-items: center;
+    width: 160px;
+    & h3 {
+      font-size: 1rem;
+    }
+    & p {
+      font-size: 0.8rem;
+    }
+  }
+
+  .weather-box-outer .weather-box {
+    width: 100%; /* Make the weather boxes take full width on small screens */
+  }
+
+  .weather-box-outer .weather-box:nth-child(n+4) {
+    display: none; /* Hide weather boxes beyond the third one on small screens */
+  }
+}
