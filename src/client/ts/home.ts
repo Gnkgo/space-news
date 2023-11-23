@@ -1,5 +1,3 @@
-import { NONAME } from "dns";
-
 //Add click-eventlistener to planets
 const mars = document.getElementById('mars');
 mars?.addEventListener('click', () => showPlanetInformation('mars'));
@@ -11,7 +9,8 @@ const moon = document.getElementById('moon');
 moon?.addEventListener('click', () => showPlanetInformation('moon'));
 
 //Add click-eventlistener for sun gimmick
-const sun = document.getElementById('sun');
+const sun = document.getElementById('sun') as HTMLImageElement;
+sun?.addEventListener('click', () => showSunEasterEgg(sun));
 
 
 
@@ -47,6 +46,6 @@ function showPlanetInformation(planet: string) {
 }
 
 
-function showSunEasterEgg() {
-
+function showSunEasterEgg(sunImg: HTMLImageElement) {
+    sunImg.style.width = '20vh';
 }

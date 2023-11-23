@@ -7,77 +7,80 @@ body {
     background-image: url('/src/client/img/star_background.jpg');
     background-size: cover;
     background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: 100vh; /* This ensures that the background covers the entire viewport height */
     margin: 0; /* Remove default margin */
     overflow: hidden;
 
-    & img#sun {
-        width: 15vh;
-        position: absolute;
-    }
-    
-    & div#earth-and-moon-container {
+    & div#home-container {
         display: flex;
-        position: absolute;
-        width: 25vh;
-        height: 25vh;
-        justify-content: center;
         align-items: center;
-        animation: orbitEarth var(--earth-orbit-time) infinite linear;
+        justify-content: center;
 
-        > img#earth {
-            width: 10vh;
+        & img#sun {
+            width: 15vh;
             position: absolute;
-            z-index: 1;
         }
-
-        & div#moon-container {
+        
+        & div#earth-and-moon-container {
             display: flex;
+            position: absolute;
+            width: 25vh;
+            height: 25vh;
             justify-content: center;
             align-items: center;
-            position: absolute;
-            width: inherit;
-            height: inherit;
-
-            > img#moon {
-                width: 25%;
+            animation: orbitEarth var(--earth-orbit-time) infinite linear;
+    
+            > img#earth {
+                width: 10vh;
                 position: absolute;
-                animation: orbitMoon 60s infinite linear;
                 z-index: 1;
             }
-
-            & #moon-svg-container {
-                width: 26vh;
-                height: 26vh;
+    
+            & div#moon-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 position: absolute;
+                width: inherit;
+                height: inherit;
+    
+                > img#moon {
+                    width: 25%;
+                    position: absolute;
+                    animation: orbitMoon 60s infinite linear;
+                    z-index: 1;
+                }
+    
+                & #moon-svg-container {
+                    width: 26vh;
+                    height: 26vh;
+                    position: absolute;
+                }
             }
         }
-    }
-
-    & img#mars {
-        width: 8vh;
-        position: absolute;
-        animation: orbitMars var(--mars-orbit-time) linear infinite;
-    }
-
-    & div > img#earth:hover, div div > img#moon:hover, img#mars:hover {
-        cursor: pointer;
-    }
-
-    & svg {
-        height: 100vh;
-        width: 100vw;
-
-        & ellipse {
-            fill: none;
-            stroke: lightgrey;
-            stroke-width: 1;
-            opacity: 50%;
+    
+        & img#mars {
+            width: 8vh;
+            position: absolute;
+            animation: orbitMars var(--mars-orbit-time) linear infinite;
         }
-    }
+    
+        & div > img#earth:hover, div div > img#moon:hover, img#mars:hover {
+            cursor: pointer;
+        }
+    
+        & svg {
+            height: 100vh;
+            width: 100vw;
+    
+            & ellipse {
+                fill: none;
+                stroke: lightgrey;
+                stroke-width: 1;
+                opacity: 50%;
+            }
+        }
+    }   
 }
 
 @keyframes orbitEarth {
