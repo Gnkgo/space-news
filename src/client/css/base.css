@@ -5,4 +5,16 @@ therefore is this file linked by every HTML file
 
 html {
     font-family: 'Andale Mono', monospace;
-  }
+}
+
+footer {
+    grid-area: footer;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-weight: 300;
+    color: white;
+    padding: 10px;
+
+}

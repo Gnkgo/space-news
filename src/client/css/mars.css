@@ -1,8 +1,9 @@
 body {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: auto auto 1fr auto; /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-rows: 10px auto auto 1fr auto; /* Adjusted rows to include 1fr for the remaining space */
   grid-template-areas: 
+    ". . . buttons"
     "title title . today-weather-box-outer"
     "paragraph paragraph . today-weather-box-outer"
     "weather-boxes weather-boxes weather-boxes weather-boxes"
@@ -18,6 +19,14 @@ body {
     margin: 0;
     width: 150px;;
   }
+}
+
+.buttons {
+  grid-area: buttons;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 10px;
 }
 
 body>main {
@@ -80,14 +89,3 @@ body > p {
   color: white;
 }
 
-footer {
-  grid-area: footer;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  text-align: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  font-weight: 300;
-  color: white;
-  padding: 10px;
-
-}
