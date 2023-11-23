@@ -3,7 +3,7 @@
  * 
  * Note: Indexing bounds are not checked (impossible in TS's type system).
  */
-export type SizedArray<N extends number, T> = { length: N } & _SizedArrayHelper<N, T>;
+export type SizedArray<N extends number, T> = { [index: number]: T, length: N } & _SizedArrayHelper<N, T>;
 type _SizedArrayHelper<N extends number, T, R extends T[] = []> = R extends { length: N } ? R : _SizedArrayHelper<N, T, [T, ...R]>;
 /**
  * Size-safe matrix data of dimension M x N.
@@ -257,7 +257,7 @@ export class _Affine<T> {
         const n = t.m;
         const mat = this.linAlg.createIdentityMatrix((n + 1) as NPlusOne);
         for (let i = 0; i < n; ++i)
-            mat.data[i][n] = t.data[i][0];
+            mat.data[i]![n] = t.data[i]![0]!;
         return mat;
     }
 };
@@ -274,7 +274,6 @@ export class _Affine2D<T> extends _Affine<T> {
     public createRotationMatrix(angle: number): Matrix<3, 3, T> {
         const mat = this.linAlg.createIdentityMatrix(3);
         const rot = this.linAlg.TwoD.createRotationMatrix(angle);
-        const test: _LessThanOrEqual<7> = 6;
         mat.load(rot.data);
         return mat;
     }
@@ -390,15 +389,15 @@ export class LinAlg<T> {
             this.data = data;
         }
         get(i: number, j: number): T {
-            return (this.data[i] as SizedArray<N, T>)[j];
+            return (this.data[i]! as SizedArray<N, T>)[j]!;
         }
         set(i: number, j: number, v: T): T {
-            return this.data[i][j] = v;
+            return this.data[i]![j] = v;
         }
         forEach(op: (selfRow: SizedArray<N, T>, i: number, j: number) => void): void {
             let selfRow: SizedArray<N, T>;
             for (let i = 0; i < this.m; ++i) {
-                selfRow = this.data[i];
+                selfRow = this.data[i]!;
                 for (let j = 0; j < this.n; ++j)
                     op(selfRow, i, j);
             }
@@ -406,20 +405,22 @@ export class LinAlg<T> {
         zip<P extends number, Q extends number>(op: (selfRow: SizedArray<N, T>, dataRow: SizedArray<Q, T>, i: number, j: number) => T, otherData: MatrixData<P, Q, T>, target: IMatrix<M, N, T>) {
             let selfRow: SizedArray<N, T>;
             let dataRow: SizedArray<Q, T>
+            let targetRow: SizedArray<N, T>;
             const p = otherData.length as P;
             const q = (otherData[0] as SizedArray<Q, T>).length as Q;
             for (let i = 0; i < p; ++i) {
-                selfRow = this.data[i];
-                dataRow = otherData[i];
+                selfRow = this.data[i]!;
+                dataRow = otherData[i]!;
+                targetRow = target.data[i]!;
                 for (let j = 0; j < q; ++j)
-                    selfRow[j] = op(selfRow, dataRow, i, j);
+                    targetRow[j] = op(selfRow, dataRow, i, j);
             }
         }
         load<P extends _LessThanOrEqual<M>, Q extends _LessThanOrEqual<N>>(data: MatrixData<P, Q, T>) {
-            this.zip<P, Q>((_selfRow, dataRow, _i, j) => dataRow[j], data, this);
+            this.zip<P, Q>((_selfRow, dataRow, _i, j) => dataRow[j]!, data, this);
         }
         cwiseBinOp(op: (a: T, b: T) => T, other: IMatrix<M, N, T>, target: IMatrix<M, N, T>): IMatrix<M, N, T> {
-            this.zip<M, N>((selfRow, dataRow, _i, j) => op(selfRow[j], dataRow[j]), other.data, target);
+            this.zip<M, N>((selfRow, dataRow, _i, j) => op(selfRow[j]!, dataRow[j]!), other.data, target);
             return this;
         }
         add(other: IMatrix<M, N, T>, store: IMatrix<M, N, T>) {
@@ -460,7 +461,7 @@ export class LinAlg<T> {
         }
         dot(): number {
             let sum = 0;
-            this.forEach((selfRow, _i, j) => sum += this.linAlg._ops.dot(selfRow[j]));
+            this.forEach((selfRow, _i, j) => sum += this.linAlg._ops.dot(selfRow[j]!));
             return sum;
         }
         norm(): number {
@@ -487,11 +488,11 @@ export class LinAlg<T> {
     }
     private _transposedMatrixData<M extends number, N extends number>(data: MatrixData<M, N, T>): MatrixData<N, M, T> {
         const m = data.length;
-        const n = data[0].length;
+        const n = data[0]!.length;
         const transposed = this._createMatrixData<N, M>(n, m);
         for (let i = 0; i < n; ++i)
             for (let j = 0; j < m; ++j)
-                transposed[i][j] = data[j][i];
+                transposed[i]![j] = data[j]![i]!;
         return transposed;
     }
 
@@ -528,12 +529,12 @@ export class LinAlg<T> {
     public createIdentityMatrix<N extends number>(n: N): Matrix<N, N, T> {
         const mat = this.createZeroMatrix<N, N>(n, n);
         for (let i = 0; i < n; ++i)
-            mat.data[i][i] = this._ops.mulId();
+            mat.data[i]![i] = this._ops.mulId();
         return mat;
     }
     public loadVector<N extends number, Q extends _LessThanOrEqual<N>>(vec: Vector<N, T>, data: SizedArray<Q, T>): void {
         for (let i = 0; i < data.length; ++i)
-            vec.data[i][0] = data[i];
+            vec.data[i]![0] = data[i]!;
     }
 
     private _getOrCreateBuffer<M extends number, N extends number>(m: M, n: N): MatrixData<M, N, T> {
@@ -555,12 +556,12 @@ export class LinAlg<T> {
         let bufRow: SizedArray<P, T>;
         let acc: T;
         for (let i = 0; i < m; ++i) {
-            aRow = a.data[i];
-            bufRow = buf[i];
+            aRow = a.data[i]!;
+            bufRow = buf[i]!;
             for (let j = 0; j < p; ++j) {
                 acc = ops.addId();
                 for (let k = 0; k < n; ++k)
-                    acc = ops.add(acc, ops.mul(aRow[k], b.data[k][j]));
+                    acc = ops.add(acc, ops.mul(aRow[k]!, b.data[k]![j]!));
                 bufRow[j] = acc;
             }
         }
@@ -664,9 +665,9 @@ export class LinAlg<T> {
          */
         public cross(a: Vector<3, T>, b: Vector<3, T>, c?: Vector<3, T>): Vector<3, T> {
             const ops = this.linAlg._ops;
-            const x = ops.sub(ops.mul(a.data[1][0], b.data[2][0]), ops.mul(a.data[2][0], b.data[1][0]));
-            const y = ops.sub(ops.mul(a.data[3][0], b.data[0][0]), ops.mul(a.data[0][0], b.data[3][0]));
-            const z = ops.sub(ops.mul(a.data[0][0], b.data[1][0]), ops.mul(a.data[1][0], b.data[0][0]));
+            const x = ops.sub(ops.mul(a.data[1]![0]!, b.data[2]![0]!), ops.mul(a.data[2]![0]!, b.data[1]![0]!));
+            const y = ops.sub(ops.mul(a.data[3]![0]!, b.data[0]![0]!), ops.mul(a.data[0]![0]!, b.data[3]![0]!));
+            const z = ops.sub(ops.mul(a.data[0]![0]!, b.data[1]![0]!), ops.mul(a.data[1]![0]!, b.data[0]![0]!));
             const data = [x, y, z] as SizedArray<3, T>;
             if (c == undefined)
                 return this.linAlg.createVector<3>(data);
