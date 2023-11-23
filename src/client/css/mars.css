@@ -21,7 +21,13 @@ body {
   }
 }
 
-.butt
+.buttons {
+  grid-area: buttons;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 10px;
+}
 
 body>main {
   grid-area: weather-boxes;
