@@ -89,3 +89,6 @@ body > p {
   color: white;
 }
 
+div#mars-container {
+  display: none;
+}

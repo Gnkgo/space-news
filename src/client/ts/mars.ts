@@ -8,6 +8,7 @@ let isCelsius = true;
 let isSol = true;
 let currentDate: string = "";
 let currentDateSol: string = "";
+const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 
 interface SolEntry {
   id: string;
@@ -40,14 +41,16 @@ interface MarsData {
 async function init(): Promise<void> {
   try {
     console.log("Initializing weather app");
-    createTemperatureToggleBox(); // Call the function to create the temperature toggle box
-    createDateToggle();
-    const weatherData = await getWeatherData();
-    renderWeather(weatherData);
-    renderRoverPhotos();
-    createTitle(`Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
-    createText("The weather data is collected by NASA which is currently on Mars. The data is updated every day. Note that the weather is due to storms and other inconveniences not always available and has a delay up to two weeks.")
-    createFooter();
+    if(marsContainer){
+      createTemperatureToggleBox(marsContainer); // Call the function to create the temperature toggle box
+      createDateToggle(marsContainer);
+      const weatherData = await getWeatherData();
+      renderWeather(weatherData);
+      renderRoverPhotos();
+      createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
+      createText(marsContainer, "The weather data is collected by NASA which is currently on Mars. The data is updated every day. Note that the weather is due to storms and other inconveniences not always available and has a delay up to two weeks.")
+      createFooter();
+    }
   } catch (error) {
     console.error("Error initializing weather app", error);
   }
@@ -118,7 +121,7 @@ async function toggleDateUnit() {
   isSol = !isSol;
   const weatherData = await getWeatherData();
   renderWeather(weatherData);
-  createTitle(`Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
+  createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
 }
 
 async function toggleTemperatureUnit() {
@@ -127,8 +130,7 @@ async function toggleTemperatureUnit() {
   renderWeather(weatherData);
 }
 
-function createTemperatureToggleBox() {
-  const body = document.body;
+function createTemperatureToggleBox(divContainer: HTMLDivElement) {
   const temperatureToggleBox = document.createElement("div");
   temperatureToggleBox.id = "temperatureToggleBox";
 
@@ -150,13 +152,12 @@ function createTemperatureToggleBox() {
   temperatureToggleBox.appendChild(celsiusButton);
   temperatureToggleBox.appendChild(fahrenheitButton);
 
-  body?.appendChild(temperatureToggleBox);
+  divContainer.appendChild(temperatureToggleBox);
 
 }
 
 
-function createDateToggle() {
-  const body = document.body;
+function createDateToggle(divContainer: HTMLDivElement) {
   const dateToggleBox = document.createElement("div");
   dateToggleBox.id = "dateToggleBox";
 
@@ -179,7 +180,7 @@ function createDateToggle() {
   dateToggleBox.appendChild(solButton);
   dateToggleBox.appendChild(earthButton);
 
-  body?.appendChild(dateToggleBox);
+  divContainer.appendChild(dateToggleBox);
 }
 
 
