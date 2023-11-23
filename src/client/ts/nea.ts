@@ -30,7 +30,15 @@ async function getCloseApproachData(cadApiUrl: string){
 }
 
 function processCloseApproachData(cadJson: CadJson){
+    const cadContainer = document.getElementById('cad-container');
     for (const elem of cadJson.data){
+        const objectName = document.createElement("h2");
+        objectName.textContent = elem[0]?.toString() || "n/A";
+        cadContainer?.appendChild(objectName)
+
+        const objectText = document.createElement("p");
+        objectText.textContent = "Close approach on the: " + elem[3] +" in a distance of: " + elem[5] + "au with a velocity of: " + elem[7] + "km/s";
+        cadContainer?.appendChild(objectText);
         console.log("The Object: " + elem[0] + " will approach the earth on the: " + elem[3] + " in a distance of: " + elem[5] + "au with a velocity of: " + elem[7] + "km/s");
     }
 }
