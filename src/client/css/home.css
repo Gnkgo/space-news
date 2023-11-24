@@ -20,6 +20,7 @@ body {
             z-index: 1;
             width: 15vh;
             position: absolute;
+            border-radius: 50%;
         }
         
         & div#earth-and-moon-container {
@@ -35,6 +36,7 @@ body {
                 width: 10vh;
                 position: absolute;
                 z-index: 1;
+                border-radius: 50%;
             }
     
             & div#moon-container-home {
@@ -50,6 +52,7 @@ body {
                     position: absolute;
                     animation: orbitMoon 60s infinite linear;
                     z-index: 1;
+                    border-radius: 50%;
                 }
     
                 & #moon-svg-container {
@@ -63,6 +66,7 @@ body {
         & img#mars {
             width: 8vh;
             position: absolute;
+            border-radius: 50%;
             animation: orbitMars var(--mars-orbit-time) linear infinite;
         }
     
