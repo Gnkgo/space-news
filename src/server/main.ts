@@ -8,47 +8,50 @@ import { writeFile } from "node:fs/promises";
 // creates the expres app do not change
 const app = express();
 
-// VALENTIN START
-/*type LoggedError = {
-  apiName: string,
-  timeStamp: number,
-  error: unknown
-};*/
+// Helper functions
+function toPrettyJson(obj: any): string {
+  return JSON.stringify(obj, undefined, 2);
+}
 
+// Caches
 type CacheEntry<TRes> = {
   ttl: number,
   value: TRes
 }
 type Cache<TRes> = {
-  cached: Map<string, CacheEntry<TRes>>,
+  path: string,
+  entries: Map<string, CacheEntry<TRes>>,
   computeTtl: () => number,
 }
-function cacheCreate<TRes>(period: number): Cache<TRes> {
+function cacheCreate<TRes>(name: string, period: number): Cache<TRes> {
   return {
-    cached: new Map<string, CacheEntry<TRes>>(),
+    path: `./caches/${name}.json`,
+    entries: new Map<string, CacheEntry<TRes>>(),
     computeTtl: () => Math.ceil((new Date().getTime() + period) / period) * period
   };
 }
 const dayMillis = 24 * 60 * 60 * 1000;
-function cacheCreateDaily<TRes>(): Cache<TRes> {
-  return cacheCreate(dayMillis);
+function cacheCreateDaily<TRes>(name: string): Cache<TRes> {
+  return cacheCreate(name, dayMillis);
 }
 /*const weekMillis = 7 * dayMillis;
 function cacheCreateWeekly<TRes>(): Cache<TRes> {
   return cacheCreate(weekMillis);
 }*/
 function cacheGet<TRes>(cache: Cache<TRes>, key: any): CacheEntry<TRes> | undefined {
-  return cache.cached.get(String(key));
+  return cache.entries.get(JSON.stringify(key));
 }
-function cacheSet<TReq, TRes>(cache: Cache<TRes>, key: TReq, value: TRes): CacheEntry<TRes> {
+async function cacheSet<TReq, TRes>(cache: Cache<TRes>, key: TReq, value: TRes): Promise<CacheEntry<TRes>> {
   const entry = { ttl: cache.computeTtl(), value: value };
-  cache.cached.set(String(key), entry);
+  cache.entries.set(JSON.stringify(key), entry);
+  await cacheWrite(cache);
   return entry;
 }
-function cacheData<TRes>(cache: Cache<TRes>): Map<string, CacheEntry<TRes>> {
-  return cache.cached;
+async function cacheWrite(cache: Cache<any>): Promise<void> {
+  await writeFile(cache.path, toPrettyJson(Object.fromEntries(cache.entries)));
 }
 
+// API's
 type ApiDef<TReq, TRes> = {
   apiName: string,
   target: string,
@@ -59,29 +62,22 @@ type ApiDef<TReq, TRes> = {
 function apiInit<TReq, TRes>(api: ApiDef<TReq, TRes>): ApiDef<TReq, TRes> {
   const cache = api.cache;
   if (cache != undefined) {
-    const path = apiCachePath(api);
+    const path = cache.path;
     try {
       const cache = api.cache;
       if (cache != undefined) {
         accessSync(path, constants.F_OK);
-        const data = cacheData(cache);
+        const data = cache.entries;
         Object.entries(JSON.parse(readFileSync(path, { encoding: "utf8" }))).forEach(([k, v]) => data.set(k, v as CacheEntry<TRes>));
       }
     } catch {
-      apiWrite(api);
+      cacheWrite(cache);
     };
   }
   return api;
 }
-function apiCachePath(api: ApiDef<any, any>): string {
-  return `./src/server/caches/${api.apiName}.json`;
-}
-async function apiWrite<TRes, TReq>(api: ApiDef<TReq, TRes>) {
-  const cache = api.cache;
-  if (cache != undefined)
-    await writeFile(apiCachePath(api), JSON.stringify(Object.fromEntries(cache.cached), undefined, 2));
-}
 
+// Express shortcuts
 function regFile(target: string, ...paths: string[]): void {
   app.get(target, (_req, res) => {
     res.sendFile(path.resolve(...paths));
@@ -100,11 +96,14 @@ function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
       const cache = api.cache;
       if (cache != undefined) {
         const entry = cacheGet(cache, apiReq);
+        console.log("The stored value for ");
+        console.log(apiReq);
+        console.log(" is:\r\n");
+        console.log(entry);
         if (entry != undefined && new Date().getTime() < entry.ttl)
           apiRes = entry.value;
         else {
           cacheSet(cache, apiReq, apiRes = await fetchNew());
-          apiWrite(api);
         }
       } else
         apiRes = await fetchNew();
@@ -118,9 +117,9 @@ function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
 regHtml('/', 'home.html');
 regHtml('/nea.html', 'nea.html');
 regApi<CADReq, CADRes>({
-  apiName: "CAD",
+  apiName: "Close Approach Data",
   target: '/nasa-cad-api',
-  cache: cacheCreateDaily(),
+  cache: cacheCreateDaily("cad"),
   genReq: (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&dist-max=${req["dist-max"]}`,
   genRes: (res) => res
 });
