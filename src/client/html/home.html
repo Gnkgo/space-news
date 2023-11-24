@@ -7,27 +7,32 @@
     <link rel="stylesheet" type="text/css" href="/src/client/css/base.css"/>
     <link rel="stylesheet" type="text/css" href="/src/client/css/home.css"/>
     <link rel="stylesheet" type="text/css" href="/src/client/css/nea.css"/>
+    <link rel="stylesheet" type="text/css" href="/src/client/css/mars.css"/>
+    <link rel="stylesheet" type="text/css" href="/src/client/css/moon.css"/>
+    <link rel="stylesheet" type="text/css" href="/src/client/css/component.css"/>
     <script src="/src/client/ts/home.ts" type="module"></script>
     <script src="/src/client/ts/nea.ts" type="module"></script>
+    <script src="/src/client/ts/mars.ts" type="module"></script>
+    <script src="/src/client/ts/moon.ts" type="module"></script>
     <title>Space News</title>
   </head>
   <body>
     <div id="home-container">
       <img id="sun" src="/src/client/img/sun.png"></img>
-    <div id="earth-and-moon-container">
-        <img id="earth" src="/src/client/img/earth.png"></img>
-        <div id="moon-container">
-            <img id="moon" src="/src/client/img/moon.png"></img>
-            <svg id="moon-svg-container">
-              <ellipse id="moon-orbit" cx="12.75vh" cy="12.75vh" rx="12.5vh"/>
-            </svg>
-        </div>
-    </div>
-    <img id="mars" src="/src/client/img/mars.png"></img>
-    <svg>
-        <ellipse id="mars-orbit" cx="50%" cy="50%" rx="45vh"/>
-        <ellipse id="earth-orbit" cx="50%" cy="50%" rx="27.5vh"/>
-    </svg>
+      <div id="earth-and-moon-container">
+          <img id="earth" src="/src/client/img/earth.png"></img>
+          <div id="moon-container">
+              <img id="moon" src="/src/client/img/moon.png"></img>
+              <svg id="moon-svg-container">
+                <ellipse id="moon-orbit" cx="12.75vh" cy="12.75vh" rx="12.5vh"/>
+              </svg>
+          </div>
+      </div>
+      <img id="mars" src="/src/client/img/mars.png"></img>
+      <svg>
+          <ellipse id="mars-orbit" cx="50%" cy="50%" rx="45vh"/>
+          <ellipse id="earth-orbit" cx="50%" cy="50%" rx="27.5vh"/>
+      </svg>
     </div>
     <div id="mars-container"></div>
     <div id="nea-container"></div>

@@ -1,6 +1,20 @@
+div#mars-container {
+  display: none;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 10px auto auto 1fr auto; /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-areas: 
+    ". . . buttons"
+    "title title . today-weather-box-outer"
+    "paragraph paragraph . today-weather-box-outer"
+    "weather-boxes weather-boxes weather-boxes weather-boxes"
+    "footer footer footer footer";
+
+  gap: 10px;
+  min-height: 100vh; /* Ensure body takes up at least the full viewport height */
+}
+
 
 .today-weather-box-outer {
-
   grid-area: today-weather-box-outer;
   display: flex;
   justify-content: center; /* Center the content horizontally */
@@ -42,7 +56,7 @@
   margin-top: 0;
 }
 
-body>main {
+#mars-container > main {
   grid-area: weather-boxes;
   flex-wrap: wrap;
   gap: 10px;
@@ -96,7 +110,7 @@ body>main {
 }
 
 
-body > p {
+#mars-container > p {
   grid-area: paragraph;
   font-size: 1rem;
   margin: 10px;
@@ -108,25 +122,25 @@ body > p {
 }
 
 /* Media query for screens smaller than 660px */
-@media only screen and (max-width: 800px) {
-  body {
+@media only screen and (max-width: 600px) {
+  div#mars-container {
     grid-template-columns: 1fr; /* Adjust to a single column layout for small screens */
   }
 
-  body > .title-box {
+  #mars-container > .title-box {
     width: 180px; /* Make the title-box take full width on small screens */
     & h1 {
       font-size: 1.5rem;
     }
   }
 
-  body > p {
+  #mars-container > p {
     font-size: 0.8rem;
     /* Your shortened content for small screens */
     content: "NASA data on Mars weather, updated daily. Note: Weather availability may be affected by storms, with up to a two-week delay.";
   }
 
-  body > .today-weather-box-outer {
+  #mars-container > .today-weather-box-outer {
     justify-content: center;
     align-items: center;
     width: 160px;
@@ -146,17 +160,5 @@ body > p {
     display: none; /* Hide weather boxes beyond the third one on small screens */
   }
 }
-div#mars-container {
-  display: none;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 10px auto auto 1fr auto; /* Adjusted rows to include 1fr for the remaining space */
-  grid-template-areas: 
-    ". . . buttons"
-    "title title . today-weather-box-outer"
-    "paragraph paragraph . today-weather-box-outer"
-    "weather-boxes weather-boxes weather-boxes weather-boxes"
-    "footer footer footer footer";
 
-  gap: 10px;
-  min-height: 100vh; /* Ensure body takes up at least the full viewport height */
-}
+

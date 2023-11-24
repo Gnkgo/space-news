@@ -1,5 +1,5 @@
   
-body>main {
+#moon-container main {
   grid-area: weather-boxes;
   flex-wrap: wrap;
   gap: 10px;
@@ -21,7 +21,7 @@ body>main {
   margin: 5px;
 }
 
-body > h1 {
+#moon-container h1 {
   grid-area: title;
   background-color: rgba(0, 0, 0, 0.6);
   border-radius: 8px;
@@ -34,13 +34,13 @@ body > h1 {
   width: 330px;
 }
 
-body > h2 {
+#moon-container h2 {
   font-size: 1.5rem;
   margin: 0;
   color: white;
 }
 
-body > p {
+#moon-container + p {
   grid-area: paragraph;
   font-size: 1rem;
   margin: 10px;

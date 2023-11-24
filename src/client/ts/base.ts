@@ -18,13 +18,12 @@ export function formatDate(inputDate: string | undefined): string {
     return formattedDate;
 }
 
-export function createTitle(marsContainer: HTMLDivElement, title: string, isSol: boolean, dateEarth: string, dateSol: string) {
-    let titleBox = document.getElementById("title-box");
-
+export function createTitle(divContainer: HTMLDivElement, title: string, isSol: boolean, dateEarth: string, dateSol: string) {
+    let titleBox = divContainer.querySelector("#title-box");
     if (!titleBox) {
         titleBox = document.createElement("div");
         titleBox.id = "title-box";
-        titleBox.classList.add("title-box"); // Add the 'title-box' class
+        titleBox.classList.add("title-box"); 
     } else {
         titleBox.innerHTML = '';
     }
@@ -42,7 +41,7 @@ export function createTitle(marsContainer: HTMLDivElement, title: string, isSol:
     titleBox?.appendChild(titleElement);
     titleBox?.appendChild(dateElement);
 
-    marsContainer.appendChild(titleBox);
+    divContainer.appendChild(titleBox);
 }
 
 export function createText(divContainer: HTMLDivElement, text: string) {
@@ -51,16 +50,12 @@ export function createText(divContainer: HTMLDivElement, text: string) {
     divContainer.appendChild(textElement);
 }
 
-export function createFooter() {
-    const body = document.body;
+export function createFooter(divContainer: HTMLDivElement) {
     const footer = document.createElement("footer");
     footer.textContent = "© 2023 by DeValdi - Gnkgo - Nick";
-    body?.appendChild(footer);
+    divContainer.appendChild(footer);
 }
 
-/**
- * Test
- */
 export function celsiusToFahrenheit(celsius: number): number {
     return (celsius * 9 / 5) + 32;
   }

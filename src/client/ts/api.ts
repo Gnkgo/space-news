@@ -1,4 +1,4 @@
-export const apiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX'; // DEPRECATED, remove soon
+export const apiKey = 'DEMO_KEY'; // DEPRECATED, remove soon
 
 export function getFormattedDate(): string {
     const today = new Date();
