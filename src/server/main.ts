@@ -1,12 +1,16 @@
 import express from "express";
 import ViteExpress from "vite-express";
 import path from "path";
-import { CADReq, CADRes } from "../common/types";
+import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes } from "../common/api";
 import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
+import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget } from "../common/api";
 
 // creates the expres app do not change
 const app = express();
+
+// Constants
+const apiKey = 'DEMO_KEY';
 
 // Helper functions
 function toPrettyJson(obj: any): string {
@@ -118,10 +122,24 @@ regHtml('/', 'home.html');
 regHtml('/nea.html', 'nea.html');
 regApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
-  target: '/nasa-cad-api',
+  target: cadTarget,
   cache: cacheCreateDaily("cad"),
   genReq: (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&dist-max=${req["dist-max"]}`,
   genRes: (res) => res
+});
+regApi<MarsWeatherReq, MarsWeatherRes>({
+  apiName: "Mars Weather Data",
+  target: marsWeatherTarget,
+  cache: cacheCreateDaily("mars_weather"),
+  genReq: (_req) => 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json',
+  genRes: (res) => res as MarsWeatherRes
+});
+regApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
+  apiName: "Mars Rover Photos Data",
+  target: marsRoverPhotosTarget,
+  cache: cacheCreateDaily("mars_rover_photos"),
+  genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${req.earthDate}&api_key=${apiKey}`,
+  genRes: (res) => res as MarsRoverPhotosRes
 });
 // VALENTIN END
 
