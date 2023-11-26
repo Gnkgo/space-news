@@ -1,29 +1,11 @@
-import { moonAPI } from './api';
+import { moonURL } from './api';
 import { createTitle, createFooter, formatDate, createImage, createSunBackButton } from './base';
-
-const moonURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/zurich?next30days?unitGroup=metric&include=days&key=${moonAPI}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`;
+import {MoonData} from './interfaces';
 
 const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
 
 let moonData: MoonData;
 
-
-interface MoonEntry {
-    datetime: string;
-    sunrise: string;
-    sunset: string;
-    moonphase: number;
-    moonrise: string;
-    moonset: string;
-}
-
-interface MoonData {
-    description: Record<string, string>;
-    days: MoonEntry[];
-}
-
-
-// Function to fetch data from the API
 async function getMoonData(): Promise<MoonData> {
     try {
         const response = await fetch(moonURL);
@@ -35,9 +17,6 @@ async function getMoonData(): Promise<MoonData> {
         throw error;
     }
 }
-
-
-
 
 async function initMoon(): Promise<void> {
     try {
@@ -94,35 +73,35 @@ function displayMoon(): void {
         switch (true) {
             case moonphase === 0:
                 moonText = 'New Moon';
-                moonImage = 'src/client/img/new-moon-modified.png';
+                moonImage = 'src/client/img/moon_images/new-moon-modified.png';
                 break;
             case moonphase < 0.25:
                 moonText = 'Waxing Crescent';
-                moonImage = 'src/client/img/waning-crescent-modified.png';
+                moonImage = 'src/client/img/moon_images/waning-crescent-modified.png';
                 break;
             case moonphase === 0.25:
                 moonText = 'First Quarter';
-                moonImage = 'src/client/img/first-quarter-modified.png';
+                moonImage = 'src/client/img/moon_images/first-quarter-modified.png';
                 break;
             case moonphase < 0.5:
                 moonText = 'Waxing Gibbous';
-                moonImage = 'src/client/img/waning-gibbous-modified.png';
+                moonImage = 'src/client/img/moon_images/waning-gibbous-modified.png';
                 break;
             case moonphase === 0.5:
                 moonText = 'Full Moon';
-                moonImage = 'src/client/img/full-modified.png';
+                moonImage = 'src/client/img/moon_images/full-modified.png';
                 break;
             case moonphase < 0.75:
                 moonText = 'Waning Gibbous';
-                moonImage = 'src/client/img/waning-crescent-modified.png';
+                moonImage = 'src/client/img/moon_images/waning-crescent-modified.png';
                 break;
             case moonphase === 0.75:
                 moonText = 'Last Quarter';
-                moonImage = 'src/client/img/third-quarter-modified.png';
+                moonImage = 'src/client/img/moon_images/third-quarter-modified.png';
                 break;
             case moonphase < 1:
                 moonText = 'Waning Crescent';
-                moonImage = 'src/client/img/waning-crescent-modified.png';
+                moonImage = 'src/client/img/moon_images/waning-crescent-modified.png';
                 break;
             default:
                 moonText = 'Error';

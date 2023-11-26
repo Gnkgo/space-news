@@ -19,9 +19,23 @@ export interface SolEntry {
     local_uv_irradiance_index: string;
     min_gts_temp: string;
     max_gts_temp: string;
-  }
-  
-  export interface MarsData {
+}
+
+export interface MarsData {
     descriptions: Record<string, string>;
     soles: SolEntry[];
-  }
+}
+
+export interface MoonEntry {
+    datetime: string;
+    sunrise: string;
+    sunset: string;
+    moonphase: number;
+    moonrise: string;
+    moonset: string;
+}
+
+export interface MoonData {
+    description: Record<string, string>;
+    days: MoonEntry[];
+}
