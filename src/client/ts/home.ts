@@ -17,6 +17,7 @@ sun?.addEventListener('click', () => showSunEasterEgg(sun));
 function showPlanetInformation(planet: string) {
         const homeContainer = document.getElementById("home-container");
         if(homeContainer){
+            console.log("Current display style:", getComputedStyle(homeContainer).display);
             homeContainer.style.display = 'none';
         }
 

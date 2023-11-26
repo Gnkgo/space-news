@@ -1,47 +1,115 @@
 div#mars-container {
   display: none;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 10px auto auto 1fr auto; /* Adjusted rows to include 1fr for the remaining space */
-  grid-template-areas: 
-    ". . . buttons"
-    "title title . today-weather-box-outer"
-    "paragraph paragraph . today-weather-box-outer"
+  grid-template-columns: 0.7fr 1fr 0.7fr 1fr;
+  grid-template-rows: 25px 0.6fr 1fr 1fr 40px;
+  /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-areas:
+    "sun . . buttons"
+    "title title . today-weather-box"
+    "paragraph paragraph . today-weather-box"
     "weather-boxes weather-boxes weather-boxes weather-boxes"
     "footer footer footer footer";
 
   gap: 10px;
-  min-height: 100vh; /* Ensure body takes up at least the full viewport height */
+  min-height: 100vh;
+  /* Ensure body takes up at least the full viewport height */
+
+  >main {
+    grid-area: weather-boxes;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 }
 
 
-.today-weather-box-outer {
-  grid-area: today-weather-box-outer;
+
+
+.title-box {
+  grid-area: title;
+  font-size: 2rem;
+
+  & .grey-box {
+    text-align: left;
+    line-height: 24pt;
+    display: inline-block;
+  }
+
+  & h1 {
+    font-size: 2rem;
+    color: white;
+  }
+
+  & h2 {
+    font-size: 1.5rem;
+    color: white;
+  }
+}
+
+.paragraph-box {
+  grid-area: paragraph;
+
+  & .grey-box {
+    line-height: 16pt;
+    text-align: left;
+  }
+}
+
+
+.weather-boxes {
   display: flex;
-  justify-content: center; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-  & .weather-box {
-    line-height: 0.8;
-    & h3{
+  justify-content: space-evenly;
+
+  & .grey-box {
+    margin: 5px;
+  }
+}
+
+.grey-box {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+
+
+  padding: 20px;
+  color: white;
+  margin: 10px;
+
+  & h3 {
+    font-size: 16pt;
+  }
+
+  & p {
+    font-size: 9pt;
+  }
+}
+
+.today-weather-box {
+  grid-area: today-weather-box;
+  justify-content: center;
+  /* Center the content horizontally */
+  align-items: center;
+  /* Center the content vertically */
+  display: flex;
+
+  & .grey-box {
+
+    & h3 {
       font-size: 20pt;
-      margin: 8pt;
     }
 
     & p {
-      margin: 8pt;
       font-size: 12pt;
     }
-    margin: 0;
-    width: 270px;;
   }
 }
 
 .buttonChange {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.8);
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 100%; /* Make the weather-box take full width within its container */
-  line-height: 0.65;
+  width: 100%;
   padding: 4px;
   color: white;
   margin-right: 5px;
@@ -50,115 +118,61 @@ div#mars-container {
 .button-box {
   grid-area: buttons;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 10px;
   margin-right: 10px;
   margin-top: 0;
 }
 
-#mars-container > main {
-  grid-area: weather-boxes;
-  flex-wrap: wrap;
-  gap: 10px;
-}
 
-.title-box{
-  grid-area: title;
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  font-size: 2rem;
-  margin: 10px;
-  font-weight: 300;
-  padding: 10px;
-  width: 215px;
-  & h1 {
-    font-size: 2rem;
-    margin: 0;
-    color: white;
-  }
-  & h2 {
-    font-size: 1.5rem;
-    margin: 0;
-    color: white;
-  }
-}
-
-.weather-box-outer {
-  display: flex;
-}
-.weather-box {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 100%; /* Make the weather-box take full width within its container */
-  line-height: 0.8; /* Adjust this value to increase line height */
-
-  padding: 4px;
-  color: white;
-  margin: 5px;
-
-  & h3{
-    font-size: 16pt;
-    margin: 7pt;
-  }
-
-  & p {
-    font-size: 9pt;
-  }
-}
-
-
-#mars-container > p {
-  grid-area: paragraph;
-  font-size: 1rem;
-  margin: 10px;
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  color: white;
-}
 
 /* Media query for screens smaller than 660px */
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 750px) {
   div#mars-container {
-    grid-template-columns: 1fr; /* Adjust to a single column layout for small screens */
-  }
+    grid-template-columns: 1fr;
 
-  #mars-container > .title-box {
-    width: 180px; /* Make the title-box take full width on small screens */
-    & h1 {
-      font-size: 1.5rem;
+    >.title-box {
+      display: inline-block;
+
+      /* Set display to inline-block */
+      & h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    >.today-weather-box {
+      justify-content: center;
+      align-items: center;
+      width: 160px;
+
+      & h3 {
+        font-size: 1rem;
+      }
+
+      & p {
+        font-size: 0.8rem;
+      }
     }
   }
 
-  #mars-container > p {
-    font-size: 0.8rem;
-    /* Your shortened content for small screens */
-    content: "NASA data on Mars weather, updated daily. Note: Weather availability may be affected by storms, with up to a two-week delay.";
+  .weather-boxes .grey-box {
+    width: 100%;
   }
 
-  #mars-container > .today-weather-box-outer {
-    justify-content: center;
-    align-items: center;
-    width: 160px;
-    & h3 {
-      font-size: 1rem;
-    }
-    & p {
-      font-size: 0.8rem;
-    }
-  }
-
-  .weather-box-outer .weather-box {
-    width: 100%; /* Make the weather boxes take full width on small screens */
-  }
-
-  .weather-box-outer .weather-box:nth-child(n+4) {
-    display: none; /* Hide weather boxes beyond the third one on small screens */
+  .weather-boxes .grey-box:nth-child(n+4) {
+    display: none;
   }
 }
 
+@media only screen and (max-width: 800px) {
 
+  /* Add styles for displaying the sun image */
+  div#sun {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-image: url('src/client/img/sun.png');
+    background-size: cover;
+    background-position: center;
+  }
+}
