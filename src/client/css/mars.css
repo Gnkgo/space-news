@@ -24,37 +24,6 @@ div#mars-container {
 
 
 
-.title-box {
-  grid-area: title;
-  font-size: 2rem;
-
-  & .grey-box {
-    text-align: left;
-    line-height: 24pt;
-    display: inline-block;
-  }
-
-  & h1 {
-    font-size: 2rem;
-    color: white;
-  }
-
-  & h2 {
-    font-size: 1.5rem;
-    color: white;
-  }
-}
-
-.paragraph-box {
-  grid-area: paragraph;
-
-  & .grey-box {
-    line-height: 16pt;
-    text-align: left;
-  }
-}
-
-
 .weather-boxes {
   display: flex;
   justify-content: space-evenly;
@@ -64,25 +33,7 @@ div#mars-container {
   }
 }
 
-.grey-box {
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
 
-
-  padding: 20px;
-  color: white;
-  margin: 10px;
-
-  & h3 {
-    font-size: 16pt;
-  }
-
-  & p {
-    font-size: 9pt;
-  }
-}
 
 .today-weather-box {
   grid-area: today-weather-box;
@@ -166,7 +117,6 @@ div#mars-container {
 
 @media only screen and (max-width: 800px) {
 
-  /* Add styles for displaying the sun image */
   div#sun {
     display: block;
     width: 100%;

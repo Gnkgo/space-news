@@ -207,6 +207,4 @@ function todayWeather(data: MarsData): void {
   }
 }
 
-
-
 init();

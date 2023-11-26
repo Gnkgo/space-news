@@ -68,7 +68,7 @@ function moonriseMoonset(): void {
 
         const moonContent = document.createElement("div");
         moonContent.id = "moon-content";
-        moonContent.className = "grey-box"; // Add a class for styling
+        moonContent.className = "grey-box"; 
 
         const title = document.createElement("h3");
         title.textContent = "Moonrise & Moonset";
@@ -133,7 +133,6 @@ function displayMoon(): void {
     }
 }
 
-// Function to update the countdown
 function updateCountdown(differenceInMilliseconds: number) {
     let countdownElement = document.getElementById('countdown');
     if (!countdownElement) {
@@ -155,27 +154,22 @@ function updateCountdown(differenceInMilliseconds: number) {
     }
 }
 
-// Function to calculate the time until the next full moon
 function getTimeUntilNextFullMoon(): number {
     const currentDate = new Date();
     const fullMoonDates = moonData.days.filter((day) => day.moonphase === 0.5);
 
     if (fullMoonDates.length > 0) {
-        // Find the next full moon date
         const nextFullMoonDate = fullMoonDates.find((date) => new Date(date.datetime) > currentDate);
 
         if (nextFullMoonDate) {
-            // Calculate the time difference in milliseconds
             const timeUntilFullMoon = new Date(nextFullMoonDate.datetime).getTime() - currentDate.getTime();
             return timeUntilFullMoon;
         }
     }
 
-    // If there are no upcoming full moons, return a default value (e.g., -1)
     return -1;
 }
 
-// Update the countdown every second
 setInterval(() => {
     updateCountdown(getTimeUntilNextFullMoon());
 }, 1000);
