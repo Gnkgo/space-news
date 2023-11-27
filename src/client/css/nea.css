@@ -1,8 +1,36 @@
 div#nea-container {
     display: none;
+    height: 100vh;
     grid-template-columns: 1fr 1fr 1fr;
+    color: wheat;
+
+    & div#cad-container {
+        align-self: center;
+
+        & div#cad-Elem-box {
+            display: flex;
+            flex-direction: column;
+            line-height: 0.8;
+            padding: 3px;
+            margin: 5px;
+            background-color: rgba(102, 102, 102, 0.6);;
+            border-radius: 8px;
+
+            & h3{
+                align-self: center;
+                font-size: 20pt;
+                margin: 8pt;
+            }
+          
+            & p {
+                margin: 8pt;
+                font-size: 12pt;
+            }
+        }
+    }
 
     & img#nea {
+        align-self: center;
         height: 75vh;
     }
 }

@@ -22,17 +22,16 @@ fetch('/nea.html')
                 .then(html => {
                     if(neaContainer){
                         neaContainer.innerHTML = html;
+                        getCloseApproachData(cadApiUrl);
                     }
                 })
                 .catch(error => console.error('Error loading nea.html:', error));
-
-console.log("start fetching neo stuff");
-getCloseApproachData(cadApiUrl);
 
 async function getCloseApproachData(cadApiUrl: string){
     try{
         const res = await fetch(cadApiUrl);
         const cad = await res.json() as CadJson;
+        console.log(cad.data);
         processCloseApproachData(cad);
     } catch (error){
         console.log("Error: " + error)
@@ -41,14 +40,27 @@ async function getCloseApproachData(cadApiUrl: string){
 
 function processCloseApproachData(cadJson: CadJson){
     const cadContainer = document.getElementById('cad-container');
-    for (const elem of cadJson.data){
-        const objectName = document.createElement("h2");
-        objectName.textContent = elem[0]?.toString() || "n/A";
-        cadContainer?.appendChild(objectName)
 
-        const objectText = document.createElement("p");
-        objectText.textContent = "Close approach on the: " + elem[3] +" in a distance of: " + elem[5] + "au with a velocity of: " + elem[7] + "km/s";
-        cadContainer?.appendChild(objectText);
-        console.log("The Object: " + elem[0] + " will approach the earth on the: " + elem[3] + " in a distance of: " + elem[5] + "au with a velocity of: " + elem[7] + "km/s");
+    for (const elem of cadJson.data){
+        const cadElemBox = document.createElement('div');
+        cadElemBox.id = 'cad-Elem-box';
+
+        const objectName = document.createElement("h3");
+        objectName.textContent = elem[0]?.toString() || 'N/A';
+        cadElemBox?.appendChild(objectName)
+
+        const objectDateText = document.createElement("p");
+        objectDateText.textContent = "Closest approach date: " + elem[3];
+        cadElemBox?.appendChild(objectDateText);
+
+        const objectDistText = document.createElement("p");
+        objectDistText.textContent = "Distance: " + Number(elem[5]).toFixed(4) + "au";
+        cadElemBox?.appendChild(objectDistText);
+
+        const objectVelText = document.createElement("p");
+        objectVelText.textContent = "Velocity: " + Number(elem[7]).toFixed(4) + "km/s";
+        cadElemBox?.appendChild(objectVelText);
+
+        cadContainer?.appendChild(cadElemBox);
     }
 }
