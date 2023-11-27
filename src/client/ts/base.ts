@@ -18,36 +18,95 @@ export function formatDate(inputDate: string | undefined): string {
     return formattedDate;
 }
 
+export function createSunBackButton(divContainer: HTMLDivElement) {
+    const sunButton = document.createElement("img");
+    sunButton.classList.add("sun-button");
+    sunButton.id = "sun-button";
+
+    // Set the path to your sun image
+    sunButton.src = "/src/client/img/sun.png";
+
+    divContainer.appendChild(sunButton);
+
+    sunButton?.addEventListener('click', () => goHome());
+
+
+}
+
+
 export function createTitle(divContainer: HTMLDivElement, title: string, isSol: boolean, dateEarth: string, dateSol: string) {
     let titleBox = divContainer.querySelector("#title-box");
     if (!titleBox) {
         titleBox = document.createElement("div");
         titleBox.id = "title-box";
-        titleBox.classList.add("title-box"); 
+        titleBox.classList.add("title-box");
     } else {
+        titleBox.parentNode?.removeChild(titleBox);
         titleBox.innerHTML = '';
     }
 
     const titleElement = document.createElement("h1");
     titleElement.textContent = title;
+
     const dateElement = document.createElement("h2");
 
-    if (isSol) {   
+    if (isSol) {
         dateElement.textContent = `Sol ${dateSol}`;
     } else {
-        dateElement.textContent = dateEarth;
+        dateElement.textContent = `${dateEarth}`;
     }
 
-    titleBox?.appendChild(titleElement);
-    titleBox?.appendChild(dateElement);
+    const innerTitle = document.createElement("div");
+    innerTitle.id = "inner-title";
 
+
+
+
+
+    const greyBox = document.createElement("div");
+    greyBox.id = "inner-title";
+    greyBox.className = "grey-box";
+
+    innerTitle.appendChild(titleElement);
+    innerTitle.appendChild(dateElement);
+
+    greyBox?.appendChild(innerTitle);
+
+
+    titleBox.appendChild(greyBox);
     divContainer.appendChild(titleBox);
 }
 
+export function createImage(container: HTMLElement, imagePath: string, description: string): void {
+    const image = document.createElement('img');
+    image.className = 'image';
+    image.id = 'image';
+    image.src = imagePath;
+
+    const imageContainer = document.createElement('div');
+    imageContainer.className = 'image-container';
+    imageContainer.id = 'image-container';
+    imageContainer.appendChild(image);
+    imageContainer.appendChild(document.createTextNode(description));
+
+    container.appendChild(imageContainer);
+}
+
 export function createText(divContainer: HTMLDivElement, text: string) {
-    const textElement = document.createElement("p");
-    textElement.textContent = text;
-    divContainer.appendChild(textElement);
+    const paragraphBox = document.createElement("div");
+    paragraphBox.className = "paragraph-box";
+    paragraphBox.id = "paragraph-box";
+
+    const textNode = document.createTextNode(text);
+
+    const greyBox = document.createElement("div");
+    greyBox.id = "paragraph";
+    greyBox.className = "grey-box";
+
+    greyBox.appendChild(textNode);
+
+    paragraphBox.appendChild(greyBox);
+    divContainer.appendChild(paragraphBox);
 }
 
 export function createFooter(divContainer: HTMLDivElement) {
@@ -58,4 +117,32 @@ export function createFooter(divContainer: HTMLDivElement) {
 
 export function celsiusToFahrenheit(celsius: number): number {
     return (celsius * 9 / 5) + 32;
-  }
+}
+
+
+
+export function goHome() {
+    const sunButtom = document.getElementById('sun-button');
+    sunButtom?.addEventListener('click', () => goHome());
+
+    const homeContainer = document.getElementById("home-container");
+    if (homeContainer) {
+        homeContainer.style.display = 'flex';
+    }
+
+    const marsContainer = document.getElementById('mars-container');
+    if (marsContainer) {
+        marsContainer.style.display = 'none';
+    }
+
+    const neaContainer = document.getElementById('nea-container');
+    if (neaContainer) {
+        neaContainer.style.display = 'none';
+    }
+
+    const moonContainer = document.getElementById('moon-container');
+    if (moonContainer) {
+        moonContainer.style.display = 'none';
+    }
+}
+

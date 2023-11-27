@@ -3,8 +3,8 @@
     "ttl": 1700956800000,
     "value": {
       "signature": {
-        "version": "1.5",
-        "source": "NASA/JPL SBDB Close Approach Data API"
+        "source": "NASA/JPL SBDB Close Approach Data API",
+        "version": "1.5"
       },
       "count": 2,
       "fields": [
