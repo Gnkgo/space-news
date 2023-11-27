@@ -2,14 +2,14 @@
 Here you can find the whole code for the project in the course Fundamentals of Webengineering 2023 from ETH.
 
 
-# READ ME from FoWE-TEAM Skeleton-------------------------------------------------------------------
+# READ ME from FoWE-TEAM Skeleton---------------------------------------
 
 # Project Title
 Space-News
 ## Team Members
-1. Valentin Baal
-2. Joanna Brodbeck
-3. Nick Troxler
+1. DaValdi
+2. Gnkgo
+3. Nick
 
 ## Project Description 
 The project is about wanting to create a website with three different components: Earth, Mars and Moon. Each component can be accessed to show more data about the associated celestial body. For the Earth, we want to show the current asteroids and comets and where they can be found. For Mars, a weather forecast will be shown. For the Moon, its current state (phase, special phenomena) will be displayed.
@@ -80,15 +80,16 @@ docker run -it --rm -p 5173:5173 my-webapp bash
 ## Milestones
 Document here the major milestones of your code and future planned steps.\
 - [ ] Moon
-  - [ ] Show current moon
-  - [ ] Show countdown
+  - [X] Show current moon
+  - [X] Show countdown
+    - [ ] Fancy countdown   
   - [ ] make button to choose a date in the future
-  - [ ] make a back button
+  - [X] make a back button
      
       
 - [ ] Mars
-  - [ ] display weather
-  - [ ] have a pargraph that describes it
+  - [X] display weather
+  - [X] have a pargraph that describes it
   - [ ] have a nice layout
      
 - [ ] Earth
@@ -103,8 +104,33 @@ Take a look at [Issues and Branches](https://www.youtube.com/watch?v=DSuSBuVYpys
 This will help you have a clearer overview of what you are currently doing, track your progress and organise your work among yourselves. Moreover it gives us more insights on your progress.  
 
 ## Weekly Summary 
-Write here a short summary with weekly progress, including challanges and open questions.\
-We will use this to understand what your struggles and where did the weekly effort go to.
+### 16. November 2023 - 23. November 2023
+#### Gnkgo:
+##### Mars:
+- Creating first version of the mars component
+- Challenging was the CSS layout and the grid.
+- Get Mars picture and put it as a background
+- Display Boxes with the weather of the last 6 days
+- Display the current day box with more information
+- Create a back button
+
+###### Struggles:
+- Mars API didn't work, since they stopped hosting their weather API.
+  - Could resolve it and found another good one
+- The API I use now is not up to date, since they are storms at Mars. 
+
+### 23. November 2023 - 30. November 2023
+#### Gnkgo:
+##### Mars:
+- Change how to display the whole content -> Put everything in one container
+- New layout
+
+##### Moon:
+- Display current moon (there are 8 options)
+- Display countdown when the next full moon is
+- Display back button
+- Show the moonrise and moonset
+
 
 ## Versioning
 Create stable versions of your code each week by using gitlab tags.\
