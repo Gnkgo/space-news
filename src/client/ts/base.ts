@@ -59,10 +59,6 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
     const innerTitle = document.createElement("div");
     innerTitle.id = "inner-title";
 
-
-
-
-
     const greyBox = document.createElement("div");
     greyBox.id = "inner-title";
     greyBox.className = "grey-box";
@@ -78,19 +74,31 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
 }
 
 export function createImage(container: HTMLElement, imagePath: string, description: string): void {
+    // Check if there is already an image with the id 'image'
+    const existingImage = container.querySelector('#image') as HTMLImageElement;
+
+    // If an existing image is found, remove it
+    if (existingImage) {
+        existingImage.remove();
+    }
+
+    // Create a new image element
     const image = document.createElement('img');
     image.className = 'image';
     image.id = 'image';
     image.src = imagePath;
 
+    // Create a new container for the image and description
     const imageContainer = document.createElement('div');
     imageContainer.className = 'image-container';
     imageContainer.id = 'image-container';
     imageContainer.appendChild(image);
     imageContainer.appendChild(document.createTextNode(description));
 
+    // Add the new container to the specified container
     container.appendChild(imageContainer);
 }
+
 
 export function createText(divContainer: HTMLDivElement, text: string) {
     const paragraphBox = document.createElement("div");

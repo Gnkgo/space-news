@@ -2,7 +2,7 @@
 Here you can find the whole code for the project in the course Fundamentals of Webengineering 2023 from ETH.
 
 
-# READ ME from FoWE-TEAM Skeleton---------------------------------------
+# READ ME from FoWE-TEAM Skeleton
 
 # Project Title
 Space-News
@@ -18,10 +18,11 @@ The project is about wanting to create a website with three different components
 ### Project goals
 - Being able to retrieve data from an API
 - Serving external NASA/Moon data in an aesthetically pleasing interface and providing a great user experience
-- 
+  
 ### Data Sources
 - [NASA API](https://api.nasa.gov/)
 - [Moon API](https://dev.qweather.com/en/docs/api/astronomy/moon-and-moon-phase/)
+- [Used Moon API](https://www.visualcrossing.com/)
 
   
 ### Tasks
@@ -85,11 +86,10 @@ Document here the major milestones of your code and future planned steps.\
     - [ ] Fancy countdown   
   - [ ] make button to choose a date in the future
   - [X] make a back button
-     
       
 - [ ] Mars
   - [X] display weather
-  - [X] have a pargraph that describes it
+  - [X] have a paragraph that describes it
   - [ ] have a nice layout
      
 - [ ] Earth
@@ -140,10 +140,8 @@ Then list here the weekly tags. \
 We will evaluate your code every week, based on the corresponding version.
 
 Tags:
-- Milestone 1: ...
-- Milestone 2: ...
-- Milestone 3: ...
-- ...
+- Moon
+- Mars
 
 
 
