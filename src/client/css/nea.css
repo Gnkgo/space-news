@@ -5,7 +5,14 @@ div#nea-container {
     color: wheat;
 
     & div#cad-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         align-self: center;
+        overflow-y: auto;
+        height: inherit;
+        -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
+        scrollbar-width: none;  /* Hide scrollbar for Firefox */
 
         & div#cad-Elem-box {
             display: flex;
@@ -27,6 +34,10 @@ div#nea-container {
                 font-size: 12pt;
             }
         }
+    }
+
+    & div#cad-container::-webkit-scrollbar {
+        display: none;
     }
 
     & img#nea {
