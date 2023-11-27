@@ -1,4 +1,5 @@
 import {getFormattedDate} from './api';
+//import { createSunBackButton } from './base';
 
 interface CadJson {
     signature: {
@@ -16,7 +17,7 @@ const maxDate = '30';
 const distMax = '0.01';
 const cadApiUrl = `/nasa-cad-api?date-min=${minDate}&date-max=${maxDate}&dist-max=${distMax}`;
 
-const neaContainer = document.getElementById('nea-container');
+const neaContainer = document.getElementById('nea-container') as HTMLDivElement;
 fetch('/nea.html')
                 .then(response => response.text())
                 .then(html => {
@@ -28,6 +29,8 @@ fetch('/nea.html')
 
 console.log("start fetching neo stuff");
 getCloseApproachData(cadApiUrl);
+//TODO: Check if you can adapt the layout so you have a backbutton to the overview page again
+//createSunBackButton(neaContainer);
 
 async function getCloseApproachData(cadApiUrl: string){
     try{
