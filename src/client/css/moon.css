@@ -2,11 +2,10 @@
 div#moon-container {
   display: none;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 20px 0.6fr 1fr 1fr 40px; /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-rows: 20px 0.1fr 2fr 40px; /* Adjusted rows to include 1fr for the remaining space */
   grid-template-areas: 
     "sun . . buttons"
     "title countdown countdown moon-sunrise-sunset-box"
-    "moon moon moon moon"
     "moon moon moon moon"
     "footer footer footer footer";
 

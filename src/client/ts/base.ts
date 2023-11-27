@@ -83,6 +83,9 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
     image.id = 'image';
     image.src = imagePath;
 
+    image.width = 300;
+    image.height = 300;
+
     const imageContainer = document.createElement('div');
     imageContainer.className = 'image-container';
     imageContainer.id = 'image-container';

@@ -129,7 +129,7 @@ function updateCountdown(differenceInMilliseconds: number) {
         countdownElement.innerHTML = `Time until Full Moon: ${days}d ${hours}h ${minutes}m ${seconds}s`;
 
     } else {
-        countdownElement.innerHTML = "The event has already passed.";
+        countdownElement.innerHTML = "TODAY IS THE DAY! IT IS FULL MOON! SLEEP WELL";
     }
 }
 
