@@ -36,14 +36,12 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
 
 export function createTitle(divContainer: HTMLDivElement, title: string, isSol: boolean, dateEarth: string, dateSol: string) {
     let titleBox = divContainer.querySelector("#title-box");
-    if (!titleBox) {
-        titleBox = document.createElement("div");
-        titleBox.id = "title-box";
-        titleBox.classList.add("title-box");
-    } else {
-        titleBox.parentNode?.removeChild(titleBox);
-        titleBox.innerHTML = '';
-    }
+    titleBox?.parentNode?.removeChild(titleBox);
+    if (titleBox) titleBox.remove();
+
+    titleBox = document.createElement("div");
+    titleBox.id = "title-box";
+    titleBox.classList.add("title-box");
 
     const titleElement = document.createElement("h1");
     titleElement.textContent = title;
@@ -73,29 +71,25 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
     divContainer.appendChild(titleBox);
 }
 
-export function createImage(container: HTMLElement, imagePath: string, description: string): void {
-    // Check if there is already an image with the id 'image'
-    const existingImage = container.querySelector('#image') as HTMLImageElement;
+export function createImage(container: HTMLElement, imagePath: string, description: string, dateContainer: HTMLDivElement): void {
+    const existingImage = container.querySelector('#image-container') as HTMLImageElement;
 
-    // If an existing image is found, remove it
     if (existingImage) {
         existingImage.remove();
     }
 
-    // Create a new image element
     const image = document.createElement('img');
     image.className = 'image';
     image.id = 'image';
     image.src = imagePath;
 
-    // Create a new container for the image and description
     const imageContainer = document.createElement('div');
     imageContainer.className = 'image-container';
     imageContainer.id = 'image-container';
     imageContainer.appendChild(image);
     imageContainer.appendChild(document.createTextNode(description));
+    imageContainer.appendChild(dateContainer);
 
-    // Add the new container to the specified container
     container.appendChild(imageContainer);
 }
 
