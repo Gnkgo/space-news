@@ -18,5 +18,4 @@ export const randomRover = rovers[Math.floor(Math.random() * rovers.length)]!;
 export const roverAPIUrl = `https://api.nasa.gov/mars-photos/api/v1/manifests/${randomRover}?api_key=${apiKey}`; // DEPRECATED, remove soon (moved to backend)
 
 // Moon
-export const moonAPI = 'TANA3BSE43X9AFK3TDSPXST5P'; // DEPRECATED, remove soon (moved to backend)
-export const moonURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/zurich?next30days?unitGroup=metric&include=days&key=${moonAPI}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`; // DEPRECATED, remove soon (moved to backend)
+export const moonAPI = 'TANA3BSE43X9AFK3TDSPXST5P';

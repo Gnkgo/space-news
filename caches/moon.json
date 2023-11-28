@@ -1,5 +1,5 @@
 {
-  "{}": {
+  "{\"date\":\"2023-11-28\",\"location\":\"zurich\"}": {
     "ttl": 1701216000000,
     "value": {
       "queryCost": 1,
@@ -17,7 +17,21 @@
           "moonphase": 0.53,
           "moonrise": "17:03:21",
           "moonset": "09:16:08"
-        },
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-11-29\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
         {
           "datetime": "2023-11-29",
           "sunrise": "07:49:18",
@@ -25,7 +39,21 @@
           "moonphase": 0.57,
           "moonrise": "17:55:29",
           "moonset": "10:21:02"
-        },
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-11-30\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
         {
           "datetime": "2023-11-30",
           "sunrise": "07:50:35",
@@ -33,7 +61,21 @@
           "moonphase": 0.6,
           "moonrise": "18:57:12",
           "moonset": "11:13:44"
-        },
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-12-01\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
         {
           "datetime": "2023-12-01",
           "sunrise": "07:51:49",
@@ -41,15 +83,21 @@
           "moonphase": 0.63,
           "moonrise": "20:04:52",
           "moonset": "11:53:26"
-        },
-        {
-          "datetime": "2023-12-02",
-          "sunrise": "07:53:03",
-          "sunset": "16:37:01",
-          "moonphase": 0.66,
-          "moonrise": "21:14:39",
-          "moonset": "12:22:50"
-        },
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-12-03\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
         {
           "datetime": "2023-12-03",
           "sunrise": "07:54:15",
@@ -57,22 +105,21 @@
           "moonphase": 0.69,
           "moonrise": "22:22:59",
           "moonset": "12:45:41"
-        },
-        {
-          "datetime": "2023-12-04",
-          "sunrise": "07:55:25",
-          "sunset": "16:36:15",
-          "moonphase": 0.73,
-          "moonrise": "23:30:36",
-          "moonset": "13:04:07"
-        },
-        {
-          "datetime": "2023-12-05",
-          "sunrise": "07:56:34",
-          "sunset": "16:35:57",
-          "moonphase": 0.75,
-          "moonset": "13:19:48"
-        },
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-12-06\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
         {
           "datetime": "2023-12-06",
           "sunrise": "07:57:40",
@@ -80,7 +127,108 @@
           "moonphase": 0.79,
           "moonrise": "00:36:02",
           "moonset": "13:34:00"
-        },
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-12-05\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
+        {
+          "datetime": "2023-12-05",
+          "sunrise": "07:56:34",
+          "sunset": "16:35:57",
+          "moonphase": 0.75,
+          "moonset": "13:19:48"
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-12-04\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
+        {
+          "datetime": "2023-12-04",
+          "sunrise": "07:55:25",
+          "sunset": "16:36:15",
+          "moonphase": 0.73,
+          "moonrise": "23:30:36",
+          "moonset": "13:04:07"
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-11-27\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
+        {
+          "datetime": "2023-11-27",
+          "sunrise": "07:46:42",
+          "sunset": "16:39:44",
+          "moonphase": 0.5,
+          "moonrise": "16:21:56",
+          "moonset": "08:00:52"
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-11-20\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
+        {
+          "datetime": "2023-11-20",
+          "sunrise": "07:37:02",
+          "sunset": "16:45:20",
+          "moonphase": 0.25,
+          "moonrise": "13:52:31",
+          "moonset": "23:59:46"
+        }
+      ]
+    }
+  },
+  "{\"date\":\"2023-12-07\",\"location\":\"zurich\"}": {
+    "ttl": 1701216000000,
+    "value": {
+      "queryCost": 1,
+      "latitude": 47.3771,
+      "longitude": 8.53956,
+      "resolvedAddress": "Zürich, ZH, Schweiz",
+      "address": "zurich",
+      "timezone": "Europe/Zurich",
+      "tzoffset": 1,
+      "days": [
         {
           "datetime": "2023-12-07",
           "sunrise": "07:58:46",
@@ -88,46 +236,6 @@
           "moonphase": 0.82,
           "moonrise": "01:42:15",
           "moonset": "13:47:50"
-        },
-        {
-          "datetime": "2023-12-08",
-          "sunrise": "07:59:49",
-          "sunset": "16:35:18",
-          "moonphase": 0.85,
-          "moonrise": "02:48:53",
-          "moonset": "14:02:19"
-        },
-        {
-          "datetime": "2023-12-09",
-          "sunrise": "08:00:50",
-          "sunset": "16:35:10",
-          "moonphase": 0.89,
-          "moonrise": "03:58:38",
-          "moonset": "14:18:58"
-        },
-        {
-          "datetime": "2023-12-10",
-          "sunrise": "08:01:49",
-          "sunset": "16:35:06",
-          "moonphase": 0.92,
-          "moonrise": "05:11:56",
-          "moonset": "14:39:42"
-        },
-        {
-          "datetime": "2023-12-11",
-          "sunrise": "08:02:46",
-          "sunset": "16:35:04",
-          "moonphase": 0.95,
-          "moonrise": "06:28:19",
-          "moonset": "15:07:02"
-        },
-        {
-          "datetime": "2023-12-12",
-          "sunrise": "08:03:41",
-          "sunset": "16:35:06",
-          "moonphase": 0.98,
-          "moonrise": "07:46:44",
-          "moonset": "15:44:08"
         }
       ]
     }

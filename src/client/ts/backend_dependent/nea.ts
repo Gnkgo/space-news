@@ -1,7 +1,7 @@
 import { CADRes, cadTarget } from '../../../common/api';
 import {getFormattedDate} from '.././api';
 //import { createSunBackButton } from './base';
-  
+
 const minDate = getFormattedDate();
 const maxDate = '30';
 const distMax = '0.01';

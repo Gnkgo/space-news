@@ -165,7 +165,7 @@ regUrlApi<MoonReq, MoonRes>({
   apiName: "Moon Data",
   target: moonTarget.raw(),
   cache: cacheCreateDaily("moon"),
-  genReq: async (_req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/zurich?next30days?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
   genRes: async (res) => res as MoonRes
 });
 // VALENTIN END

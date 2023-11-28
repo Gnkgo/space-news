@@ -1,19 +1,22 @@
-import { MarsRoverPhotosRes, MarsWeatherRes, SolEntry, marsRoverPhotosTarget, marsWeatherTarget } from '../../../common/api';
 import { randomRover } from '.././api';
 import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton } from '.././base';
+import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, marsWeatherTarget } from '../../../common/api';
+import { marsRoverPhotosTarget } from '../../../common/api';
 
 let isCelsius = true;
 let isSol = true;
 let currentDate: string = "";
 let currentDateSol: string = "";
 const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
+let weatherData: MarsData;
+
 
 async function init(): Promise<void> {
   try {
     if (marsContainer) {
       createButtons();
-      const weatherData = await getWeatherData();
-      renderWeather(weatherData);
+      weatherData = await getWeatherData();
+      renderWeather();
       renderRoverPhotos();
       createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
       createText(marsContainer, "Please be advised that our weather predictions on Mars are subject to occasional \
@@ -30,7 +33,7 @@ async function init(): Promise<void> {
 
 async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
   try {
-    const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover }));
+    const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover, camera: "TODO", date: "TODO"}));
     const data = await response.json();
     return data;
   } catch (error) {
@@ -45,21 +48,26 @@ async function renderRoverPhotos(): Promise<void> {
     const mainElement = document.createElement("main");
     marsContainer.appendChild(mainElement);
   }
+  let photo;
+
   const photoData = await getRoverPhotos();
+
   if (photoData.photos.length > 0) {
-    const photo = photoData.photos[Math.floor(Math.random() * photoData.photos.length)];
-    marsContainer.style.backgroundImage = `url('${photo.img_src}')`;
-    marsContainer.style.backgroundSize = "cover";
-    marsContainer.style.backgroundPosition = "center";
-    marsContainer.style.backgroundRepeat = "no-repeat";
-    marsContainer.style.overflow = "hidden";
+    photo = photoData.photos[Math.floor(Math.random() * photoData.photos.length)];
   }
+
+  marsContainer.style.backgroundImage = `url('${photo.img_src}')`;
+  marsContainer.style.backgroundSize = "cover";
+  marsContainer.style.backgroundPosition = "center";
+  marsContainer.style.backgroundRepeat = "no-repeat";
+  marsContainer.style.overflow = "hidden";
 }
 
-async function getWeatherData(): Promise<MarsWeatherRes> {
+
+async function getWeatherData(): Promise<MarsData> {
   try {
     const response = await fetch(marsWeatherTarget.resolve({}));
-    const data = await response.json() as MarsWeatherRes;
+    const data = await response.json() as MarsData;
     data.soles.forEach(sol => {
       if (sol.min_temp) {
         sol.min_temp_fahrenheit = celsiusToFahrenheit(parseFloat(sol.min_temp)).toFixed(2);
@@ -78,15 +86,13 @@ async function getWeatherData(): Promise<MarsWeatherRes> {
 
 async function toggleDateUnit() {
   isSol = !isSol;
-  const weatherData = await getWeatherData();
-  renderWeather(weatherData);
+  renderWeather();
   createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
 }
 
 async function toggleTemperatureUnit() {
   isCelsius = !isCelsius;
-  const weatherData = await getWeatherData();
-  renderWeather(weatherData);
+  renderWeather();
 }
 function createButtons(): void {
   const buttonBox = document.createElement("div");
@@ -124,9 +130,12 @@ function handleButtonClick(label: string): void {
 }
 
 
-function createInnerWeatherBox(sol: SolEntry, moreInfo: boolean): HTMLDivElement {
+function createInnerWeatherBox(moreInfo: boolean): HTMLDivElement {
+  const sol = weatherData.soles[0];
   const innerWeatherBox = document.createElement('div');
   innerWeatherBox.classList.add('grey-box');
+  if (sol == undefined) return innerWeatherBox ;
+
 
   const title = document.createElement('h3');
   title.textContent = isSol ? `Sol ${sol.sol}` : `${formatDate(sol.terrestrial_date)}`;
@@ -152,7 +161,7 @@ function createInnerWeatherBox(sol: SolEntry, moreInfo: boolean): HTMLDivElement
 }
 
 
-function renderWeather(data: MarsWeatherRes): void {
+function renderWeather(): void {
   let marsMain = marsContainer.querySelector("main");
   if (!marsMain) {
     marsMain = document.createElement("main");
@@ -160,22 +169,22 @@ function renderWeather(data: MarsWeatherRes): void {
   } else {
     marsMain.innerHTML = '';
   }
-  if (marsMain && data.soles.length > 0) {
+  if (marsMain && weatherData.soles.length > 0) {
     const outerWeatherBox = document.createElement("div");
     outerWeatherBox.className = "weather-boxes";
-    for (let i = Math.min(data.soles.length, 6); i > 0; i--) {
-      const sol = data.soles[i];
+    for (let i = Math.min(weatherData.soles.length, 6); i > 0; i--) {
+      const sol = weatherData.soles[i];
       if (sol == undefined) continue;
-      outerWeatherBox.appendChild(createInnerWeatherBox(sol, false));
+      outerWeatherBox.appendChild(createInnerWeatherBox(false));
     }
-    todayWeather(data);
+    todayWeather();
     marsMain.appendChild(outerWeatherBox);
   }
 }
 
-function todayWeather(data: MarsWeatherRes): void {
-  if (marsContainer && data.soles.length > 0) {
-    const sol = data.soles[0];
+function todayWeather(): void {
+  if (marsContainer && weatherData.soles.length > 0) {
+    const sol = weatherData.soles[0];
     if (sol == undefined) return;
 
     let outerWeatherBox = marsContainer.querySelector("#today-weather-box");
@@ -193,7 +202,7 @@ function todayWeather(data: MarsWeatherRes): void {
     currentDateSol = sol.sol;
 
     // Append the new box to the body
-    outerWeatherBox.appendChild(createInnerWeatherBox(sol, true));
+    outerWeatherBox.appendChild(createInnerWeatherBox(true));
     marsContainer.appendChild(outerWeatherBox);
   }
 }

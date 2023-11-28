@@ -23,69 +23,82 @@ export const marsRoverPhotosTarget = new TargetPattern<MarsRoverPhotosReq>('/nas
 export const moonTarget = new TargetPattern<MoonReq>('/visual-crossing-moon-api');
 
 export type CADReq = {
-    'date-min': string,
-    'date-max': string,
-    'dist-max': string,
+  'date-min': string,
+  'date-max': string,
+  'dist-max': string,
 }
 
 export type CADRes = {
-    signature: {
-        version: string;
-        source: string;
-    };
-    count: number;
-    fields: string[];
-    data: Array<Array<string | number>>;
+  signature: {
+    version: string;
+    source: string;
+  };
+  count: number;
+  fields: string[];
+  data: Array<Array<string | number>>;
 }
 
-export type SolEntry = {
-    id: string;
-    terrestrial_date: string;
-    sol: string;
-    ls: string;
-    season: string;
-    min_temp: string;
-    max_temp: string;
-    min_temp_fahrenheit?: string;
-    max_temp_fahrenheit?: string;
-    pressure: string;
-    pressure_string: string;
-    abs_humidity: string;
-    wind_speed: string;
-    wind_direction: string;
-    atmo_opacity: string;
-    sunrise: string;
-    sunset: string;
-    local_uv_irradiance_index: string;
-    min_gts_temp: string;
-    max_gts_temp: string;
-  }
+// MARS WEATHER
 
-  export type MarsWeatherReq = {};
-  
-  export type MarsWeatherRes = {
-    descriptions: Record<string, string>;
-    soles: SolEntry[];
-  }
+export type MarsWeatherReq = {}
 
-  export type MarsRoverPhotosReq = {
-    rover: string
-  }
-
-  export type MarsRoverPhotosRes = any;
-
-  export type MoonEntry = {
-    datetime: string;
-    sunrise: string;
-    sunset: string;
-    moonphase: number;
-    moonrise: string;
-    moonset: string;
+export type SolEntryRes = {
+  id: string;
+  terrestrial_date: string;
+  sol: string;
+  ls: string;
+  season: string;
+  min_temp: string;
+  max_temp: string;
+  min_temp_fahrenheit?: string;
+  max_temp_fahrenheit?: string;
+  pressure: string;
+  pressure_string: string;
+  abs_humidity: string;
+  wind_speed: string;
+  wind_direction: string;
+  atmo_opacity: string;
+  sunrise: string;
+  sunset: string;
+  local_uv_irradiance_index: string;
+  min_gts_temp: string;
+  max_gts_temp: string;
 }
 
-export type MoonReq = {};
+
+export type MarsWeatherRes = {
+  descriptions: Record<string, string>;
+  soles: SolEntryRes[];
+}
+
+// MARS ROVER PHOTOS
+
+export type MarsRoverPhotosReq = {
+  'rover': string;
+  'date': string;
+  'camera': string;
+}
+
+export type MarsRoverPhotosRes = any;
+
+// MOON
+
+export type MoonReq = {
+  'date': string;
+  'location': string;
+}
+
+export type MoonEntryRes = {
+  datetime: string;
+  sunrise: string;
+  sunset: string;
+  moonphase: number;
+  moonrise: string;
+  moonset: string;
+}
+
 
 export type MoonRes = {
-    description: Record<string, string>;
-    days: MoonEntry[];
+  description: Record<string, string>;
+  days: MoonEntryRes[];
 }

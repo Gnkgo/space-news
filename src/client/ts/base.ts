@@ -36,14 +36,12 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
 
 export function createTitle(divContainer: HTMLDivElement, title: string, isSol: boolean, dateEarth: string, dateSol: string) {
     let titleBox = divContainer.querySelector("#title-box");
-    if (!titleBox) {
-        titleBox = document.createElement("div");
-        titleBox.id = "title-box";
-        titleBox.classList.add("title-box");
-    } else {
-        titleBox.parentNode?.removeChild(titleBox);
-        titleBox.innerHTML = '';
-    }
+    titleBox?.parentNode?.removeChild(titleBox);
+    if (titleBox) titleBox.remove();
+
+    titleBox = document.createElement("div");
+    titleBox.id = "title-box";
+    titleBox.classList.add("title-box");
 
     const titleElement = document.createElement("h1");
     titleElement.textContent = title;
@@ -59,10 +57,6 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
     const innerTitle = document.createElement("div");
     innerTitle.id = "inner-title";
 
-
-
-
-
     const greyBox = document.createElement("div");
     greyBox.id = "inner-title";
     greyBox.className = "grey-box";
@@ -77,7 +71,13 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
     divContainer.appendChild(titleBox);
 }
 
-export function createImage(container: HTMLElement, imagePath: string, description: string): void {
+export function createImage(container: HTMLElement, imagePath: string, description: string, dateContainer: HTMLDivElement): void {
+    const existingImage = container.querySelector('#image-container') as HTMLImageElement;
+
+    if (existingImage) {
+        existingImage.remove();
+    }
+
     const image = document.createElement('img');
     image.className = 'image';
     image.id = 'image';
@@ -91,9 +91,11 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
     imageContainer.id = 'image-container';
     imageContainer.appendChild(image);
     imageContainer.appendChild(document.createTextNode(description));
+    imageContainer.appendChild(dateContainer);
 
     container.appendChild(imageContainer);
 }
+
 
 export function createText(divContainer: HTMLDivElement, text: string) {
     const paragraphBox = document.createElement("div");
