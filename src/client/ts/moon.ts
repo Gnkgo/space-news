@@ -1,4 +1,4 @@
-import { MoonDataRes } from '../../common/api';
+import { MoonDataRes as MoonData } from '../../common/api';
 import { getFormattedDate, moonAPI } from './api';
 import { createTitle, createFooter, formatDate, createImage, createSunBackButton } from './base';
 
@@ -9,10 +9,10 @@ let currentMoonURL = `https://weather.visualcrossing.com/VisualCrossingWebServic
 
 let isCurrentDate = true;
 
-let currentMoonData: MoonDataRes;
-let pickedMoonData: MoonDataRes;
+let currentMoonData: MoonData;
+let pickedMoonData: MoonData;
 
-const backup: MoonDataRes = {
+const backup: MoonData = {
     description: {
       location: "Sample Location",
       timeZone: "UTC+0",
@@ -31,10 +31,10 @@ const backup: MoonDataRes = {
   
 
 
-async function getMoonData(moonURL: string): Promise<MoonDataRes> {
+async function getMoonData(moonURL: string): Promise<MoonData> {
     try {
         const response = await fetch(moonURL);
-        const data = await response.json() as MoonDataRes;
+        const data = await response.json() as MoonData;
         console.log("Moon data fetched successfully", data);
         return data;
     } catch (error) {
@@ -63,7 +63,7 @@ async function initMoon(): Promise<void> {
     }
 }
 
-function moonriseMoonset(moonData: MoonDataRes): void {
+function moonriseMoonset(moonData: MoonData): void {
     console.log("MOONDATA", moonData);
     if (moonData.days[0] !== undefined) {
         const moonrise = moonData.days[0].moonrise;
@@ -94,7 +94,7 @@ function moonriseMoonset(moonData: MoonDataRes): void {
     }
 }
 
-function displayMoon(moonData: MoonDataRes): void {
+function displayMoon(moonData: MoonData): void {
     const moonphase = moonData.days[0]?.moonphase;
     let moonText = '';
     let moonImage = '';
