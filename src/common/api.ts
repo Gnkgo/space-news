@@ -5,7 +5,7 @@ export const marsRoverPhotosTarget = '/nasa-mars-rover-photos-api';
 export type CADReq = {
     'date-min': string,
     'date-max': string,
-    'dist-max': string,
+    'min-dist-max': string,
 }
 
 export type CADRes = {

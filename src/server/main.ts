@@ -131,7 +131,7 @@ regApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
   target: cadTarget,
   cache: cacheCreateDaily("cad"),
-  genReq: (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&dist-max=${req["dist-max"]}`,
+  genReq: (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&min-dist-max=${req["min-dist-max"]}`,
   genRes: (res) => res
 });
 regApi<MarsWeatherReq, MarsWeatherRes>({
