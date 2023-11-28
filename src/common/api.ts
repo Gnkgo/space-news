@@ -97,7 +97,6 @@ export type MoonEntryRes = {
   moonset: string;
 }
 
-
 export type MoonRes = {
   description: Record<string, string>;
   days: MoonEntryRes[];
