@@ -1,4 +1,4 @@
-div#nea-container {
+div#neo-container {
     display: none;
     height: 100vh;
     grid-template-columns: 1fr 1fr 1fr;
@@ -40,7 +40,7 @@ div#nea-container {
         display: none;
     }
 
-    & img#nea {
+    & img#neo {
         align-self: center;
         height: 75vh;
     }

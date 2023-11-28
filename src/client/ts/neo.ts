@@ -17,20 +17,20 @@ const maxDate = '30';
 const distMax = '0.01';
 const cadApiUrl = `/nasa-cad-api?date-min=${minDate}&date-max=${maxDate}&dist-max=${distMax}`;
 
-const neaContainer = document.getElementById('nea-container') as HTMLDivElement;
-fetch('/nea.html')
+const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
+fetch('/neo.html')
                 .then(response => response.text())
                 .then(html => {
-                    if(neaContainer){
-                        neaContainer.innerHTML = html;
+                    if(neoContainer){
+                        neoContainer.innerHTML = html;
                         getCloseApproachData(cadApiUrl);
                     }
                 })
-                .catch(error => console.error('Error loading nea.html:', error));
+                .catch(error => console.error('Error loading neo.html:', error));
 
 console.log("start fetching neo stuff");
 //TODO: Check if you can adapt the layout so you have a backbutton to the overview page again
-//createSunBackButton(neaContainer);
+//createSunBackButton(neoContainer);
 
 async function getCloseApproachData(cadApiUrl: string){
     try{

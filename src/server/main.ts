@@ -126,7 +126,7 @@ function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
   });
 }
 regHtml('/', 'home.html');
-regHtml('/nea.html', 'nea.html');
+regHtml('/neo.html', 'neo.html');
 regApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
   target: cadTarget,
@@ -154,8 +154,8 @@ regApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
 /*app.get('/', (_req, res) => {
   res.sendFile(path.resolve('src', 'client', 'html', 'home.html'));
 });
-app.get('/nea.html', (_req, res) => {
-  res.sendFile(path.resolve('src', 'client', 'html', 'nea.html'));
+app.get('/neo.html', (_req, res) => {
+  res.sendFile(path.resolve('src', 'client', 'html', 'neo.html'));
 });
 app.get('/nasa-cad-api', async (req, res) => {
   try {
