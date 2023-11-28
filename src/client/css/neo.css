@@ -4,17 +4,16 @@ div#neo-container {
     grid-template-columns: 1fr 1fr 1fr;
     color: wheat;
 
-    & div#cad-container {
+    & div#cad-container, div#fireball-container {
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-self: center;
         overflow-y: auto;
         height: inherit;
         -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
         scrollbar-width: none;  /* Hide scrollbar for Firefox */
 
-        & div#cad-Elem-box {
+        & div#cad-Elem-box, div#fireball-Elem-box {
             display: flex;
             flex-direction: column;
             line-height: 0.8;
@@ -36,7 +35,7 @@ div#neo-container {
         }
     }
 
-    & div#cad-container::-webkit-scrollbar {
+    & div#cad-container::-webkit-scrollbar, div#fireball-container::-webkit-scrollbar {
         display: none;
     }
 

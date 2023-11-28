@@ -1,10 +1,10 @@
 import express from "express";
 import ViteExpress from "vite-express";
 import path from "path";
-import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes } from "../common/api";
+import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, FireballReq, FireballRes } from "../common/api";
 import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
-import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget } from "../common/api";
+import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, fireballTarget } from "../common/api";
 
 /**
  * TODO
@@ -148,6 +148,13 @@ regApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
   genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${req.earthDate}&api_key=${apiKey}`,
   genRes: (res) => res as MarsRoverPhotosRes
 });
+regApi<FireballReq, FireballRes>({
+  apiName: "Fireball Data",
+  target: fireballTarget,
+  genReq: (req) => `https://ssd-api.jpl.nasa.gov/fireball.api?date-min=${req["date-min"]}&req-loc=${req["req-loc"]}`,
+  genRes: (res) => res as FireballRes
+});
+
 // VALENTIN END
 
 // NICK START

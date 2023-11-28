@@ -1,21 +1,18 @@
 import {getFormattedDate} from './api';
+import { CADRes as CadJson, FireballRes as FireBallJson} from '../../common/api';
 //import { createSunBackButton } from './base';
 
-type CadJson = {
-    signature: {
-      version: string;
-      source: string;
-    };
-    count: number;
-    fields: string[];
-    data: Array<Array<string | number>>;
-  }
-  
+//Close approach parameters
+const cadMinDate = getFormattedDate();
+const cadMaxDate = '30';
+const cadMinDistMax = '0.0026'; //Distance to moon in unit 'au'
+const cadApiUrl = `/nasa-cad-api?date-min=${cadMinDate}&date-max=${cadMaxDate}&min-dist-max=${cadMinDistMax}`;
 
-const minDate = getFormattedDate();
-const maxDate = '30';
-const distMax = '0.01';
-const cadApiUrl = `/nasa-cad-api?date-min=${minDate}&date-max=${maxDate}&dist-max=${distMax}`;
+//Fireball parameters
+const fireballMinDate = '2010-01-01';
+const fireballReqLocBool = true;
+const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=${fireballReqLocBool}`;
+
 
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
 fetch('/neo.html')
@@ -24,11 +21,11 @@ fetch('/neo.html')
                     if(neoContainer){
                         neoContainer.innerHTML = html;
                         getCloseApproachData(cadApiUrl);
+                        getFireballData(fireballApiUrl);
                     }
                 })
                 .catch(error => console.error('Error loading neo.html:', error));
 
-console.log("start fetching neo stuff");
 //TODO: Check if you can adapt the layout so you have a backbutton to the overview page again
 //createSunBackButton(neoContainer);
 
@@ -36,10 +33,9 @@ async function getCloseApproachData(cadApiUrl: string){
     try{
         const res = await fetch(cadApiUrl);
         const cad = await res.json() as CadJson;
-        console.log(cad.data);
         processCloseApproachData(cad);
     } catch (error){
-        console.log("Error: " + error)
+        console.log("Error fetching close approach data: " + error)
     }
 }
 
@@ -67,5 +63,39 @@ function processCloseApproachData(cadJson: CadJson){
         cadElemBox?.appendChild(objectVelText);
 
         cadContainer?.appendChild(cadElemBox);
+    }
+}
+
+async function getFireballData(fireballApiUrl: string){
+    try {
+        const res = await fetch(fireballApiUrl);
+        const fireballData = await res.json();
+        console.log(fireballData);
+        processFireballData(fireballData);
+    } catch (error) {
+        console.log("Error fetching fireball data: " + error)
+    }
+}
+
+function processFireballData(fireballJson: FireBallJson){
+    const fireballContainer = document.getElementById('fireball-container');
+
+    for (const elem of fireballJson.data){
+        const fireballElemBox = document.createElement('div');
+        fireballElemBox.id = 'fireball-Elem-box';
+
+        const objectDateText = document.createElement("p");
+        objectDateText.textContent = "Peak brightness date: " + elem[0];
+        fireballElemBox?.appendChild(objectDateText);
+
+        const objectLatText = document.createElement("p");
+        objectLatText.textContent = "Lat: " + elem[3] + "°" + elem[4];
+        fireballElemBox?.appendChild(objectLatText);
+
+        const objectLonText = document.createElement("p");
+        objectLonText.textContent = "Lon: " + elem[5] + "°" + elem[6];
+        fireballElemBox?.appendChild(objectLonText);
+
+        fireballContainer?.appendChild(fireballElemBox);
     }
 }

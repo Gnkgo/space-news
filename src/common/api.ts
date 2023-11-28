@@ -1,6 +1,7 @@
 export const cadTarget = '/nasa-cad-api';
 export const marsWeatherTarget = '/nasa-mars-weather-api';
 export const marsRoverPhotosTarget = '/nasa-mars-rover-photos-api';
+export const fireballTarget = '/nasa-fireball-api';
 
 export type CADReq = {
     'date-min': string,
@@ -41,15 +42,30 @@ export type SolEntry = {
     max_gts_temp: string;
   }
 
-  export type MarsWeatherReq = {};
-  
-  export type MarsWeatherRes = {
-    descriptions: Record<string, string>;
-    soles: SolEntry[];
-  }
+export type MarsWeatherReq = {};
 
-  export type MarsRoverPhotosReq = {
-    earthDate: string 
-  }
+export type MarsWeatherRes = {
+  descriptions: Record<string, string>;
+  soles: SolEntry[];
+}
 
-  export type MarsRoverPhotosRes = any;
+export type MarsRoverPhotosReq = {
+  earthDate: string 
+}
+
+export type MarsRoverPhotosRes = any;
+
+export type FireballReq = {
+  'date-min': string,
+  'req-loc': boolean
+};
+
+export type FireballRes = {
+  signature: {
+    version: string;
+    source: string;
+  };
+  count: number;
+  fields: string[];
+  data: Array<Array<string | number>>;
+};
