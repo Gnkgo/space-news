@@ -1,7 +1,7 @@
 import {getFormattedDate} from './api';
 //import { createSunBackButton } from './base';
 
-interface CadJson {
+type CadJson = {
     signature: {
       version: string;
       source: string;
