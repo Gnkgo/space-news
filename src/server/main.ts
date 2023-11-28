@@ -6,6 +6,13 @@ import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget } from "../common/api";
 
+/**
+ * TODO
+ * 
+ * - Remove old cached values
+ * - Logs
+ */
+
 // creates the expres app do not change
 const app = express();
 
@@ -31,7 +38,7 @@ function cacheCreate<TRes>(name: string, period: number): Cache<TRes> {
   return {
     path: `./caches/${name}.json`,
     entries: new Map<string, CacheEntry<TRes>>(),
-    computeTtl: () => Math.ceil((new Date().getTime() + period) / period) * period
+    computeTtl: () => Math.floor((new Date().getTime() + period) / period) * period
   };
 }
 const dayMillis = 24 * 60 * 60 * 1000;
