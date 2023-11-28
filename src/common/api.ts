@@ -1,6 +1,26 @@
-export const cadTarget = '/nasa-cad-api';
-export const marsWeatherTarget = '/nasa-mars-weather-api';
-export const marsRoverPhotosTarget = '/nasa-mars-rover-photos-api';
+export class TargetPattern<TReq extends {}> {
+  private readonly _target: string;
+
+  public constructor(target: string) {
+    this._target = target;
+  }
+
+  public raw(): string {
+    return this._target;
+  }
+
+  public resolve(req: TReq): string {
+    const entries = Object.entries(req);
+    if (entries.length == 0)
+      return this._target;
+    return `${this._target}?${entries.map(entry => `${entry[0]}=${entry[1]}`).join('&')}`;
+  }
+}
+
+export const cadTarget = new TargetPattern<CADReq>('/nasa-cad-api');
+export const marsWeatherTarget = new TargetPattern<MarsWeatherReq>('/nasa-mars-weather-api');
+export const marsRoverPhotosTarget = new TargetPattern<MarsRoverPhotosReq>('/nasa-mars-rover-photos-api');
+export const moonTarget = new TargetPattern<MoonReq>('/visual-crossing-moon-api');
 
 export type CADReq = {
     'date-min': string,
@@ -49,7 +69,23 @@ export type SolEntry = {
   }
 
   export type MarsRoverPhotosReq = {
-    earthDate: string 
+    rover: string
   }
 
   export type MarsRoverPhotosRes = any;
+
+  export type MoonEntry = {
+    datetime: string;
+    sunrise: string;
+    sunset: string;
+    moonphase: number;
+    moonrise: string;
+    moonset: string;
+}
+
+export type MoonReq = {};
+
+export type MoonRes = {
+    description: Record<string, string>;
+    days: MoonEntry[];
+}
