@@ -155,7 +155,7 @@ regApi<MarsRoverManifestReq, MarsRoverManifestRes>({
   apiName: "Mars Rover Photos Manifest Data",
   target: marsRoverManifestTarget,
   cache: cacheCreateDaily("mars_rover_manifest"),
-  genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.rover}/photos?&api_key=${apiKey}`,
+  genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/manifests/${req.rover}/?api_key=${apiKey}`,
   genRes: (res) => res as MarsRoverManifestRes
 });
 

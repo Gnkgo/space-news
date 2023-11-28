@@ -241,6 +241,6 @@ function getNextMonth(date: Date) {
 
 initMoon();
 
-setInterval(() => {
-    updateCountdown(getTimeUntilNextFullMoon());
-}, 1000);
+//setInterval(() => {
+//    updateCountdown(getTimeUntilNextFullMoon());
+//}, 1000);

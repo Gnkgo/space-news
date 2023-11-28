@@ -6,8 +6,9 @@ const rovers = ["curiosity", "opportunity", "spirit"];
 const randomRover = rovers[Math.floor(Math.random() * rovers.length)];
 
 const marsWeatherApiUrl = `/nasa-mars-weather-api`;
-const marsRoverManifest = `/nasa-mars-rover-photos-api&rover=${randomRover}`;
+const marsRoverManifest = `/nasa-mars-rover-manifest-api&rover=${randomRover}`;
 let marsRoverPhotos : string; 
+console.log(marsRoverManifest);
 
 let isCelsius = true;
 let isSol = true;
