@@ -1,6 +1,9 @@
 export const cadTarget = '/nasa-cad-api';
 export const marsWeatherTarget = '/nasa-mars-weather-api';
 export const marsRoverPhotosTarget = '/nasa-mars-rover-photos-api';
+export const marsRoverManifestTarget = '/nasa-mars-rover-manifest-api';
+export const moonVisibilityTarget = '/moon-visibility-api';
+export const moonVisibilityTarget2 = '/moon-visibility-api2';
 
 export type CADReq = {
   'date-min': string,
@@ -55,15 +58,28 @@ export type MarsWeatherRes = {
 
 export type MarsRoverPhotosReq = {
   'rover': string;
-  'date': string;
-  'camera': string;
+  'maxSol': string;
 }
 
 export type MarsRoverPhotosRes = any;
 
+export type MarsRoverManifestReq = {
+  'rover': string;
+}
+
+export type MarsRoverManifestRes = {
+  name : string;
+  landing_date : string;
+  launch_date : string;
+  status : string;
+  max_sol : string;
+  max_date : string;
+  total_photos : string;
+}
+
 // MOON
 
-export type MoonReq = {
+export type MoonDataReq = {
   'date': string;
   'location': string;
 }
@@ -82,6 +98,7 @@ export type MoonDataRes = {
   description: Record<string, string>;
   days: MoonEntryRes[];
 }
+
 
 
 

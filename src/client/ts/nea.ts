@@ -1,4 +1,4 @@
-import {getFormattedDate} from './api';
+import { getFormattedDate } from '../../common/utils';
 //import { createSunBackButton } from './base';
 
 interface CadJson {

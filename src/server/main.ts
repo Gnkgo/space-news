@@ -1,10 +1,10 @@
 import express from "express";
 import ViteExpress from "vite-express";
 import path from "path";
-import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes } from "../common/api";
+import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsRoverManifestReq, MarsRoverManifestRes, MarsWeatherReq, MarsWeatherRes, MoonDataReq, MoonDataRes } from "../common/api";
 import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
-import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget } from "../common/api";
+import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, marsRoverManifestTarget, moonVisibilityTarget, moonVisibilityTarget2} from "../common/api";
 
 /**
  * TODO
@@ -18,6 +18,8 @@ const app = express();
 
 // Constants
 const apiKey = 'DEMO_KEY';
+//const nasaApiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX';
+const moonApiKey = 'TANA3BSE43X9AFK3TDSPXST5P';
 
 // Helper functions
 function toPrettyJson(obj: any): string {
@@ -145,9 +147,36 @@ regApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
   apiName: "Mars Rover Photos Data",
   target: marsRoverPhotosTarget,
   cache: cacheCreateDaily("mars_rover_photos"),
-  genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${req.earthDate}&api_key=${apiKey}`,
+  genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.rover}/photos?sol=${req.maxSol}&api_key=${apiKey}`,
   genRes: (res) => res as MarsRoverPhotosRes
 });
+
+regApi<MarsRoverManifestReq, MarsRoverManifestRes>({
+  apiName: "Mars Rover Photos Manifest Data",
+  target: marsRoverManifestTarget,
+  cache: cacheCreateDaily("mars_rover_manifest"),
+  genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.rover}/photos?&api_key=${apiKey}`,
+  genRes: (res) => res as MarsRoverManifestRes
+});
+
+regApi<MoonDataReq, MoonDataRes>({
+  apiName: "Moon Visibility Data",
+  target: moonVisibilityTarget,
+  cache: cacheCreateDaily("moon_visibility_data"),
+  genReq: (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/next30days?unitGroup=us&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genRes: (res) => res as MoonDataRes
+});
+
+regApi<MoonDataReq, MoonDataRes>({
+  apiName: "Moon Visibility Data 2",
+  target: moonVisibilityTarget2,
+  cache: cacheCreateDaily("moon_visibility_data"),
+  genReq: (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=us&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genRes: (res) => res as MoonDataRes
+});
+
+
+
 // VALENTIN END
 
 // NICK START
