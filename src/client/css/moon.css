@@ -2,15 +2,19 @@
 div#moon-container {
   display: none;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 20px 0.1fr 2fr 40px; /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-rows: 40px 200px 1fr 40px; /* Adjusted rows to include 1fr for the remaining space */
   grid-template-areas: 
-    "sun . . buttons"
+    "sun date-picker date-picker buttons"
     "title countdown countdown moon-sunrise-sunset-box"
     "moon moon moon moon"
     "footer footer footer footer";
 
   gap: 10px;
   min-height: 100vh; /* Ensure body takes up at least the full viewport height */
+  .grey-box {
+    border: none; /* or border-width: 0; */
+    background-color: transparent;
+  }
 }
 
 .title-box{
@@ -22,6 +26,22 @@ div#moon-container {
     align-items: center;
   }
 }
+
+.date-picker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: date-picker;
+}
+
+.date-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: date-picker;
+}
+
+
 
 .moon-box {
   grid-area: moon-sunrise-sunset-box;
@@ -41,7 +61,9 @@ div#moon-container {
 }
   
 .image {
-  padding: 20px;
+  padding-bottom: 20px;
+  width: 400px;
+  height: 400px;
 }
 
 .image-container {

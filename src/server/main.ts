@@ -1,7 +1,9 @@
 import express from "express";
+import { ParamsDictionary } from "express-serve-static-core";
+import QueryString from "qs";
 import ViteExpress from "vite-express";
 import path from "path";
-import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, FireballReq, FireballRes } from "../common/api";
+import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, FireballReq, FireballRes, MoonReq, MoonRes, moonTarget } from "../common/api";
 import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, fireballTarget } from "../common/api";
@@ -17,7 +19,8 @@ import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, fireballTarget } f
 const app = express();
 
 // Constants
-const apiKey = 'DEMO_KEY';
+const marsRoverApiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX';
+const moonApiKey = 'TANA3BSE43X9AFK3TDSPXST5P';
 
 // Helper functions
 function toPrettyJson(obj: any): string {
@@ -67,8 +70,8 @@ type ApiDef<TReq, TRes> = {
   apiName: string,
   target: string,
   cache?: Cache<TRes>,
-  genReq: (req: TReq) => string,
-  genRes: (json: any) => TRes
+  genReq: (req: TReq) => Promise<string>,
+  genRes: (json: any) => Promise<TRes>
 }
 function apiInit<TReq, TRes>(api: ApiDef<TReq, TRes>): ApiDef<TReq, TRes> {
   const cache = api.cache;
@@ -97,12 +100,12 @@ function regFile(target: string, ...paths: string[]): void {
 function regHtml(target: string, file: string): void {
   regFile(target, 'src', 'client', 'html', file);
 }
-function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
+function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>, func: (req: express.Request<ParamsDictionary, any, any, QueryString.ParsedQs, Record<string, any>>) => any): void {
   apiInit(api);
   app.get(api.target, async (req, res) => {
     try {
-      const apiReq = req.query as TReq;
-      const fetchNew = async () => await fetch(api.genReq(apiReq)).then((data) => data.json()).then((json) => api.genRes(json));
+      const apiReq = func(req) as TReq;
+      const fetchNew = async () => await fetch(await api.genReq(apiReq)).then((data) => data.json()).then(async (json) => await api.genRes(json));
       let apiRes: TRes;
       const cache = api.cache;
       if (cache != undefined) {
@@ -125,28 +128,45 @@ function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
     }
   });
 }
+function regUrlApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
+  regApi<TReq, TRes>(api, (req) => req.query);
+}
+/*function regHeaderApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
+  regApi<TReq, TRes>(api, (req) => req.headers);
+}*/
+
 regHtml('/', 'home.html');
 regHtml('/neo.html', 'neo.html');
 regApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
-  target: cadTarget,
+  target: cadTarget.raw(),
   cache: cacheCreateDaily("cad"),
-  genReq: (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&min-dist-max=${req["min-dist-max"]}`,
-  genRes: (res) => res
+  genReq: async (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&min-dist-max=${req["min-dist-max"]}`,
+  genRes: async (res) => res
 });
-regApi<MarsWeatherReq, MarsWeatherRes>({
+regUrlApi<MarsWeatherReq, MarsWeatherRes>({
   apiName: "Mars Weather Data",
-  target: marsWeatherTarget,
+  target: marsWeatherTarget.raw(),
   cache: cacheCreateDaily("mars_weather"),
-  genReq: (_req) => 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json',
-  genRes: (res) => res as MarsWeatherRes
+  genReq: async (_req) => 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json',
+  genRes: async (res) => res as MarsWeatherRes
 });
-regApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
+regUrlApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
   apiName: "Mars Rover Photos Data",
-  target: marsRoverPhotosTarget,
+  target: marsRoverPhotosTarget.raw(),
   cache: cacheCreateDaily("mars_rover_photos"),
-  genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=${req.earthDate}&api_key=${apiKey}`,
-  genRes: (res) => res as MarsRoverPhotosRes
+  genReq: async (req) => {
+    const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${req.rover}?api_key=${marsRoverApiKey}`).then((data) => data.json());
+    return `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.rover}/photos?sol=${manifest.photo_manifest.max_sol}&api_key=${marsRoverApiKey}`
+  },
+  genRes: async (res) => res as MarsRoverPhotosRes
+});
+regUrlApi<MoonReq, MoonRes>({
+  apiName: "Moon Data",
+  target: moonTarget.raw(),
+  cache: cacheCreateDaily("moon"),
+  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genRes: async (res) => res as MoonRes
 });
 regApi<FireballReq, FireballRes>({
   apiName: "Fireball Data",

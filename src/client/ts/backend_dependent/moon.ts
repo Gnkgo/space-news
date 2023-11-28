@@ -1,11 +1,10 @@
-import { MoonRes as MoonData } from '../../common/api';
-import { getFormattedDate, moonAPI } from './api';
-import { createTitle, createFooter, formatDate, createImage, createSunBackButton } from './base';
+import { MoonRes as MoonData, moonTarget } from '../../../common/api';
+import { getFormattedDate } from '../../../common/utils';
+import { createTitle, createFooter, formatDate, createImage, createSunBackButton } from '.././base';
 
 const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
 let location = 'zurich';
 let today = getFormattedDate();
-let currentMoonURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/next30days?unitGroup=us&key=TANA3BSE43X9AFK3TDSPXST5P&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`;
 
 let isCurrentDate = true;
 
@@ -31,9 +30,9 @@ const backup: MoonData = {
   
 
 
-async function getMoonData(moonURL: string): Promise<MoonData> {
+async function getMoonData(date: string): Promise<MoonData> {
     try {
-        const response = await fetch(moonURL);
+        const response = await fetch(moonTarget.resolve({date: date, location: location}));
         const data = await response.json() as MoonData;
         console.log("Moon data fetched successfully", data);
         return data;
@@ -49,8 +48,8 @@ async function initMoon(): Promise<void> {
         if (moonContainer) {
             createSunBackButton(moonContainer);
             createFooter(moonContainer);
-            currentMoonData = await getMoonData(currentMoonURL);
-            pickedMoonData = await getMoonData(currentMoonURL);
+            currentMoonData = await getMoonData(getFormattedDate());
+            pickedMoonData = await getMoonData(getFormattedDate());
             createTitle(moonContainer, `Status Moon`, false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData);
             moonriseMoonset(currentMoonData);
@@ -215,8 +214,7 @@ function createDatePicker() {
 
     async function handleInputEvent() {
         const selectedDate = datePicker.value;
-        const pickedMoonURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${selectedDate}?unitGroup=metric&include=days&key=${moonAPI}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`;
-        pickedMoonData = await getMoonData(pickedMoonURL);
+        pickedMoonData = await getMoonData(selectedDate);
         displayMoon(pickedMoonData);
         moonriseMoonset(pickedMoonData);
         createTitle(moonContainer, `Status Moon`, false, formatDate(pickedMoonData.days[0]?.datetime), "");

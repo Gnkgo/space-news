@@ -1,8 +1,7 @@
-import { apiKey, weatherURL, roverAPIUrl, randomRover } from './api';
-import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton } from './base';
-import { MarsWeatherRes as MarsData } from '../../common/api';
-
-
+import { randomRover } from '.././api';
+import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton } from '.././base';
+import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, marsWeatherTarget } from '../../../common/api';
+import { marsRoverPhotosTarget } from '../../../common/api';
 
 let isCelsius = true;
 let isSol = true;
@@ -32,9 +31,9 @@ async function init(): Promise<void> {
   }
 }
 
-async function getRoverPhotos(api: string): Promise<any> {
+async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
   try {
-    const response = await fetch(api);
+    const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover, camera: "TODO", date: "TODO"}));
     const data = await response.json();
     return data;
   } catch (error) {
@@ -49,10 +48,9 @@ async function renderRoverPhotos(): Promise<void> {
     const mainElement = document.createElement("main");
     marsContainer.appendChild(mainElement);
   }
-  const manifest = await getRoverPhotos(roverAPIUrl);
   let photo;
 
-  const photoData = await getRoverPhotos(`https://api.nasa.gov/mars-photos/api/v1/rovers/${randomRover}/photos?sol=${manifest.photo_manifest.max_sol}&api_key=${apiKey}`);
+  const photoData = await getRoverPhotos();
 
   if (photoData.photos.length > 0) {
     photo = photoData.photos[Math.floor(Math.random() * photoData.photos.length)];
@@ -68,7 +66,7 @@ async function renderRoverPhotos(): Promise<void> {
 
 async function getWeatherData(): Promise<MarsData> {
   try {
-    const response = await fetch(weatherURL);
+    const response = await fetch(marsWeatherTarget.resolve({}));
     const data = await response.json() as MarsData;
     data.soles.forEach(sol => {
       if (sol.min_temp) {
