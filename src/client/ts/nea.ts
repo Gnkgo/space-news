@@ -29,7 +29,6 @@ fetch('/nea.html')
                 .catch(error => console.error('Error loading nea.html:', error));
 
 console.log("start fetching neo stuff");
-getCloseApproachData(cadApiUrl);
 //TODO: Check if you can adapt the layout so you have a backbutton to the overview page again
 //createSunBackButton(neaContainer);
 

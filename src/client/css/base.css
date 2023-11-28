@@ -21,8 +21,8 @@ footer {
 
 .sun-button {
     grid-area: sun;
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     cursor: pointer;
   }
 
@@ -46,6 +46,9 @@ footer {
     }
   }
 
+h3 {
+  margin: 0;
+}
 
 
 .title-box {
