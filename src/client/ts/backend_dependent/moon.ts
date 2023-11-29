@@ -5,6 +5,7 @@ import { createTitle, createFooter, formatDate, createImage, createSunBackButton
 const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
 let location = 'zurich';
 let today = getFormattedDate();
+let selectedDate = today;
 
 let isCurrentDate = true;
 
@@ -144,9 +145,10 @@ function displayMoon(moonData: MoonData): void {
 function updateCountdown(differenceInMilliseconds: number) {
     let countdownElement = document.getElementById('countdown');
 
-    countdownElement?.innerHTML == '';
-
     if (!isCurrentDate) return;
+
+    countdownElement?.remove();
+
 
     countdownElement = document.createElement("div");
     countdownElement.id = "countdown";
@@ -211,9 +213,10 @@ function createDatePicker() {
     datePicker.className = "date-picker";
     datePicker.min = "1971-01-01";
     datePicker.max = "2050-01-01";
+    datePicker.value = selectedDate;
 
     async function handleInputEvent() {
-        const selectedDate = datePicker.value;
+        selectedDate = datePicker.value;
         pickedMoonData = await getMoonData(selectedDate);
         displayMoon(pickedMoonData);
         moonriseMoonset(pickedMoonData);

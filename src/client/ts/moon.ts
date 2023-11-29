@@ -1,11 +1,10 @@
 import { MoonRes as MoonData } from '../../common/api';
-import { getFormattedDate, moonAPI } from './api';
+import { getFormattedDate } from '../../common/utils';
 import { createTitle, createFooter, formatDate, createImage, createSunBackButton } from './base';
 
 const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
 let location = 'zurich';
 let today = getFormattedDate();
-let currentMoonURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/next30days?unitGroup=us&key=TANA3BSE43X9AFK3TDSPXST5P&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`;
 
 let isCurrentDate = true;
 
@@ -14,21 +13,21 @@ let pickedMoonData: MoonData;
 
 const backup: MoonData = {
     description: {
-      location: "Sample Location",
-      timeZone: "UTC+0",
+        location: "Sample Location",
+        timeZone: "UTC+0",
     },
     days: [
-      {
-        datetime: "2023-11-28T18:30:00",
-        sunrise: "2023-11-28T06:30:00",
-        sunset: "2023-11-28T17:45:00",
-        moonphase: 0.75,
-        moonrise: "2023-11-28T14:00:00",
-        moonset: "2023-11-29T03:45:00",
-      },
+        {
+            datetime: "2023-11-28T18:30:00",
+            sunrise: "2023-11-28T06:30:00",
+            sunset: "2023-11-28T17:45:00",
+            moonphase: 0.75,
+            moonrise: "2023-11-28T14:00:00",
+            moonset: "2023-11-29T03:45:00",
+        },
     ],
-  };
-  
+};
+
 
 
 async function getMoonData(moonURL: string): Promise<MoonData> {
@@ -49,8 +48,8 @@ async function initMoon(): Promise<void> {
         if (moonContainer) {
             createSunBackButton(moonContainer);
             createFooter(moonContainer);
-            currentMoonData = await getMoonData(currentMoonURL);
-            pickedMoonData = await getMoonData(currentMoonURL);
+            currentMoonData = await getMoonData(getFormattedDate());
+            pickedMoonData = await getMoonData(getFormattedDate());
             createTitle(moonContainer, `Status Moon`, false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData);
             moonriseMoonset(currentMoonData);
@@ -71,7 +70,7 @@ function moonriseMoonset(moonData: MoonData): void {
 
         let moonBox = document.getElementById("moon-box");
         if (moonBox) moonBox.remove();
-        
+
         moonBox = document.createElement("div");
         moonBox.id = "moon-box";
         moonBox.className = "moon-box";
@@ -143,11 +142,13 @@ function displayMoon(moonData: MoonData): void {
 }
 
 function updateCountdown(differenceInMilliseconds: number) {
+    if (!isCurrentDate) return;
+
     let countdownElement = document.getElementById('countdown');
 
-    countdownElement?.innerHTML == '';
-
-    if (!isCurrentDate) return;
+    if (countdownElement) {
+        countdownElement.remove();
+    }
 
     countdownElement = document.createElement("div");
     countdownElement.id = "countdown";
@@ -215,7 +216,7 @@ function createDatePicker() {
 
     async function handleInputEvent() {
         const selectedDate = datePicker.value;
-        const pickedMoonURL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${selectedDate}?unitGroup=metric&include=days&key=${moonAPI}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`;
+        const pickedMoonURL = `/moon-visibility-api2&location=${location}&date=${selectedDate}`;
         pickedMoonData = await getMoonData(pickedMoonURL);
         displayMoon(pickedMoonData);
         moonriseMoonset(pickedMoonData);

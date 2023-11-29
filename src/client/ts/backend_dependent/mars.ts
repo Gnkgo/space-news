@@ -1,7 +1,9 @@
-import { randomRover } from '.././api';
 import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton } from '.././base';
 import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, marsWeatherTarget } from '../../../common/api';
 import { marsRoverPhotosTarget } from '../../../common/api';
+
+const rovers = ["curiosity", "opportunity", "spirit"];
+let randomRover = rovers[Math.floor(Math.random() * rovers.length)];
 
 let isCelsius = true;
 let isSol = true;
@@ -33,7 +35,8 @@ async function init(): Promise<void> {
 
 async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
   try {
-    const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover, camera: "TODO", date: "TODO"}));
+    if (randomRover == undefined) randomRover = "opportunity";
+    const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover}));
     const data = await response.json();
     return data;
   } catch (error) {

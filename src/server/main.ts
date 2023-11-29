@@ -3,10 +3,10 @@ import { ParamsDictionary } from "express-serve-static-core";
 import QueryString from "qs";
 import ViteExpress from "vite-express";
 import path from "path";
-import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, FireballReq, FireballRes, MoonReq, MoonRes, moonTarget } from "../common/api";
+import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, MoonReq, MoonRes, FireballReq, FireballRes } from "../common/api";
 import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
-import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, fireballTarget } from "../common/api";
+import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, fireballTarget, moonTarget, moonSelectedDayTarget } from "../common/api";
 
 /**
  * TODO
@@ -157,10 +157,12 @@ regUrlApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
   cache: cacheCreateDaily("mars_rover_photos"),
   genReq: async (req) => {
     const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${req.rover}?api_key=${marsRoverApiKey}`).then((data) => data.json());
+    console.log("MANIFEST", manifest);
     return `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.rover}/photos?sol=${manifest.photo_manifest.max_sol}&api_key=${marsRoverApiKey}`
   },
   genRes: async (res) => res as MarsRoverPhotosRes
 });
+
 regUrlApi<MoonReq, MoonRes>({
   apiName: "Moon Data",
   target: moonTarget.raw(),
@@ -168,12 +170,37 @@ regUrlApi<MoonReq, MoonRes>({
   genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
   genRes: async (res) => res as MoonRes
 });
+
+
+regUrlApi<MoonReq, MoonRes>({
+  apiName: "Moon Data",
+  target: moonTarget.raw(),
+  cache: cacheCreateDaily("moon"),
+  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/next30days??unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+
+  genRes: async (res) => res as MoonRes
+});
+
+regUrlApi<MoonReq, MoonRes>({
+  apiName: "Moon Data Selected Day",
+  target: moonSelectedDayTarget.raw(),
+  cache: cacheCreateDaily("moon_selected_day"),
+  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genRes: async (res) => res as MoonRes
+});
+
 regUrlApi<FireballReq, FireballRes>({
   apiName: "Fireball Data",
   target: fireballTarget.raw(),
   genReq: async (req) => `https://ssd-api.jpl.nasa.gov/fireball.api?date-min=${req["date-min"]}&req-loc=${req["req-loc"]}`,
   genRes: async (res) => res as FireballRes
 });
+
+
+
+
+
+
 
 // VALENTIN END
 
