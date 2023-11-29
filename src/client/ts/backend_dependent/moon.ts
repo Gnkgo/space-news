@@ -154,7 +154,6 @@ function updateCountdown(differenceInMilliseconds: number) {
     countdownElement.className = "countdown";
     moonContainer.appendChild(countdownElement);
 
-    console.log("Difference in milliseconds: ", differenceInMilliseconds);
     if (differenceInMilliseconds > 0) {
         const days = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
         const hours = Math.floor((differenceInMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -180,8 +179,7 @@ function isSameDay(date1: Date, date2: Date): boolean {
 
 function getTimeUntilNextFullMoon(): number {
     const currentDate = new Date();
-    console.log("Current date: ", currentDate);
-    console.log("Current moon data: ", currentMoonData);
+
 
     if (currentMoonData.days[0]) {
         const datePick = new Date(currentMoonData.days[0].datetime);

@@ -1,5 +1,5 @@
 import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton } from '.././base';
-import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, marsWeatherTarget } from '../../../common/api';
+import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, SolEntryRes, marsWeatherTarget } from '../../../common/api';
 import { marsRoverPhotosTarget } from '../../../common/api';
 
 const rovers = ["curiosity", "opportunity", "spirit"];
@@ -12,6 +12,9 @@ let currentDateSol: string = "";
 const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 let weatherData: MarsData;
 
+function createGraph() {
+  
+}
 
 async function init(): Promise<void> {
   try {
@@ -133,8 +136,7 @@ function handleButtonClick(label: string): void {
 }
 
 
-function createInnerWeatherBox(moreInfo: boolean): HTMLDivElement {
-  const sol = weatherData.soles[0];
+function createInnerWeatherBox(moreInfo: boolean, sol : SolEntryRes): HTMLDivElement {
   const innerWeatherBox = document.createElement('div');
   innerWeatherBox.classList.add('grey-box');
   if (sol == undefined) return innerWeatherBox ;
@@ -175,10 +177,13 @@ function renderWeather(): void {
   if (marsMain && weatherData.soles.length > 0) {
     const outerWeatherBox = document.createElement("div");
     outerWeatherBox.className = "weather-boxes";
+    console.log("CHECK", weatherData.soles);
     for (let i = Math.min(weatherData.soles.length, 6); i > 0; i--) {
+      console.log("CHECK2");
       const sol = weatherData.soles[i];
+      console.log("SOL", sol);
       if (sol == undefined) continue;
-      outerWeatherBox.appendChild(createInnerWeatherBox(false));
+      outerWeatherBox.appendChild(createInnerWeatherBox(false, sol));
     }
     todayWeather();
     marsMain.appendChild(outerWeatherBox);
@@ -205,7 +210,8 @@ function todayWeather(): void {
     currentDateSol = sol.sol;
 
     // Append the new box to the body
-    outerWeatherBox.appendChild(createInnerWeatherBox(true));
+    if (weatherData.soles[0] === undefined) return;
+    outerWeatherBox.appendChild(createInnerWeatherBox(true, weatherData.soles[0]));
     marsContainer.appendChild(outerWeatherBox);
   }
 }
