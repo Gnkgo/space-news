@@ -26,7 +26,7 @@ export const fireballTarget = new TargetPattern<FireballReq>('/nasa-fireball-api
 export type CADReq = {
   'date-min': string,
   'date-max': string,
-  'dist-max': string,
+  'min-dist-max': string,
 }
 
 export type CADRes = {

@@ -137,7 +137,7 @@ function regUrlApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
 
 regHtml('/', 'home.html');
 regHtml('/neo.html', 'neo.html');
-regApi<CADReq, CADRes>({
+regUrlApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
   target: cadTarget.raw(),
   cache: cacheCreateDaily("cad"),
@@ -168,11 +168,11 @@ regUrlApi<MoonReq, MoonRes>({
   genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
   genRes: async (res) => res as MoonRes
 });
-regApi<FireballReq, FireballRes>({
+regUrlApi<FireballReq, FireballRes>({
   apiName: "Fireball Data",
-  target: fireballTarget,
-  genReq: (req) => `https://ssd-api.jpl.nasa.gov/fireball.api?date-min=${req["date-min"]}&req-loc=${req["req-loc"]}`,
-  genRes: (res) => res as FireballRes
+  target: fireballTarget.raw(),
+  genReq: async (req) => `https://ssd-api.jpl.nasa.gov/fireball.api?date-min=${req["date-min"]}&req-loc=${req["req-loc"]}`,
+  genRes: async (res) => res as FireballRes
 });
 
 // VALENTIN END
