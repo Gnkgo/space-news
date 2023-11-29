@@ -13,6 +13,7 @@ const fireballMinDate = '2010-01-01';
 const fireballReqLocBool = true;
 const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=${fireballReqLocBool}`;
 
+
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
 fetch('/neo.html')
                 .then(response => response.text())
@@ -39,29 +40,33 @@ async function getCloseApproachData(cadApiUrl: string){
 }
 
 function processCloseApproachData(cadJson: CadJson){
-    const cadContainer = document.getElementById('cad-container');
+    const neoContainer = document.getElementById('neo-container');
 
     for (const elem of cadJson.data){
-        const cadElemBox = document.createElement('div');
-        cadElemBox.id = 'cad-Elem-box';
+        //Create Asteroid image
+        const cadElem = document.createElement('img');
+        cadElem.classList.add('cad-Elem'); 
+        cadElem.id = `cad-Elem-${elem[0]?.toString()}`;
+        cadElem.src = '/src/client/img/asteroid.png';
 
+        //Create Info Box
         const objectName = document.createElement("h3");
         objectName.textContent = elem[0]?.toString() || 'N/A';
-        cadElemBox?.appendChild(objectName)
+        cadElem?.appendChild(objectName)
 
         const objectDateText = document.createElement("p");
         objectDateText.textContent = "Closest approach date: " + elem[3];
-        cadElemBox?.appendChild(objectDateText);
+        cadElem?.appendChild(objectDateText);
 
         const objectDistText = document.createElement("p");
         objectDistText.textContent = "Distance: " + Number(elem[5]).toFixed(4) + "au";
-        cadElemBox?.appendChild(objectDistText);
+        cadElem?.appendChild(objectDistText);
 
         const objectVelText = document.createElement("p");
         objectVelText.textContent = "Velocity: " + Number(elem[7]).toFixed(4) + "km/s";
-        cadElemBox?.appendChild(objectVelText);
+        cadElem?.appendChild(objectVelText);
 
-        cadContainer?.appendChild(cadElemBox);
+        neoContainer?.appendChild(cadElem);
     }
 }
 
