@@ -1,10 +1,12 @@
 import express from "express";
+import { ParamsDictionary } from "express-serve-static-core";
+import QueryString from "qs";
 import ViteExpress from "vite-express";
 import path from "path";
-import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsRoverManifestReq, MarsRoverManifestRes, MarsWeatherReq, MarsWeatherRes, MoonDataReq, MoonDataRes } from "../common/api";
+import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, MoonReq, MoonRes } from "../common/api";
 import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
-import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, marsRoverManifestTarget, moonVisibilityTarget, moonVisibilityTarget2} from "../common/api";
+import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, moonTarget, moonSelectedDayTarget as moonSelectedDayTarget} from "../common/api";
 
 /**
  * TODO
@@ -17,8 +19,7 @@ import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, marsRoverManifestT
 const app = express();
 
 // Constants
-const apiKey = 'DEMO_KEY';
-//const nasaApiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX';
+const marsRoverApiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX';
 const moonApiKey = 'TANA3BSE43X9AFK3TDSPXST5P';
 
 // Helper functions
@@ -69,8 +70,8 @@ type ApiDef<TReq, TRes> = {
   apiName: string,
   target: string,
   cache?: Cache<TRes>,
-  genReq: (req: TReq) => string,
-  genRes: (json: any) => TRes
+  genReq: (req: TReq) => Promise<string>,
+  genRes: (json: any) => Promise<TRes>
 }
 function apiInit<TReq, TRes>(api: ApiDef<TReq, TRes>): ApiDef<TReq, TRes> {
   const cache = api.cache;
@@ -99,12 +100,12 @@ function regFile(target: string, ...paths: string[]): void {
 function regHtml(target: string, file: string): void {
   regFile(target, 'src', 'client', 'html', file);
 }
-function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
+function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>, func: (req: express.Request<ParamsDictionary, any, any, QueryString.ParsedQs, Record<string, any>>) => any): void {
   apiInit(api);
   app.get(api.target, async (req, res) => {
     try {
-      const apiReq = req.query as TReq;
-      const fetchNew = async () => await fetch(api.genReq(apiReq)).then((data) => data.json()).then((json) => api.genRes(json));
+      const apiReq = func(req) as TReq;
+      const fetchNew = async () => await fetch(await api.genReq(apiReq)).then((data) => data.json()).then(async (json) => await api.genRes(json));
       let apiRes: TRes;
       const cache = api.cache;
       if (cache != undefined) {
@@ -127,53 +128,58 @@ function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
     }
   });
 }
+function regUrlApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
+  regApi<TReq, TRes>(api, (req) => req.query);
+}
+/*function regHeaderApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
+  regApi<TReq, TRes>(api, (req) => req.headers);
+}*/
+
 regHtml('/', 'home.html');
 regHtml('/nea.html', 'nea.html');
-regApi<CADReq, CADRes>({
+regUrlApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
-  target: cadTarget,
+  target: cadTarget.raw(),
   cache: cacheCreateDaily("cad"),
-  genReq: (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&dist-max=${req["dist-max"]}`,
-  genRes: (res) => res
+  genReq: async (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&dist-max=${req["dist-max"]}`,
+  genRes: async (res) => res
 });
-regApi<MarsWeatherReq, MarsWeatherRes>({
+regUrlApi<MarsWeatherReq, MarsWeatherRes>({
   apiName: "Mars Weather Data",
-  target: marsWeatherTarget,
+  target: marsWeatherTarget.raw(),
   cache: cacheCreateDaily("mars_weather"),
-  genReq: (_req) => 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json',
-  genRes: (res) => res as MarsWeatherRes
+  genReq: async (_req) => 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json',
+  genRes: async (res) => res as MarsWeatherRes
 });
-regApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
+regUrlApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
   apiName: "Mars Rover Photos Data",
-  target: marsRoverPhotosTarget,
+  target: marsRoverPhotosTarget.raw(),
   cache: cacheCreateDaily("mars_rover_photos"),
-  genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.rover}/photos?sol=${req.maxSol}&api_key=${apiKey}`,
-  genRes: (res) => res as MarsRoverPhotosRes
+  genReq: async (req) => {
+    const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${req.rover}?api_key=${marsRoverApiKey}`).then((data) => data.json());
+    console.log("MANIFEST", manifest);
+    return `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.rover}/photos?sol=${manifest.photo_manifest.max_sol}&api_key=${marsRoverApiKey}`
+  },
+  genRes: async (res) => res as MarsRoverPhotosRes
 });
 
-regApi<MarsRoverManifestReq, MarsRoverManifestRes>({
-  apiName: "Mars Rover Photos Manifest Data",
-  target: marsRoverManifestTarget,
-  cache: cacheCreateDaily("mars_rover_manifest"),
-  genReq: (req) => `https://api.nasa.gov/mars-photos/api/v1/manifests/${req.rover}/?api_key=${apiKey}`,
-  genRes: (res) => res as MarsRoverManifestRes
+regUrlApi<MoonReq, MoonRes>({
+  apiName: "Moon Data",
+  target: moonTarget.raw(),
+  cache: cacheCreateDaily("moon"),
+  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genRes: async (res) => res as MoonRes
 });
 
-regApi<MoonDataReq, MoonDataRes>({
-  apiName: "Moon Visibility Data",
-  target: moonVisibilityTarget,
-  cache: cacheCreateDaily("moon_visibility_data"),
-  genReq: (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/next30days?unitGroup=us&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
-  genRes: (res) => res as MoonDataRes
+regUrlApi<MoonReq, MoonRes>({
+  apiName: "Moon Data",
+  target: moonSelectedDayTarget.raw(),
+  cache: cacheCreateDaily("moon"),
+  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/next30days??unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genRes: async (res) => res as MoonRes
 });
 
-regApi<MoonDataReq, MoonDataRes>({
-  apiName: "Moon Visibility Data 2",
-  target: moonVisibilityTarget2,
-  cache: cacheCreateDaily("moon_visibility_data"),
-  genReq: (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=us&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
-  genRes: (res) => res as MoonDataRes
-});
+
 
 
 

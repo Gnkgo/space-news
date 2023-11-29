@@ -1,10 +1,11 @@
-import { MoonRes as MoonData } from '../../common/api';
-import { getFormattedDate } from '../../common/utils';
-import { createTitle, createFooter, formatDate, createImage, createSunBackButton } from './base';
+import { MoonRes as MoonData, moonTarget } from '../../../common/api';
+import { getFormattedDate } from '../../../common/utils';
+import { createTitle, createFooter, formatDate, createImage, createSunBackButton } from '.././base';
 
 const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
 let location = 'zurich';
 let today = getFormattedDate();
+let selectedDate = today;
 
 let isCurrentDate = true;
 
@@ -13,26 +14,26 @@ let pickedMoonData: MoonData;
 
 const backup: MoonData = {
     description: {
-        location: "Sample Location",
-        timeZone: "UTC+0",
+      location: "Sample Location",
+      timeZone: "UTC+0",
     },
     days: [
-        {
-            datetime: "2023-11-28T18:30:00",
-            sunrise: "2023-11-28T06:30:00",
-            sunset: "2023-11-28T17:45:00",
-            moonphase: 0.75,
-            moonrise: "2023-11-28T14:00:00",
-            moonset: "2023-11-29T03:45:00",
-        },
+      {
+        datetime: "2023-11-28T18:30:00",
+        sunrise: "2023-11-28T06:30:00",
+        sunset: "2023-11-28T17:45:00",
+        moonphase: 0.75,
+        moonrise: "2023-11-28T14:00:00",
+        moonset: "2023-11-29T03:45:00",
+      },
     ],
-};
+  };
+  
 
 
-
-async function getMoonData(moonURL: string): Promise<MoonData> {
+async function getMoonData(date: string): Promise<MoonData> {
     try {
-        const response = await fetch(moonURL);
+        const response = await fetch(moonTarget.resolve({date: date, location: location}));
         const data = await response.json() as MoonData;
         console.log("Moon data fetched successfully", data);
         return data;
@@ -70,7 +71,7 @@ function moonriseMoonset(moonData: MoonData): void {
 
         let moonBox = document.getElementById("moon-box");
         if (moonBox) moonBox.remove();
-
+        
         moonBox = document.createElement("div");
         moonBox.id = "moon-box";
         moonBox.className = "moon-box";
@@ -142,13 +143,12 @@ function displayMoon(moonData: MoonData): void {
 }
 
 function updateCountdown(differenceInMilliseconds: number) {
-    if (!isCurrentDate) return;
-
     let countdownElement = document.getElementById('countdown');
 
-    if (countdownElement) {
-        countdownElement.remove();
-    }
+    if (!isCurrentDate) return;
+
+    countdownElement?.remove();
+
 
     countdownElement = document.createElement("div");
     countdownElement.id = "countdown";
@@ -213,11 +213,11 @@ function createDatePicker() {
     datePicker.className = "date-picker";
     datePicker.min = "1971-01-01";
     datePicker.max = "2050-01-01";
+    datePicker.value = selectedDate;
 
     async function handleInputEvent() {
-        const selectedDate = datePicker.value;
-        const pickedMoonURL = `/moon-visibility-api2&location=${location}&date=${selectedDate}`;
-        pickedMoonData = await getMoonData(pickedMoonURL);
+        selectedDate = datePicker.value;
+        pickedMoonData = await getMoonData(selectedDate);
         displayMoon(pickedMoonData);
         moonriseMoonset(pickedMoonData);
         createTitle(moonContainer, `Status Moon`, false, formatDate(pickedMoonData.days[0]?.datetime), "");

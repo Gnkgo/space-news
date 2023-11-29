@@ -1,6 +1,6 @@
-import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton } from './base';
-import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, marsWeatherTarget } from '../../common/api';
-import { marsRoverPhotosTarget } from '../../common/api';
+import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton } from '.././base';
+import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, marsWeatherTarget } from '../../../common/api';
+import { marsRoverPhotosTarget } from '../../../common/api';
 
 const rovers = ["curiosity", "opportunity", "spirit"];
 let randomRover = rovers[Math.floor(Math.random() * rovers.length)];
@@ -35,7 +35,7 @@ async function init(): Promise<void> {
 
 async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
   try {
-    if (randomRover == undefined) randomRover = "Opportunity";
+    if (randomRover == undefined) randomRover = "opportunity";
     const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover}));
     const data = await response.json();
     return data;

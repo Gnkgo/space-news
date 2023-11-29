@@ -1,9 +1,28 @@
-export const cadTarget = '/nasa-cad-api';
-export const marsWeatherTarget = '/nasa-mars-weather-api';
-export const marsRoverPhotosTarget = '/nasa-mars-rover-photos-api';
-export const marsRoverManifestTarget = '/nasa-mars-rover-manifest-api';
-export const moonVisibilityTarget = '/moon-visibility-api';
-export const moonVisibilityTarget2 = '/moon-visibility-api2';
+export class TargetPattern<TReq extends {}> {
+  private readonly _target: string;
+
+  public constructor(target: string) {
+    this._target = target;
+  }
+
+  public raw(): string {
+    return this._target;
+  }
+
+  public resolve(req: TReq): string {
+    const entries = Object.entries(req);
+    if (entries.length == 0)
+      return this._target;
+    return `${this._target}?${entries.map(entry => `${entry[0]}=${entry[1]}`).join('&')}`;
+  }
+}
+
+export const cadTarget = new TargetPattern<CADReq>('/nasa-cad-api');
+export const marsWeatherTarget = new TargetPattern<MarsWeatherReq>('/nasa-mars-weather-api');
+export const marsRoverPhotosTarget = new TargetPattern<MarsRoverPhotosReq>('/nasa-mars-rover-photos-api');
+export const moonTarget = new TargetPattern<MoonReq>('/visual-crossing-moon-api');
+export const moonSelectedDayTarget = new TargetPattern<MoonReq>('/visual-crossing-moon-api2');
+
 
 export type CADReq = {
   'date-min': string,
@@ -58,28 +77,13 @@ export type MarsWeatherRes = {
 
 export type MarsRoverPhotosReq = {
   'rover': string;
-  'maxSol': string;
 }
 
 export type MarsRoverPhotosRes = any;
 
-export type MarsRoverManifestReq = {
-  'rover': string;
-}
-
-export type MarsRoverManifestRes = {
-  name : string;
-  landing_date : string;
-  launch_date : string;
-  status : string;
-  max_sol : string;
-  max_date : string;
-  total_photos : string;
-}
-
 // MOON
 
-export type MoonDataReq = {
+export type MoonReq = {
   'date': string;
   'location': string;
 }
@@ -93,13 +97,7 @@ export type MoonEntryRes = {
   moonset: string;
 }
 
-
-export type MoonDataRes = {
+export type MoonRes = {
   description: Record<string, string>;
   days: MoonEntryRes[];
 }
-
-
-
-
-
