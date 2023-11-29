@@ -23,3 +23,6 @@ public
 *.njsproj
 *.sln
 *.sw?
+
+# Cache
+/caches

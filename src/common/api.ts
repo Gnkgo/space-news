@@ -21,7 +21,6 @@ export const cadTarget = new TargetPattern<CADReq>('/nasa-cad-api');
 export const marsWeatherTarget = new TargetPattern<MarsWeatherReq>('/nasa-mars-weather-api');
 export const marsRoverPhotosTarget = new TargetPattern<MarsRoverPhotosReq>('/nasa-mars-rover-photos-api');
 export const moonTarget = new TargetPattern<MoonReq>('/visual-crossing-moon-api');
-export const moonSelectedDayTarget = new TargetPattern<MoonReq>('/visual-crossing-moon-api2');
 export const fireballTarget = new TargetPattern<FireballReq>('/nasa-fireball-api');
 
 export type CADReq = {
