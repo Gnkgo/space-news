@@ -3,7 +3,7 @@ const mars = document.getElementById('mars');
 mars?.addEventListener('click', () => showPlanetInformation('mars'));
 
 const earth = document.getElementById('earth');
-earth?.addEventListener('click', () => showPlanetInformation('nea'));
+earth?.addEventListener('click', () => showPlanetInformation('neo'));
 
 const moon = document.getElementById('moon');
 moon?.addEventListener('click', () => showPlanetInformation('moon'));
@@ -29,10 +29,10 @@ function showPlanetInformation(planet: string) {
             }
             break;
     
-        case 'nea':
-            const neaContainer = document.getElementById('nea-container');
-            if(neaContainer){
-                neaContainer.style.display = 'grid';
+        case 'neo':
+            const neoContainer = document.getElementById('neo-container');
+            if(neoContainer){
+                neoContainer.style.display = 'grid';
             }
             break;
         case 'moon':
