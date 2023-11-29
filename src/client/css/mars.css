@@ -14,67 +14,65 @@ div#mars-container {
   min-height: 100vh;
   /* Ensure body takes up at least the full viewport height */
 
-  >main {
+  & div#button-box {
+    grid-area: buttons;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-right: 10px;
+    margin-top: 0;
+
+    & button.buttonChange {
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 100%;
+      padding: 4px;
+      color: white;
+      margin-right: 5px;
+    }
+
+    & button#celsius-button, button#mars-date-button {
+      display: none;
+    }
+  }
+
+  & main {
     grid-area: weather-boxes;
     flex-wrap: wrap;
     gap: 10px;
-  }
-}
 
-
-
-
-.weather-boxes {
-  display: flex;
-  justify-content: space-evenly;
-
-  & .grey-box {
-    margin: 5px;
-  }
-}
-
-
-
-.today-weather-box {
-  grid-area: today-weather-box;
-  justify-content: center;
-  /* Center the content horizontally */
-  align-items: center;
-  /* Center the content vertically */
-  display: flex;
-
-  & .grey-box {
-
-    & h3 {
-      font-size: 2rem;
+    & div.weather-boxes {
+      display: flex;
+      justify-content: space-evenly;
+    
+      & .grey-box {
+        margin: 5px;
+      }
     }
+  }
 
-    & p {
-      font-size: 1rem;
+  & div#today-weather-box {
+    grid-area: today-weather-box;
+    justify-content: center;
+    /* Center the content horizontally */
+    align-items: center;
+    /* Center the content vertically */
+    display: flex;
+  
+    & .grey-box {
+  
+      & h3 {
+        font-size: 2rem;
+      }
+  
+      & p {
+        font-size: 1rem;
+      }
     }
   }
 }
-
-.buttonChange {
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 100%;
-  padding: 4px;
-  color: white;
-  margin-right: 5px;
-}
-
-.button-box {
-  grid-area: buttons;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-right: 10px;
-  margin-top: 0;
-}
-
 
 
 /* Media query for screens smaller than 660px */

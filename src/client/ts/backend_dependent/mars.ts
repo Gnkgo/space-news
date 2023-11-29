@@ -1,4 +1,4 @@
-import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton } from '.././base';
+import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton, changeElemDisplay } from '.././base';
 import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, SolEntryRes, marsWeatherTarget } from '../../../common/api';
 import { marsRoverPhotosTarget } from '../../../common/api';
 
@@ -105,32 +105,37 @@ function createButtons(): void {
   buttonBox.id = "button-box";
   buttonBox.className = "button-box";
 
-  const buttonLabels = ["C", "F", "Earth", "Sol"];
+  const buttonLabels = {'celsius': '°C','fahrenheit': '°F','earth-date': 'Earth','mars-date': 'Sol'};
 
-  buttonLabels.forEach((label) => {
-    const button = createButton("buttonChange", label);
-    button.addEventListener("click", () => handleButtonClick(label));
+  for (const [key, label] of Object.entries(buttonLabels)) {
+    const button = createButton('buttonChange', label, key);
+    button.addEventListener("click", () => handleButtonClick(key));
     buttonBox.appendChild(button);
-  });
+  }
 
   marsContainer.appendChild(buttonBox);
 }
 
-function createButton(className: string, label: string): HTMLButtonElement {
+function createButton(className: string, label: string, id: string): HTMLButtonElement {
   const button = document.createElement("button");
   button.className = className;
+  button.id = `${id}-button`;
   button.textContent = label;
   return button;
 }
 
 function handleButtonClick(label: string): void {
-  if (label === "Sol" && !isSol) {
+  if (label === "mars-date") {
+    changeElemDisplay('mars-date-button', 'earth-date-button');
     toggleDateUnit();
-  } else if (label === "Earth" && isSol) {
+  } else if (label === "earth-date") {
+    changeElemDisplay('earth-date-button', 'mars-date-button');
     toggleDateUnit();
-  } else if (label === "C" && !isCelsius) {
+  } else if (label === "celsius") {
+    changeElemDisplay('celsius-button', 'fahrenheit-button');
     toggleTemperatureUnit();
-  } else if (label === "F" && isCelsius) {
+  } else if (label === "fahrenheit") {
+    changeElemDisplay('fahrenheit-button', 'celsius-button');
     toggleTemperatureUnit();
   }
 }
