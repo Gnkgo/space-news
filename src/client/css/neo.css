@@ -43,4 +43,10 @@ div#neo-container {
         align-self: center;
         height: 75vh;
     }
+
+    & img#sun-button {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
