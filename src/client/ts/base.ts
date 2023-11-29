@@ -28,7 +28,7 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
 
     divContainer.appendChild(sunButton);
 
-    sunButton?.addEventListener('click', () => goHome());
+    sunButton?.addEventListener('click', goHome);
 
 
 }
@@ -127,8 +127,6 @@ export function celsiusToFahrenheit(celsius: number): number {
 
 
 export function goHome() {
-    const sunButtom = document.getElementById('sun-button');
-    sunButtom?.addEventListener('click', () => goHome());
 
     const homeContainer = document.getElementById("home-container");
     if (homeContainer) {
@@ -140,9 +138,9 @@ export function goHome() {
         marsContainer.style.display = 'none';
     }
 
-    const neaContainer = document.getElementById('nea-container');
-    if (neaContainer) {
-        neaContainer.style.display = 'none';
+    const neoContainer = document.getElementById('neo-container');
+    if (neoContainer) {
+        neoContainer.style.display = 'none';
     }
 
     const moonContainer = document.getElementById('moon-container');

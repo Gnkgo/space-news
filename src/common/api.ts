@@ -22,12 +22,12 @@ export const marsWeatherTarget = new TargetPattern<MarsWeatherReq>('/nasa-mars-w
 export const marsRoverPhotosTarget = new TargetPattern<MarsRoverPhotosReq>('/nasa-mars-rover-photos-api');
 export const moonTarget = new TargetPattern<MoonReq>('/visual-crossing-moon-api');
 export const moonSelectedDayTarget = new TargetPattern<MoonReq>('/visual-crossing-moon-api2');
-
+export const fireballTarget = new TargetPattern<FireballReq>('/nasa-fireball-api');
 
 export type CADReq = {
   'date-min': string,
   'date-max': string,
-  'dist-max': string,
+  'min-dist-max': string,
 }
 
 export type CADRes = {
@@ -81,6 +81,20 @@ export type MarsRoverPhotosReq = {
 
 export type MarsRoverPhotosRes = any;
 
+export type FireballReq = {
+  'date-min': string,
+  'req-loc': boolean
+};
+
+export type FireballRes = {
+  signature: {
+    version: string;
+    source: string;
+  };
+  count: number;
+  fields: string[];
+  data: Array<Array<string | number>>;
+};
 // MOON
 
 export type MoonReq = {

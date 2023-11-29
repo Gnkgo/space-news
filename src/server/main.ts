@@ -3,10 +3,10 @@ import { ParamsDictionary } from "express-serve-static-core";
 import QueryString from "qs";
 import ViteExpress from "vite-express";
 import path from "path";
-import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, MoonReq, MoonRes } from "../common/api";
+import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, MoonReq, MoonRes, FireballReq, FireballRes } from "../common/api";
 import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
-import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, moonTarget, moonSelectedDayTarget as moonSelectedDayTarget} from "../common/api";
+import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, fireballTarget, moonTarget, moonSelectedDayTarget } from "../common/api";
 
 /**
  * TODO
@@ -136,12 +136,12 @@ function regUrlApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
 }*/
 
 regHtml('/', 'home.html');
-regHtml('/nea.html', 'nea.html');
+regHtml('/neo.html', 'neo.html');
 regUrlApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
   target: cadTarget.raw(),
   cache: cacheCreateDaily("cad"),
-  genReq: async (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&dist-max=${req["dist-max"]}`,
+  genReq: async (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&min-dist-max=${req["min-dist-max"]}`,
   genRes: async (res) => res
 });
 regUrlApi<MarsWeatherReq, MarsWeatherRes>({
@@ -171,13 +171,32 @@ regUrlApi<MoonReq, MoonRes>({
   genRes: async (res) => res as MoonRes
 });
 
+
 regUrlApi<MoonReq, MoonRes>({
   apiName: "Moon Data",
-  target: moonSelectedDayTarget.raw(),
+  target: moonTarget.raw(),
   cache: cacheCreateDaily("moon"),
   genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/next30days??unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+
   genRes: async (res) => res as MoonRes
 });
+
+regUrlApi<MoonReq, MoonRes>({
+  apiName: "Moon Data Selected Day",
+  target: moonSelectedDayTarget.raw(),
+  cache: cacheCreateDaily("moon_selected_day"),
+  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genRes: async (res) => res as MoonRes
+});
+
+regUrlApi<FireballReq, FireballRes>({
+  apiName: "Fireball Data",
+  target: fireballTarget.raw(),
+  genReq: async (req) => `https://ssd-api.jpl.nasa.gov/fireball.api?date-min=${req["date-min"]}&req-loc=${req["req-loc"]}`,
+  genRes: async (res) => res as FireballRes
+});
+
+
 
 
 
@@ -189,8 +208,8 @@ regUrlApi<MoonReq, MoonRes>({
 /*app.get('/', (_req, res) => {
   res.sendFile(path.resolve('src', 'client', 'html', 'home.html'));
 });
-app.get('/nea.html', (_req, res) => {
-  res.sendFile(path.resolve('src', 'client', 'html', 'nea.html'));
+app.get('/neo.html', (_req, res) => {
+  res.sendFile(path.resolve('src', 'client', 'html', 'neo.html'));
 });
 app.get('/nasa-cad-api', async (req, res) => {
   try {
