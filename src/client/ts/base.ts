@@ -27,10 +27,7 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
     sunButton.src = "/src/client/img/sun.png";
 
     divContainer.appendChild(sunButton);
-
     sunButton?.addEventListener('click', goHome);
-
-
 }
 
 
