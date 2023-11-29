@@ -2,9 +2,29 @@ div#neo-container {
     display: none;
     height: 100vh;
     grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: '. neo fireball-container' ;
     color: wheat;
 
-    & div#cad-container, div#fireball-container {
+    & img.cad-Elem {
+        align-self: center;
+        justify-self: center;
+        position: absolute;
+        width: 10vh;
+        animation: orbitAsteroid 10s linear infinite;
+    }
+
+    & img#neo {
+        align-self: center;
+        height: 75vh;
+    }
+
+    & img#sun-button {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    & div#fireball-container {
         display: flex;
         flex-direction: column;
         align-self: center;
@@ -13,7 +33,7 @@ div#neo-container {
         -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
         scrollbar-width: none;  /* Hide scrollbar for Firefox */
 
-        & div#cad-Elem-box, div#fireball-Elem-box {
+        & div#fireball-Elem-box {
             display: flex;
             flex-direction: column;
             line-height: 0.8;
@@ -35,18 +55,19 @@ div#neo-container {
         }
     }
 
-    & div#cad-container::-webkit-scrollbar, div#fireball-container::-webkit-scrollbar {
+    & div#fireball-container::-webkit-scrollbar {
         display: none;
     }
+}
 
-    & img#neo {
-        align-self: center;
-        height: 75vh;
-    }
+@keyframes orbitAsteroid {
+    0% { 
+        transform: rotate(0deg)  
+              translateY(40vh) rotate(45deg); 
+    } 
 
-    & img#sun-button {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+    100% { 
+        transform: rotate(360deg)  
+              translateY(40vh) rotate(45deg); 
+    } 
 }
