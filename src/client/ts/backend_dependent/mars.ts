@@ -1,6 +1,8 @@
 import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton, changeElemDisplay } from '.././base';
 import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, SolEntryRes, marsWeatherTarget } from '../../../common/api';
 import { marsRoverPhotosTarget } from '../../../common/api';
+import { extractAndDisplayTemperature } from '../mars/createTemperatureGraph';
+
 
 const rovers = ["curiosity", "opportunity", "spirit"];
 let randomRover = rovers[Math.floor(Math.random() * rovers.length)];
@@ -12,8 +14,10 @@ let currentDateSol: string = "";
 const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 let weatherData: MarsData;
 
-function createGraph() {
-  
+interface TemperatureData {
+  terrestrial_date: string;
+  min_temp: string;
+  max_temp: string;
 }
 
 async function init(): Promise<void> {
@@ -179,21 +183,30 @@ function renderWeather(): void {
   } else {
     marsMain.innerHTML = '';
   }
+  let temperatureData: TemperatureData[] = [];
   if (marsMain && weatherData.soles.length > 0) {
     const outerWeatherBox = document.createElement("div");
     outerWeatherBox.className = "weather-boxes";
     console.log("CHECK", weatherData.soles);
-    for (let i = Math.min(weatherData.soles.length, 6); i > 0; i--) {
+    for (let i = Math.min(weatherData.soles.length, 300); i > 0; i--) {
       console.log("CHECK2");
       const sol = weatherData.soles[i];
       console.log("SOL", sol);
       if (sol == undefined) continue;
+      temperatureData.push({
+        terrestrial_date: sol.terrestrial_date,
+        min_temp: sol.min_temp,
+        max_temp: sol.max_temp
+      });
       outerWeatherBox.appendChild(createInnerWeatherBox(false, sol));
     }
     todayWeather();
-    marsMain.appendChild(outerWeatherBox);
+    extractAndDisplayTemperature(temperatureData);
+    //marsMain.appendChild(outerWeatherBox,);
   }
 }
+
+
 
 function todayWeather(): void {
   if (marsContainer && weatherData.soles.length > 0) {
