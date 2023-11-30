@@ -6,7 +6,7 @@ import path from "path";
 import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, MoonReq, MoonRes, FireballReq, FireballRes } from "../common/api";
 import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
-import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, fireballTarget, moonTarget, moonSelectedDayTarget } from "../common/api";
+import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, fireballTarget, moonTarget } from "../common/api";
 
 /**
  * TODO
@@ -167,24 +167,6 @@ regUrlApi<MoonReq, MoonRes>({
   apiName: "Moon Data",
   target: moonTarget.raw(),
   cache: cacheCreateDaily("moon"),
-  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
-  genRes: async (res) => res as MoonRes
-});
-
-
-regUrlApi<MoonReq, MoonRes>({
-  apiName: "Moon Data",
-  target: moonTarget.raw(),
-  cache: cacheCreateDaily("moon"),
-  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/next30days??unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
-
-  genRes: async (res) => res as MoonRes
-});
-
-regUrlApi<MoonReq, MoonRes>({
-  apiName: "Moon Data Selected Day",
-  target: moonSelectedDayTarget.raw(),
-  cache: cacheCreateDaily("moon_selected_day"),
   genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
   genRes: async (res) => res as MoonRes
 });

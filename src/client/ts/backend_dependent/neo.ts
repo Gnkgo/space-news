@@ -1,6 +1,6 @@
-import { getFormattedDate } from '../../../common/utils';
+import {getFormattedDate} from '../../../common/utils';
 import { CADRes as CadJson, FireballRes as FireBallJson} from '../../../common/api';
-//import { createSunBackButton } from './base';
+import { createSunBackButton } from '../base';
 
 //Close approach parameters
 const cadMinDate = getFormattedDate();
@@ -13,7 +13,6 @@ const fireballMinDate = '2010-01-01';
 const fireballReqLocBool = true;
 const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=${fireballReqLocBool}`;
 
-
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
 fetch('/neo.html')
                 .then(response => response.text())
@@ -22,12 +21,12 @@ fetch('/neo.html')
                         neoContainer.innerHTML = html;
                         getCloseApproachData(cadApiUrl);
                         getFireballData(fireballApiUrl);
+                        
+                        //Add back to home page button
+                        createSunBackButton(neoContainer);
                     }
                 })
                 .catch(error => console.error('Error loading neo.html:', error));
-
-//TODO: Check if you can adapt the layout so you have a backbutton to the overview page again
-//createSunBackButton(neoContainer);
 
 async function getCloseApproachData(cadApiUrl: string){
     try{

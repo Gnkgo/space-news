@@ -35,7 +35,6 @@ async function getMoonData(date: string): Promise<MoonData> {
     try {
         const response = await fetch(moonTarget.resolve({date: date, location: location}));
         const data = await response.json() as MoonData;
-        console.log("Moon data fetched successfully", data);
         return data;
     } catch (error) {
         console.error("Error fetching weather data", error);
@@ -45,11 +44,10 @@ async function getMoonData(date: string): Promise<MoonData> {
 
 async function initMoon(): Promise<void> {
     try {
-        console.log("Initializing Moon");
         if (moonContainer) {
             createSunBackButton(moonContainer);
             createFooter(moonContainer);
-            currentMoonData = await getMoonData(getFormattedDate());
+            currentMoonData = await getMoonData("next30days");
             pickedMoonData = await getMoonData(getFormattedDate());
             createTitle(moonContainer, `Status Moon`, false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData);
@@ -64,7 +62,6 @@ async function initMoon(): Promise<void> {
 }
 
 function moonriseMoonset(moonData: MoonData): void {
-    console.log("MOONDATA", moonData);
     if (moonData.days[0] !== undefined) {
         const moonrise = moonData.days[0].moonrise;
         const moonset = moonData.days[0].moonset;
@@ -145,9 +142,11 @@ function displayMoon(moonData: MoonData): void {
 function updateCountdown(differenceInMilliseconds: number) {
     let countdownElement = document.getElementById('countdown');
 
+    countdownElement?.remove();
+
+
     if (!isCurrentDate) return;
 
-    countdownElement?.remove();
 
 
     countdownElement = document.createElement("div");
@@ -181,6 +180,7 @@ function isSameDay(date1: Date, date2: Date): boolean {
 function getTimeUntilNextFullMoon(): number {
     const currentDate = new Date();
 
+
     if (currentMoonData.days[0]) {
         const datePick = new Date(currentMoonData.days[0].datetime);
         const fullMoonDates = currentMoonData.days.filter((day) => day.moonphase === 0.5);
@@ -201,7 +201,6 @@ function getTimeUntilNextFullMoon(): number {
 
     return -1;
 }
-
 function createDatePicker() {
     const dateContainer = document.createElement("div");
     dateContainer.id = "date-container";
@@ -230,14 +229,6 @@ function createDatePicker() {
     datePicker.addEventListener("input", handleInputEvent);
     dateContainer.appendChild(datePicker);
     return dateContainer;
-}
-
-function getNextMonth(date: Date) {
-    var futureDate = new Date();
-    futureDate.setDate(date.getDate() + 30);
-    var futureDateString = futureDate.toISOString().split('T')[0];
-    console.log("futureDateString", futureDateString);
-    return futureDateString;
 }
 
 initMoon();

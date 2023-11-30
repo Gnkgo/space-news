@@ -1,4 +1,4 @@
-import {getFormattedDate} from './api';
+import {getFormattedDate} from '../../common/utils';
 import { CADRes as CadJson, FireballRes as FireBallJson} from '../../common/api';
 //import { createSunBackButton } from './base';
 

@@ -27,10 +27,7 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
     sunButton.src = "/src/client/img/sun.png";
 
     divContainer.appendChild(sunButton);
-
     sunButton?.addEventListener('click', goHome);
-
-
 }
 
 
@@ -149,3 +146,21 @@ export function goHome() {
     }
 }
 
+/**
+ * Hide the FROM element with display = none, and show the TO element.
+ * This achieves an inplace "switch" of elements.
+ * @param from html id of the element to hide
+ * @param to html id of the element to show
+ * @param newDisplayStyle optional parameter for TO element new display value, default is FROM.style.display
+ */
+export function changeElemDisplay(from: string, to: string, newDisplayStyle?: string){
+    const fromElem = document.getElementById(from);
+    const toElem = document.getElementById(to);
+    if(fromElem && toElem){
+      const oldDisplay = window.getComputedStyle(fromElem).display;
+      fromElem.style.display = 'none';
+      toElem.style.display = newDisplayStyle ? newDisplayStyle : oldDisplay;
+    } else {
+      console.log(`Error getting Element to change Display. FromElem: ${fromElem}, ToElem: ${toElem}`);
+    }
+}

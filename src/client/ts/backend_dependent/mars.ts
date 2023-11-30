@@ -1,5 +1,5 @@
-import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton } from '.././base';
-import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, marsWeatherTarget } from '../../../common/api';
+import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton, changeElemDisplay } from '.././base';
+import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, SolEntryRes, marsWeatherTarget } from '../../../common/api';
 import { marsRoverPhotosTarget } from '../../../common/api';
 
 const rovers = ["curiosity", "opportunity", "spirit"];
@@ -12,6 +12,9 @@ let currentDateSol: string = "";
 const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 let weatherData: MarsData;
 
+function createGraph() {
+  
+}
 
 async function init(): Promise<void> {
   try {
@@ -102,39 +105,43 @@ function createButtons(): void {
   buttonBox.id = "button-box";
   buttonBox.className = "button-box";
 
-  const buttonLabels = ["C", "F", "Earth", "Sol"];
+  const buttonLabels = {'celsius': '°C','fahrenheit': '°F','earth-date': 'Earth','mars-date': 'Sol'};
 
-  buttonLabels.forEach((label) => {
-    const button = createButton("buttonChange", label);
-    button.addEventListener("click", () => handleButtonClick(label));
+  for (const [key, label] of Object.entries(buttonLabels)) {
+    const button = createButton('buttonChange', label, key);
+    button.addEventListener("click", () => handleButtonClick(key));
     buttonBox.appendChild(button);
-  });
+  }
 
   marsContainer.appendChild(buttonBox);
 }
 
-function createButton(className: string, label: string): HTMLButtonElement {
+function createButton(className: string, label: string, id: string): HTMLButtonElement {
   const button = document.createElement("button");
   button.className = className;
+  button.id = `${id}-button`;
   button.textContent = label;
   return button;
 }
 
 function handleButtonClick(label: string): void {
-  if (label === "Sol" && !isSol) {
+  if (label === "mars-date") {
+    changeElemDisplay('mars-date-button', 'earth-date-button');
     toggleDateUnit();
-  } else if (label === "Earth" && isSol) {
+  } else if (label === "earth-date") {
+    changeElemDisplay('earth-date-button', 'mars-date-button');
     toggleDateUnit();
-  } else if (label === "C" && !isCelsius) {
+  } else if (label === "celsius") {
+    changeElemDisplay('celsius-button', 'fahrenheit-button');
     toggleTemperatureUnit();
-  } else if (label === "F" && isCelsius) {
+  } else if (label === "fahrenheit") {
+    changeElemDisplay('fahrenheit-button', 'celsius-button');
     toggleTemperatureUnit();
   }
 }
 
 
-function createInnerWeatherBox(moreInfo: boolean): HTMLDivElement {
-  const sol = weatherData.soles[0];
+function createInnerWeatherBox(moreInfo: boolean, sol : SolEntryRes): HTMLDivElement {
   const innerWeatherBox = document.createElement('div');
   innerWeatherBox.classList.add('grey-box');
   if (sol == undefined) return innerWeatherBox ;
@@ -175,10 +182,13 @@ function renderWeather(): void {
   if (marsMain && weatherData.soles.length > 0) {
     const outerWeatherBox = document.createElement("div");
     outerWeatherBox.className = "weather-boxes";
+    console.log("CHECK", weatherData.soles);
     for (let i = Math.min(weatherData.soles.length, 6); i > 0; i--) {
+      console.log("CHECK2");
       const sol = weatherData.soles[i];
+      console.log("SOL", sol);
       if (sol == undefined) continue;
-      outerWeatherBox.appendChild(createInnerWeatherBox(false));
+      outerWeatherBox.appendChild(createInnerWeatherBox(false, sol));
     }
     todayWeather();
     marsMain.appendChild(outerWeatherBox);
@@ -205,7 +215,8 @@ function todayWeather(): void {
     currentDateSol = sol.sol;
 
     // Append the new box to the body
-    outerWeatherBox.appendChild(createInnerWeatherBox(true));
+    if (weatherData.soles[0] === undefined) return;
+    outerWeatherBox.appendChild(createInnerWeatherBox(true, weatherData.soles[0]));
     marsContainer.appendChild(outerWeatherBox);
   }
 }
