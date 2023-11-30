@@ -164,3 +164,12 @@ export function changeElemDisplay(from: string, to: string, newDisplayStyle?: st
       console.log(`Error getting Element to change Display. FromElem: ${fromElem}, ToElem: ${toElem}`);
     }
 }
+
+/**
+ * Removes all spaces in a string which results in one long word.
+ * @param str arbitrary string to edit
+ * @returns STR where are all spaces got deleted
+ */
+export function removeAllSpaces(str: string){
+    return str.replace(/\s+/g, '');
+}

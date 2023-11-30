@@ -1,20 +1,21 @@
 div#neo-container {
     display: none;
     height: 100vh;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 2fr 1fr;
     grid-template-areas: '. neo fireball-container' ;
     color: wheat;
 
-    & img.cad-Elem {
+    & img.cad-elem-img {
         align-self: center;
         justify-self: center;
         position: absolute;
         width: 10vh;
-        animation: orbitAsteroid 10s linear infinite;
+        animation: orbitAsteroid 60s linear infinite;
     }
 
     & img#neo {
         align-self: center;
+        justify-self: center;
         height: 75vh;
     }
 
@@ -24,7 +25,7 @@ div#neo-container {
         transform: translateX(-50%);
     }
 
-    & div#fireball-container {
+    & div#cad-container, div#fireball-container {
         display: flex;
         flex-direction: column;
         align-self: center;
@@ -33,26 +34,36 @@ div#neo-container {
         -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
         scrollbar-width: none;  /* Hide scrollbar for Firefox */
 
-        & div#fireball-Elem-box {
+        & div.cad-elem-info, div#fireball-Elem-box {
             display: flex;
             flex-direction: column;
-            line-height: 0.8;
             padding: 3px;
             margin: 5px;
             background-color: rgba(102, 102, 102, 0.6);;
             border-radius: 8px;
 
-            & h3{
+            & h4{
                 align-self: center;
-                font-size: 20pt;
+                font-size: 15pt;
                 margin: 8pt;
             }
           
             & p {
-                margin: 8pt;
-                font-size: 12pt;
+                margin-left: 8pt;
+                margin-right: 8pt;
+                margin-top: 0;
+                margin-bottom: 4pt;
+                font-size: 10pt;
             }
         }
+
+        & div.cad-elem-info {
+            display: none;
+        }
+    }
+
+    & div#cad-container {
+        justify-content: center;
     }
 
     & div#fireball-container::-webkit-scrollbar {

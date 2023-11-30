@@ -1,6 +1,6 @@
 import {getFormattedDate} from '../../../common/utils';
 import { CADRes as CadJson, FireballRes as FireBallJson} from '../../../common/api';
-import { createSunBackButton } from '../base';
+import { createSunBackButton, removeAllSpaces } from '../base';
 
 //Close approach parameters
 const cadMinDate = getFormattedDate();
@@ -12,6 +12,9 @@ const cadApiUrl = `/nasa-cad-api?date-min=${cadMinDate}&date-max=${cadMaxDate}&m
 const fireballMinDate = '2010-01-01';
 const fireballReqLocBool = true;
 const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=${fireballReqLocBool}`;
+
+//Bool dictionary for permanent cad info display
+let cadInfoDict: {[key: string] : boolean} = {};
 
 
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
@@ -41,32 +44,67 @@ async function getCloseApproachData(cadApiUrl: string){
 
 function processCloseApproachData(cadJson: CadJson){
     const neoContainer = document.getElementById('neo-container');
+    const cadContainer = document.getElementById('cad-container');
 
     for (const elem of cadJson.data){
+        const elemName = removeAllSpaces(elem[0]!);
+        cadInfoDict[elemName] = false;
         //Create Asteroid image
-        const cadElem = document.createElement('img');
-        cadElem.classList.add('cad-Elem'); 
-        cadElem.id = `cad-Elem-${elem[0]?.toString()}`;
-        cadElem.src = '/src/client/img/asteroid.png';
+        const cadElemImg = document.createElement('img');
+        cadElemImg.classList.add('cad-elem-img'); 
+        cadElemImg.id = `cad-elem-img-${elemName}`;
+        cadElemImg.src = '/src/client/img/asteroid.png';
+
+        cadElemImg.addEventListener('mouseover', () => showCadInfo(elemName));
+        cadElemImg.addEventListener('click', () => showPermanentCadInfo(elemName));
+        cadElemImg.addEventListener('mouseleave', () => hideCadInfo(elemName));
+        neoContainer?.appendChild(cadElemImg);
 
         //Create Info Box
-        const objectName = document.createElement("h3");
-        objectName.textContent = elem[0]?.toString() || 'N/A';
-        cadElem?.appendChild(objectName)
+        const cadElemInfo = document.createElement('div');
+        cadElemInfo.classList.add('cad-elem-info');
+        cadElemInfo.id = `cad-elem-info-${elemName}`
+
+        const objectName = document.createElement("h4");
+        objectName.textContent = `Asteroid - ${elem[0]!}`;
+        cadElemInfo?.appendChild(objectName)
 
         const objectDateText = document.createElement("p");
-        objectDateText.textContent = "Closest approach date: " + elem[3];
-        cadElem?.appendChild(objectDateText);
+        objectDateText.innerHTML = `Closest Approach<br> date: ${elem[3]}`;
+        cadElemInfo?.appendChild(objectDateText);
 
         const objectDistText = document.createElement("p");
-        objectDistText.textContent = "Distance: " + Number(elem[5]).toFixed(4) + "au";
-        cadElem?.appendChild(objectDistText);
+        objectDistText.textContent = `Distance: ${Number(elem[5]).toFixed(4)}au`;
+        cadElemInfo?.appendChild(objectDistText);
 
         const objectVelText = document.createElement("p");
-        objectVelText.textContent = "Velocity: " + Number(elem[7]).toFixed(4) + "km/s";
-        cadElem?.appendChild(objectVelText);
+        objectVelText.textContent = `Velocity: ${Number(elem[7]).toFixed(4)}km/s`;
+        cadElemInfo?.appendChild(objectVelText);
 
-        neoContainer?.appendChild(cadElem);
+        cadContainer?.appendChild(cadElemInfo);
+    }
+}
+
+function showCadInfo(elemName: string){
+    const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
+    if(cadElemInfo){
+        cadElemInfo.style.display = 'flex';
+    } else {
+        console.log('Error showing the cad info box for: ' + elemName);
+    }
+}
+
+function showPermanentCadInfo(elemName: string){
+    cadInfoDict[elemName] = true;
+    showCadInfo(elemName);
+}
+
+function hideCadInfo(elemName: string){
+    const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
+    if(!cadInfoDict[elemName] && cadElemInfo){
+        cadElemInfo.style.display = 'none';
+    }else if(!cadElemInfo) {
+        console.log('Error hiding the cad info box for: ' + elemName);
     }
 }
 
