@@ -9,13 +9,23 @@ div#neo-container {
     height: 100vh;
     grid-template-columns: 1fr 2fr 1fr;
     grid-template-areas: '. neo fireball-container' ;
-    color: wheat;
+    color: white;
 
     & img.cad-elem-img {
         align-self: center;
         justify-self: center;
         position: absolute;
         width: 10vh;
+        z-index: 1;
+    }
+
+    & img.cad-elem-img-selected {
+        align-self: center;
+        justify-self: center;
+        position: absolute;
+        width: 10vh;
+        opacity: 0;
+        z-index: 0;
     }
 
     & img#neo {

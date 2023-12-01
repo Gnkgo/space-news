@@ -55,12 +55,19 @@ function processCloseApproachData(cadJson: CadJson){
         cadElemImg.classList.add('cad-elem-img'); 
         cadElemImg.id = `cad-elem-img-${elemName}`;
         cadElemImg.src = '/src/client/img/asteroid.png';
-        addVariableOrbitAnimation(cadElemImg);
+
+        const cadElemImgSelected = document.createElement('img');
+        cadElemImgSelected.classList.add('cad-elem-img-selected');
+        cadElemImgSelected.id = `cad-elem-img-selected-${elemName}`;
+        cadElemImgSelected.src = '/src/client/img/asteroid_selected.png';
+
+        addVariableOrbitAnimation(cadElemImg, cadElemImgSelected);
 
         cadElemImg.addEventListener('mouseover', () => showCadInfo(elemName));
         cadElemImg.addEventListener('click', () => showPermanentCadInfo(elemName));
         cadElemImg.addEventListener('mouseleave', () => hideCadInfo(elemName));
         neoContainer?.appendChild(cadElemImg);
+        neoContainer?.appendChild(cadElemImgSelected);
 
         //Create Info Box
         const cadElemInfo = document.createElement('div');
@@ -102,6 +109,13 @@ function showPermanentCadInfo(elemName: string){
     cadInfoDict[elemName] = !cadInfoDict[elemName];
     cadInfoHover = true;
 
+    //show asteroid_selected image
+    const elemSelectedImage = document.getElementById(`cad-elem-img-selected-${elemName}`);
+    if(elemSelectedImage){
+        elemSelectedImage.style.opacity = '100%';
+        elemSelectedImage.style.zIndex = '2';
+    }
+
     if(!cadInfoDict[elemName]){
         cadInfoHover = !cadInfoHover;
     }
@@ -124,7 +138,7 @@ function hideCadInfo(elemName?: string){
     }
 }
 
-function addVariableOrbitAnimation(elem: HTMLImageElement){
+function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLImageElement){
     const duration = getRandomInt(60, 181);
     const distance = getRandomInt(35, 50);
     const startingAngle = getRandomInt(0,360);
@@ -142,9 +156,9 @@ function addVariableOrbitAnimation(elem: HTMLImageElement){
         }
     `;
 
-    console.log("ume: " + document.styleSheets[2]?.href);
     styleSheet?.insertRule(keyframes, styleSheet.cssRules.length);
     elem.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
+    elemSelected.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
 }
 
 async function getFireballData(fireballApiUrl: string){
