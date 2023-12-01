@@ -1,3 +1,9 @@
+:root{
+    --rotate-start: 0deg;
+    --rotate-end: calc(var(--rotate-start) + 360deg);
+    --orbit-radius: 40vh;
+}
+
 div#neo-container {
     display: none;
     height: 100vh;
@@ -10,7 +16,6 @@ div#neo-container {
         justify-self: center;
         position: absolute;
         width: 10vh;
-        animation: orbitAsteroid 60s linear infinite;
     }
 
     & img#neo {
@@ -73,12 +78,12 @@ div#neo-container {
 
 @keyframes orbitAsteroid {
     0% { 
-        transform: rotate(0deg)  
-              translateY(40vh) rotate(45deg); 
+        transform: rotate(var(--rotate-start))  
+              translateY(var(--orbit-radius)) rotate(45deg); 
     } 
 
     100% { 
-        transform: rotate(360deg)  
-              translateY(40vh) rotate(45deg); 
+        transform: rotate(var(--rotate-end))  
+              translateY(var(--orbit-radius)) rotate(45deg); 
     } 
 }

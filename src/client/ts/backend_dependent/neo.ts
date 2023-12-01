@@ -1,11 +1,11 @@
 import {getFormattedDate} from '../../../common/utils';
 import { CADRes as CadJson, FireballRes as FireBallJson} from '../../../common/api';
-import { createSunBackButton, removeAllSpaces } from '../base';
+import { createSunBackButton, removeAllSpaces, getRandomInt } from '../base';
 
 //Close approach parameters
 const cadMinDate = getFormattedDate();
 const cadMaxDate = '30';
-const cadMinDistMax = '0.0026'; //Distance to moon in unit 'au'
+const cadMinDistMax = '0.26'; //Distance to moon in unit 'au'
 const cadApiUrl = `/nasa-cad-api?date-min=${cadMinDate}&date-max=${cadMaxDate}&min-dist-max=${cadMinDistMax}`;
 
 //Fireball parameters
@@ -15,6 +15,7 @@ const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=$
 
 //Bool dictionary for permanent cad info display
 let cadInfoDict: {[key: string] : boolean} = {};
+let cadInfoHover = false;
 
 
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
@@ -87,7 +88,8 @@ function processCloseApproachData(cadJson: CadJson){
 
 function showCadInfo(elemName: string){
     const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
-    if(cadElemInfo){
+    if(cadElemInfo && !cadInfoHover){
+        hideCadInfo();
         cadElemInfo.style.display = 'flex';
     } else {
         console.log('Error showing the cad info box for: ' + elemName);
@@ -95,17 +97,53 @@ function showCadInfo(elemName: string){
 }
 
 function showPermanentCadInfo(elemName: string){
-    cadInfoDict[elemName] = true;
     showCadInfo(elemName);
+    cadInfoDict[elemName] = !cadInfoDict[elemName];
+    cadInfoHover = true;
+
+    if(!cadInfoDict[elemName]){
+        cadInfoHover = !cadInfoHover;
+    }
 }
 
-function hideCadInfo(elemName: string){
+function hideCadInfo(elemName?: string){
     const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
-    if(!cadInfoDict[elemName] && cadElemInfo){
+    if(elemName && !cadInfoDict[elemName] && cadElemInfo){
         cadElemInfo.style.display = 'none';
-    }else if(!cadElemInfo) {
+    } else if(!elemName){
+        for(const [key, ] of Object.entries(cadInfoDict)){
+            cadInfoDict[key] = false;
+            const elem = document.getElementById(`cad-elem-info${key}`);
+            if(elem){
+                elem.style.display = 'none';
+            }
+        }
+    } else if(!cadElemInfo) {
         console.log('Error hiding the cad info box for: ' + elemName);
     }
+}
+
+function addVariableOrbitAnimation(elem: HTMLImageElement){
+    const duration = getRandomInt(60, 181);
+    const distance = getRandomInt(35, 50);
+    const startingAngle = getRandomInt(0,360);
+
+    const styleSheet = document.styleSheets[2];
+    const keyframes = `
+        @keyframes orbitAsteroid-${elem.id} {
+            0% {
+                transform: rotate(${startingAngle}deg) translateY(${distance}vh) rotate(45deg);
+            }
+
+            100% {
+                transform: rotate(${startingAngle + 360}deg) translateY(${distance}vh) rotate(45deg);
+            }
+        }
+    `;
+
+    console.log("ume: " + document.styleSheets[2]?.href);
+    styleSheet?.insertRule(keyframes, styleSheet.cssRules.length);
+    elem.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
 }
 
 async function getFireballData(fireballApiUrl: string){

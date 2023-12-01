@@ -173,3 +173,13 @@ export function changeElemDisplay(from: string, to: string, newDisplayStyle?: st
 export function removeAllSpaces(str: string){
     return str.replace(/\s+/g, '');
 }
+
+/**
+ * Generate a random integer between min (inclusive) and max (exclusive)
+ * @param min 
+ * @param max
+ * @returns random Integer between MIN and MAX
+ */
+export function getRandomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min) + min);
+}
