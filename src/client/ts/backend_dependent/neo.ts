@@ -55,6 +55,7 @@ function processCloseApproachData(cadJson: CadJson){
         cadElemImg.classList.add('cad-elem-img'); 
         cadElemImg.id = `cad-elem-img-${elemName}`;
         cadElemImg.src = '/src/client/img/asteroid.png';
+        addVariableOrbitAnimation(cadElemImg);
 
         cadElemImg.addEventListener('mouseover', () => showCadInfo(elemName));
         cadElemImg.addEventListener('click', () => showPermanentCadInfo(elemName));
