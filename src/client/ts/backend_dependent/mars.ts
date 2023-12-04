@@ -26,13 +26,15 @@ async function init(): Promise<void> {
       createButtons();
       weatherData = await getWeatherData();
       renderWeather();
-      renderRoverPhotos();
       createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
       createText(marsContainer, "Please be advised that our weather predictions on Mars are subject to occasional \
       delays due to unpredictable dust storms. \
-      If you're planning outdoor activities or rover missions, stay tuned for real-time updates and exercise caution during stormy conditions. Stay tuned for the latest weather reports from the fourth rock from the sun, and embrace the unique challenges that Mars\' atmosphere presents. Safe travels!");
+      If you're planning outdoor activities or rover missions, stay tuned for real-time updates and exercise caution during stormy conditions. Stay tuned for the latest weather reports \
+      from the fourth rock from the sun, and embrace the unique challenges that Mars\' atmosphere presents. Safe travels!", "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
+      If planning outdoor activities or rover missions, stay tuned for updates and exercise caution during storms. Embrace the challenges of Mars' atmosphere. Safe travels!");
       createFooter(marsContainer);
       createSunBackButton(marsContainer);
+
 
     }
   } catch (error) {
@@ -40,10 +42,13 @@ async function init(): Promise<void> {
   }
 }
 
+
+
+
 async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
   try {
     if (randomRover == undefined) randomRover = "opportunity";
-    const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover}));
+    const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover }));
     const data = await response.json();
     return data;
   } catch (error) {
@@ -53,25 +58,63 @@ async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
 }
 
 async function renderRoverPhotos(): Promise<void> {
-  const main = marsContainer.querySelector("main");
-  if (!main) {
-    const mainElement = document.createElement("main");
-    marsContainer.appendChild(mainElement);
-  }
-  let photo;
-
   const photoData = await getRoverPhotos();
+  let photo: any;
+
 
   if (photoData.photos.length > 0) {
     photo = photoData.photos[Math.floor(Math.random() * photoData.photos.length)];
   }
+  createModal();
 
-  marsContainer.style.backgroundImage = `url('${photo.img_src}')`;
-  marsContainer.style.backgroundSize = "cover";
-  marsContainer.style.backgroundPosition = "center";
-  marsContainer.style.backgroundRepeat = "no-repeat";
-  marsContainer.style.overflow = "hidden";
+  openModal(photo);
+
+
+  // Create a button element
+  //const showImageButton = createButton("buttons", "Show Mars", "pictures");
+  //showImageButton.addEventListener("click", () => openModal(photo.img_src)); // Pass the image URL to the function
 }
+
+// modal.ts
+export function openModal(photo: any): void {
+  const modal = document.getElementById("myModal") as HTMLElement;
+  const modalImage = document.getElementById("modalImage") as HTMLImageElement;
+
+  modalImage.src = photo.img_src;
+  modal.style.display = "block";
+}
+
+
+function closeModal(): void {
+  const modal = document.getElementById("myModal") as HTMLElement;
+  modal.style.display = "none";
+}
+
+
+function createModal(): void {
+  const modal = document.createElement("div");
+  modal.id = "myModal";
+  modal.className = "modal";
+
+  const closeBtn = document.createElement("span");
+  closeBtn.className = "close";
+  closeBtn.innerHTML = "&times;";
+  closeBtn.onclick = closeModal;
+
+  const modalImage = document.createElement("img");
+  modalImage.src = "";
+  modalImage.id = "modalImage";
+  modalImage.alt = "Mars Rover Photo";
+
+  modal.appendChild(closeBtn);
+  modal.appendChild(modalImage);
+
+  document.body.appendChild(modal);
+}
+
+
+
+
 
 
 async function getWeatherData(): Promise<MarsData> {
@@ -109,7 +152,7 @@ function createButtons(): void {
   buttonBox.id = "button-box";
   buttonBox.className = "button-box";
 
-  const buttonLabels = {'celsius': '°C','fahrenheit': '°F','earth-date': 'Earth','mars-date': 'Sol'};
+  const buttonLabels = { 'pictures': 'Show Mars', 'celsius': '°C', 'fahrenheit': '°F', 'earth-date': 'Earth', 'mars-date': 'Sol' };
 
   for (const [key, label] of Object.entries(buttonLabels)) {
     const button = createButton('buttonChange', label, key);
@@ -129,6 +172,8 @@ function createButton(className: string, label: string, id: string): HTMLButtonE
 }
 
 function handleButtonClick(label: string): void {
+  console.log("HANDLECLICK");
+  console.log(label);
   if (label === "mars-date") {
     changeElemDisplay('mars-date-button', 'earth-date-button');
     toggleDateUnit();
@@ -141,14 +186,17 @@ function handleButtonClick(label: string): void {
   } else if (label === "fahrenheit") {
     changeElemDisplay('fahrenheit-button', 'celsius-button');
     toggleTemperatureUnit();
+  } else if (label === "pictures") {
+    console.log("CHECK");
+    renderRoverPhotos();
   }
 }
 
 
-function createInnerWeatherBox(moreInfo: boolean, sol : SolEntryRes): HTMLDivElement {
+function createInnerWeatherBox(moreInfo: boolean, sol: SolEntryRes): HTMLDivElement {
   const innerWeatherBox = document.createElement('div');
   innerWeatherBox.classList.add('grey-box');
-  if (sol == undefined) return innerWeatherBox ;
+  if (sol == undefined) return innerWeatherBox;
 
 
   const title = document.createElement('h3');
@@ -187,11 +235,8 @@ function renderWeather(): void {
   if (marsMain && weatherData.soles.length > 0) {
     const outerWeatherBox = document.createElement("div");
     outerWeatherBox.className = "weather-boxes";
-    console.log("CHECK", weatherData.soles);
     for (let i = Math.min(weatherData.soles.length, 300); i > 0; i--) {
-      console.log("CHECK2");
       const sol = weatherData.soles[i];
-      console.log("SOL", sol);
       if (sol == undefined) continue;
       temperatureData.push({
         terrestrial_date: sol.terrestrial_date,

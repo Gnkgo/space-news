@@ -1,13 +1,13 @@
 
 div#moon-container {
   display: none;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 40px 200px 1fr 40px; /* Adjusted rows to include 1fr for the remaining space */
   grid-template-areas: 
-    "sun date-picker date-picker buttons"
-    "title countdown countdown moon-sunrise-sunset-box"
-    "moon moon moon moon"
-    "footer footer footer footer";
+    ". sun  buttons"
+    "title countdown moon-sunrise-sunset-box"
+    "moon moon moon"
+    "footer footer footer";
 
   gap: 10px;
   min-height: 100vh; /* Ensure body takes up at least the full viewport height */

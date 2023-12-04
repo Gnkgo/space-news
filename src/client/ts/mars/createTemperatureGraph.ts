@@ -6,7 +6,7 @@ interface TemperatureData {
     max_temp: string;
 }
 
-export function extractAndDisplayTemperature(data: TemperatureData[], place: HTMLElement): void {
+export function extractAndDisplayTemperature(data: TemperatureData[]): void {
     // Extract relevant information
     const dates: Date[] = [];
     const averages: number[] = [];
@@ -21,28 +21,27 @@ export function extractAndDisplayTemperature(data: TemperatureData[], place: HTM
     }
 
     // Set up the dimensions and margins for the SVG
-    const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-    const containerWidth = window.innerWidth;
-    console.log("WIDTH", containerWidth);
-    const width = (containerWidth - margin.left - margin.right - 50);
-    const height = 150 - margin.top - margin.bottom;
+    const margin = { top: 20, right: 20, bottom: 30, left: 80 };
+    let containerWidth = window.innerWidth;
 
+    const height = 300;
+    const removeHeight = 80;
     // Create the SVG container
     const svg = d3.select('#mars-container').select('main').append('svg')
         .attr('class', 'grey-box')
         .attr('width', containerWidth)
-        .attr('height', height + margin.top + margin.bottom)
+        .attr('height', height - margin.top - margin.bottom)
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Create scales for x and y axes
     const xScale = d3.scaleTime()
         .domain(d3.extent(dates) as [Date, Date])
-        .range([0, width]);
+        .range([0, containerWidth - margin.left - margin.right - removeHeight]);
 
     const yScale = d3.scaleLinear()
         .domain([Math.min(...averages), Math.max(...averages)])
-        .range([height, 0]);
+        .range([height - removeHeight - margin.top - margin.bottom, 0]);
 
     // Create x and y axes
     const xAxis = d3.axisBottom(xScale);
@@ -51,14 +50,12 @@ export function extractAndDisplayTemperature(data: TemperatureData[], place: HTM
     // Append x and y axes to the SVG
     svg.append('g')
         .attr('class', 'x-axis')
-        .attr('transform', `translate(0,${height})`)
-        .call(xAxis)
-        .selectAll('text');
+        .attr('transform', `translate(0,${height - removeHeight - margin.top - margin.bottom})`)
+        .call(xAxis);
 
     svg.append('g')
         .attr('class', 'y-axis')
-        .call(yAxis)
-        .selectAll('text');
+        .call(yAxis);
 
     // Create line generator for average temperatures
     const avgLine = d3.line<any>()
@@ -75,36 +72,77 @@ export function extractAndDisplayTemperature(data: TemperatureData[], place: HTM
 
     // Add labels
     svg.append('text')
-        .attr('transform', `translate(${width / 2},${height + margin.top + 10})`)
+        .attr('transform', `translate(${(containerWidth - margin.left - margin.right) / 2},${height - removeHeight - margin.top + 10})`)
         .style('text-anchor', 'middle')
         .style('fill', 'white')
+        .text('Date');
 
     svg.append('text')
         .attr('transform', 'rotate(-90)')
         .attr('y', 0 - margin.left)
-        .attr('x', 0 - height / 2)
+        .attr('x', 0 - (height - removeHeight - margin.top - margin.bottom) / 2)
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
         .style('fill', 'white')
         .text('Temperature (°C)');
 
+    // Create zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([1, 10]) // Set the zoom scale limits
+        .translateExtent([[0, 0], [containerWidth, height - removeHeight - margin.top - margin.bottom]]) // Set the translation extents
+        .on('zoom', zoomed);
+
+
+
+    // Apply zoom behavior to the SVG container
+    const zoomableSvg = svg.call(zoom as any);
+
+    // Create a rect to capture zoom events
+    zoomableSvg.append('rect')
+        .attr('width', containerWidth)
+        .attr('height', height - removeHeight - margin.top - margin.bottom)
+        .style('fill', 'none')
+        .style('pointer-events', 'all');
+    function zoomed(event: d3.D3ZoomEvent<SVGElement, unknown>) {
+        // Update xScale and yScale based on the zoom event, clamping to the original domain
+        const new_xScale = event.transform.rescaleX(xScale);
+        const new_yScale = event.transform.rescaleY(yScale);
+
+        // Update x-axis
+        (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
+            .call(xAxis.scale(new_xScale));
+
+        // Update y-axis
+        (svg.select('.y-axis') as d3.Selection<SVGGElement, any, any, any>)
+            .call(yAxis.scale(new_yScale));
+
+        // Update line generator with the new xScale
+        const avgLine = d3.line<any>()
+            .x((d: any) => new_xScale(dates[d]!))
+            .y((d: any) => new_yScale(averages[d]!));
+
+        // Update average temperature line
+        svg.select('.avg-line')
+            .data([d3.range(dates.length)])
+            .attr('d', avgLine);
+    }
+
+
+    // Resize function
     function handleResize() {
         // Update container width based on the window size
-        const containerWidth = window.innerWidth;
-        console.log("WIDTH", containerWidth);
-        const width = containerWidth - margin.left - margin.right - 50;
+        containerWidth = window.innerWidth;
 
         // Update SVG container size
         svg.attr('width', containerWidth);
 
-
         // Update xScale and width
-        xScale.range([0, width])
+        xScale.range([0, containerWidth - margin.left - margin.right - 100])
             .domain(d3.extent(dates) as [Date, Date]);
-        
-            // Update x-axis
+
+        // Update x-axis
         (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
-            .attr('transform', `translate(0,${height})`)
+            .attr('transform', `translate(0,${height - removeHeight - margin.top - margin.bottom})`)
             .call(xAxis);
 
         // Update line generator
@@ -116,12 +154,6 @@ export function extractAndDisplayTemperature(data: TemperatureData[], place: HTM
         svg.select('.avg-line')
             .data([d3.range(dates.length)])
             .attr('d', avgLine);
-
-        // Update labels if needed
-        // ...
-
-        // Adjust other elements based on new width and height
-        // ...
     }
 
     // Attach the resize function to the window resize event
@@ -129,9 +161,4 @@ export function extractAndDisplayTemperature(data: TemperatureData[], place: HTM
 
     // Call the handleResize function once at the beginning
     handleResize();
-            
-            // Update x-axis
-            (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
-            .attr('transform', `translate(0,${height})`)
-            .call(xAxis);
 }
