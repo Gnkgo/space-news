@@ -42,7 +42,8 @@ div#mars-container {
     }
 
     & button#celsius-button,
-    button#mars-date-button {
+    button#mars-date-button,
+    button#test2-button {
       display: none;
     }
   }
@@ -85,14 +86,33 @@ div#mars-container {
 /* Media query for screens smaller than 660px */
 @media screen and (max-width: 660px) {
   div#mars-container {
-    grid-template-rows: 25px auto auto auto 40px;
+    grid-template-rows: 40px auto auto auto auto 40px;
     grid-template-columns: auto auto;
     grid-template-areas:
       "sun buttons"
-      "title weather-boxes"
+      "title title"
       "paragraph paragraph"
-      "weather-boxes"
+      "today-weather-box today-weather-box"
+      "weather-boxes weather-boxes"
       "footer footer";
+
+      & .grey-box {
+        & h3 {
+          font-size: 12pt;
+        }
+
+      }
+
+      & div#button-box {    
+        & button.buttonChange {
+          width: 50px;
+          padding: 4px;
+          color: white;
+          margin-right: 5px;
+          font-size: 8pt;
+
+        }
+      }
 
     & .paragraph-box {
       display: none;
@@ -101,6 +121,24 @@ div#mars-container {
     & .paragraph-box-small {
       grid-area: paragraph;
       display: block;
+    }
+
+    & .today-weather-box {
+      display: none;
+    }
+
+    & .grey-box {
+      font-size: 9pt;
+    }
+
+    & .title-box {
+      & h1 {
+        font-size: 12pt;
+      }
+
+      & h2 {
+        font-size: 10pt;
+      }
     }
   }
 }
