@@ -1,14 +1,16 @@
 import * as d3 from 'd3';
 
-interface TemperatureData {
+export interface TemperatureData {
     terrestrial_date: string;
     min_temp: string;
     max_temp: string;
     min_temp_fahrenheit: string;
     max_temp_fahrenheit: string;
+    isCelcius: boolean;
 }
 
 export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius: boolean): void {
+
     // Extract relevant information
     const dates: Date[] = [];
     const averagesCelsius: number[] = [];
@@ -130,6 +132,8 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .style('fill', 'none')
         .style('pointer-events', 'all');
 
+
+
         
     function zoomed(event: d3.D3ZoomEvent<SVGElement, unknown>) {
         // Update xScale and yScale based on the zoom event, clamping to the original domain
@@ -188,8 +192,8 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     }
 
     // Attach the resize function to the window resize event
-    d3.select(window).on('resize', handleResize);
+    handleResize();
+
 
     // Call the handleResize function once at the beginning
-    handleResize();
 }

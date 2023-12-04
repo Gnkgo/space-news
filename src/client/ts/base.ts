@@ -178,3 +178,15 @@ export function changeElemDisplay(from: string, to: string, newDisplayStyle?: st
       console.log(`Error getting Element to change Display. FromElem: ${fromElem}, ToElem: ${toElem}`);
     }
 }
+
+/**
+ * Check if two dates are the same day
+ * @param date2 html id of the element to show
+ */
+export function isSameDay(date1: Date, date2: Date): boolean {
+    return (
+        date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate()
+    );
+}
