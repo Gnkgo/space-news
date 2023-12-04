@@ -42,7 +42,8 @@ div#mars-container {
     }
 
     & button#celsius-button,
-    button#mars-date-button {
+    button#mars-date-button,
+    button#test2-button {
       display: none;
     }
   }

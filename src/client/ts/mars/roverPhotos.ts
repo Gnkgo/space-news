@@ -20,8 +20,6 @@ export async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
 export async function renderRoverPhotos(): Promise<void> {
     const photoData = await getRoverPhotos();
     let photo: any;
-
-
     if (photoData.photos.length > 0) {
         photo = photoData.photos[Math.floor(Math.random() * photoData.photos.length)];
     }
