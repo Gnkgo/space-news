@@ -18,6 +18,9 @@ interface TemperatureData {
   terrestrial_date: string;
   min_temp: string;
   max_temp: string;
+  min_temp_fahrenheit: string;
+  max_temp_fahrenheit: string;
+  isCelcius: boolean;
 }
 
 async function init(): Promise<void> {
@@ -172,8 +175,6 @@ function createButton(className: string, label: string, id: string): HTMLButtonE
 }
 
 function handleButtonClick(label: string): void {
-  console.log("HANDLECLICK");
-  console.log(label);
   if (label === "mars-date") {
     changeElemDisplay('mars-date-button', 'earth-date-button');
     toggleDateUnit();
@@ -241,12 +242,15 @@ function renderWeather(): void {
       temperatureData.push({
         terrestrial_date: sol.terrestrial_date,
         min_temp: sol.min_temp,
-        max_temp: sol.max_temp
+        max_temp: sol.max_temp,
+        min_temp_fahrenheit: sol.min_temp_fahrenheit || '', // Use an empty string as a default value if sol.min_temp_fahrenheit is undefined
+        max_temp_fahrenheit: sol.max_temp_fahrenheit || '', // Use an empty string as a default value if sol.max_temp_fahrenheit is undefined
+        isCelcius: isCelsius
       });
       outerWeatherBox.appendChild(createInnerWeatherBox(false, sol));
     }
     todayWeather();
-    extractAndDisplayTemperature(temperatureData);
+    extractAndDisplayTemperature(temperatureData, isCelsius);
     //marsMain.appendChild(outerWeatherBox,);
   }
 }
