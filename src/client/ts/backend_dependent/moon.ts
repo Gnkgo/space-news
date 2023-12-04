@@ -160,7 +160,7 @@ function updateCountdown(differenceInMilliseconds: number) {
         const minutes = Math.floor((differenceInMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((differenceInMilliseconds % (1000 * 60)) / 1000);
 
-        countdownElement.innerHTML = `Time until Full Moon: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        countdownElement.innerHTML = `Time until Full Moon: <br>${days}d ${hours}h ${minutes}m ${seconds}s`;
 
     } else {
         countdownElement.innerHTML = "TODAY IS THE DAY! IT IS FULL MOON! SLEEP WELL";

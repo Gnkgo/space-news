@@ -136,3 +136,9 @@ body {
     }
     
 }
+
+.content {
+    overflow-y: auto;
+    height: calc(100vh - 20px);
+    /* Adjust for any margin or padding */
+  }
