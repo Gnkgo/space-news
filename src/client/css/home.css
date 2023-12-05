@@ -1,6 +1,14 @@
 :root {
     --earth-orbit-time: 180s;
     --mars-orbit-time: calc((687/365) * var(--earth-orbit-time));
+    --unit: 1vw;
+}
+
+/* Media query for screens with height greater than or equal to width */
+@media screen and (min-aspect-ratio: 1/1) {
+    :root {
+        --unit: 1vh; /* Switch to vw when height is greater than or equal to width */
+    }
 }
 
 body {
@@ -18,7 +26,7 @@ body {
 
         & img#sun {
             z-index: 1;
-            width: 15vh;
+            width: calc(15 * var(--unit));
             position: absolute;
             border-radius: 50%;
         }
@@ -26,14 +34,14 @@ body {
         & div#earth-and-moon-container {
             display: flex;
             position: absolute;
-            width: 25vh;
-            height: 25vh;
+            width: calc(25 * var(--unit));
+            height: calc(25 * var(--unit));
             justify-content: center;
             align-items: center;
             animation: orbitEarth var(--earth-orbit-time) infinite linear;
     
             > img#earth {
-                width: 10vh;
+                width: calc(10 * var(--unit));
                 position: absolute;
                 z-index: 1;
                 border-radius: 50%;
@@ -56,15 +64,15 @@ body {
                 }
     
                 & #moon-svg-container {
-                    width: 26vh;
-                    height: 26vh;
+                    width: calc(26 * var(--unit));
+                    height: calc(26 * var(--unit));
                     position: absolute;
                 }
             }
         }
     
         & img#mars {
-            width: 8vh;
+            width: calc(8 * var(--unit));
             position: absolute;
             border-radius: 50%;
             animation: orbitMars var(--mars-orbit-time) linear infinite;
@@ -83,6 +91,20 @@ body {
                 stroke: lightgrey;
                 stroke-width: 1;
                 opacity: 50%;
+            }
+
+            & ellipse#mars-orbit {
+                rx: calc(45 * var(--unit));
+            }
+
+            & ellipse#earth-orbit {
+                rx: calc(27.5 * var(--unit));
+            }
+
+            & ellipse#moon-orbit {
+                cx: calc(12.75 * var(--unit));
+                cy: calc(12.75 * var(--unit));
+                rx: calc(12.5 * var(--unit));
             }
         }
     }   
@@ -103,12 +125,12 @@ body {
 @keyframes orbitMars {
     0% { 
         transform: rotate(120deg)  
-              translateY(45vh) rotate(-120deg); 
+              translateY(calc(45 * var(--unit))) rotate(-120deg); 
     } 
 
     100% { 
         transform: rotate(480deg)  
-              translateY(45vh) rotate(-480deg); 
+              translateY(calc(45 * var(--unit))) rotate(-480deg); 
     } 
 }
 
@@ -126,13 +148,13 @@ body {
 
 @keyframes sunEasterEgg {
     0% {
-        width: 15vh;
+        width: calc(15 * var(--unit));
     }
     40% {
-        width: 20vh;
+        width: calc(20 * var(--unit));
     }
     100% {
-        width: 15vh;
+        width: calc(15 * var(--unit));
     }
     
 }
