@@ -12,24 +12,19 @@ let currentDateSol: string = "";
 export const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 export let weatherData: MarsData;
 
-async function init(): Promise<void> {
+async function initMars(): Promise<void> {
   try {
     if (marsContainer) {
       weatherData = await getWeatherData();
       currentDate = weatherData.soles[0]?.terrestrial_date || '';
       currentDateSol = weatherData.soles[0]?.sol || '';
       renderWeather();
-      d3.select(window).on('resize', renderWeather);
       createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
-      createText(marsContainer, "Please be advised that our weather predictions on Mars are subject to occasional \
-      delays due to unpredictable dust storms. \
-      If you're planning outdoor activities or rover missions, stay tuned for real-time updates and exercise caution during stormy conditions. Stay tuned for the latest weather reports \
-      from the fourth rock from the sun, and embrace the unique challenges that Mars\' atmosphere presents. Safe travels!", "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
+      createText(marsContainer, "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
       If planning outdoor activities or rover missions, stay tuned for updates and exercise caution during storms. Embrace the challenges of Mars' atmosphere. Safe travels!");
       createFooter(marsContainer);
       createSunBackButton(marsContainer);
       createButtons();
-
     }
   } catch (error) {
     console.error("Error initializing weather app", error);
@@ -58,6 +53,7 @@ function handleButtonClick(label: string): void {
     renderRoverPhotos();
   }
 }
+
 function createButtons(): void {
   console.log("Creating buttons");
   const buttonBox = document.createElement("div");
@@ -97,5 +93,6 @@ async function toggleTemperatureUnit() {
 }
 
 
+initMars();
+d3.select(window).on('resize', renderWeather);
 
-init();

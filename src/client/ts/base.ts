@@ -51,9 +51,8 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
     }
 
     const innerTitle = document.createElement("div");
-    innerTitle.id = "inner-title";
-
     const greyBox = document.createElement("div");
+    
     greyBox.id = "inner-title";
     greyBox.className = "grey-box";
 
@@ -93,7 +92,7 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
 }
 
 
-export function createText(divContainer: HTMLDivElement, text: string, textSmall: string) {
+export function createText(divContainer: HTMLDivElement, text: string) {
     const paragraphBox = document.createElement("div");
     paragraphBox.className = "paragraph-box";
     paragraphBox.id = "paragraph-box";
@@ -113,16 +112,6 @@ export function createText(divContainer: HTMLDivElement, text: string, textSmall
     paragraphBoxSmall.className = "paragraph-box-small";
     paragraphBoxSmall.id = "paragraph-box-small";
 
-    const textNodeSmall = document.createTextNode(textSmall);
-
-    const greyBoxSmall = document.createElement("div");
-    greyBoxSmall.id = "paragraph";
-    greyBoxSmall.className = "grey-box";
-
-    greyBoxSmall.appendChild(textNodeSmall);
-
-    paragraphBoxSmall.appendChild(greyBoxSmall);
-    divContainer.appendChild(paragraphBoxSmall);
 }
 
 export function createFooter(divContainer: HTMLDivElement) {

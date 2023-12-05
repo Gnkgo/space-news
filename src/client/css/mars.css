@@ -9,12 +9,11 @@ div#mars-container {
 
   display: none;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 40px auto auto auto 40px;
+  grid-template-rows: 40px auto auto 40px;
   /* Adjusted rows to include 1fr for the remaining space */
   grid-template-areas:
     ". sun buttons"
-    "title title today-weather-box "
-    "paragraph paragraph today-weather-box"
+    "title today-weather-box paragraph"
     "weather-boxes weather-boxes weather-boxes"
     "footer footer footer";
 
@@ -22,11 +21,29 @@ div#mars-container {
   min-height: 100vh;
   /* Ensure body takes up at least the full viewport height */
 
+
+  & .title-box {
+    grid-area: title;
+    font-size: 2rem;
+    justify-self: center;
+
+    & .grey-box {
+      display: flex;
+      align-items: baseline;
+      text-align: left;
+      height: fit-content; 
+
+      
+
+
+    }
+  }
+
   & div#button-box {
     grid-area: buttons;
     display: flex;
     justify-content: end;
-    gap: 10px;
+    gap: 5px;
     margin-right: 10px;
     margin-top: 0;
 
@@ -35,7 +52,8 @@ div#mars-container {
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: center;
-      width: 100px;
+      font-size: 8pt;
+      width: 70px;
       padding: 4px;
       color: white;
       margin-right: 5px;
@@ -75,7 +93,7 @@ div#mars-container {
     grid-area: today-weather-box;
     justify-content: center;
     /* Center the content horizontally */
-    align-items: center;
+    align-items: baseline;
     /* Center the content vertically */
     display: flex;
     line-height: 15pt;
@@ -86,41 +104,31 @@ div#mars-container {
 /* Media query for screens smaller than 660px */
 @media screen and (max-width: 660px) {
   div#mars-container {
-    grid-template-rows: 40px auto auto auto auto 40px;
+    grid-template-rows: 40px auto auto auto 40px;
     grid-template-columns: auto auto;
     grid-template-areas:
       "sun buttons"
       "title title"
-      "paragraph paragraph"
-      "today-weather-box today-weather-box"
+      "paragraph today-weather-box"
       "weather-boxes weather-boxes"
       "footer footer";
 
-      & .grey-box {
-        & h3 {
-          font-size: 12pt;
-        }
-
+    & .grey-box {
+      & h3 {
+        font-size: 12pt;
       }
 
-      & div#button-box {    
-        & button.buttonChange {
-          width: 50px;
-          padding: 4px;
-          color: white;
-          margin-right: 5px;
-          font-size: 8pt;
-
-        }
-      }
-
-    & .paragraph-box {
-      display: none;
     }
 
-    & .paragraph-box-small {
-      grid-area: paragraph;
-      display: block;
+    & div#button-box {
+      & button.buttonChange {
+        width: 50px;
+        padding: 4px;
+        color: white;
+        margin-right: 5px;
+        font-size: 8pt;
+
+      }
     }
 
     & .today-weather-box {
