@@ -180,6 +180,24 @@ export function changeElemDisplay(from: string, to: string, newDisplayStyle?: st
 }
 
 /**
+ * Removes all spaces in a string which results in one long word.
+ * @param str arbitrary string to edit
+ * @returns STR where are all spaces got deleted
+ */
+export function removeAllSpaces(str: string){
+    return str.replace(/\s+/g, '');
+}
+
+/**
+ * Generate a random integer between min (inclusive) and max (exclusive)
+ * @param min 
+ * @param max
+ * @returns random Integer between MIN and MAX
+ */
+export function getRandomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min) + min);
+}
+/**
  * Check if two dates are the same day
  * @param date2 html id of the element to show
  */

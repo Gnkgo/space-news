@@ -36,7 +36,7 @@ export type CADRes = {
   };
   count: number;
   fields: string[];
-  data: Array<Array<string | number>>;
+  data: Array<Array<string>>;
 }
 
 // MARS WEATHER
