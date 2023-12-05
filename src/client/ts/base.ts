@@ -10,8 +10,8 @@ export function formatDate(inputDate: string | undefined): string {
     const day = parseInt(dateParts?.[2] ?? "N/A");
 
     const months = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
 
     const formattedDate = `${day} ${months[month - 1]} ${year}`;

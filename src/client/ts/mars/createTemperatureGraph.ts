@@ -29,8 +29,10 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         averagesFahrenheit.push((minFahrenheit + maxFahrenheit) / 2);
         averagesCelsius.push((min + max) / 2);
     }
+    console.log(averagesCelsius, averagesFahrenheit);
     const averages = isCelcius ? averagesCelsius : averagesFahrenheit;
     const text = isCelcius ? '°C' : '°F';
+    
 
 
 
@@ -53,6 +55,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .domain(d3.extent(dates) as [Date, Date])
         .range([0, containerWidth - margin.left - margin.right]);
 
+        console.log(Math.min(...averages), Math.max(...averages));
     const yScale = d3.scaleLinear()
         .domain([Math.min(...averages), Math.max(...averages)])
         .range([height - removeHeight - margin.top - margin.bottom, 0]);
@@ -138,7 +141,6 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     function zoomed(event: d3.D3ZoomEvent<SVGElement, unknown>) {
         // Update xScale and yScale based on the zoom event, clamping to the original domain
         const newTransform = event.transform;
-
         const newXScale = newTransform.rescaleX(xScale);
         const newYScale = newTransform.rescaleY(yScale);
 
