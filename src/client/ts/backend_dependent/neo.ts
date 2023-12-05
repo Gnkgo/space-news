@@ -114,46 +114,31 @@ function showCadInfo(elemName: string, switchCadInfo?: boolean){
 function showPermanentCadInfo(elemName: string){
     const elemSelectedImage = document.getElementById(`cad-elem-img-selected-${elemName}`);
 
-    if(cadAsteroidSelected){
-        if(cadInfoDict[elemName]){
-            //The selected Asteroid has been clicked again
-            //hide info box
-            const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
-            if(cadElemInfo){
-                cadElemInfo.style.display = 'none';
-            }
-            //hide asteroid_selected image
-            if(elemSelectedImage){
-                elemSelectedImage.style.opacity = '0%';
-                elemSelectedImage.style.zIndex = '0';
-            }
-            cadAsteroidSelected = false;
-        } else {
-            //switch the info box & selected asteroid to the new one
-            //hide old selected data
-
-
-            //show new selected data
-            showCadInfo(elemName, true);
-            cadInfoDict[elemName] = true;
-
-            if(elemSelectedImage){
-                elemSelectedImage.style.opacity = '100%';
-                elemSelectedImage.style.zIndex = '2';
-            }
-
+    if(cadInfoDict[elemName]){
+        //The selected Asteroid has been clicked again
+        //hide info box
+        const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
+        if(cadElemInfo){
+            cadElemInfo.style.display = 'none';
         }
+        //hide asteroid_selected image
+        if(elemSelectedImage){
+            elemSelectedImage.style.opacity = '0%';
+            elemSelectedImage.style.zIndex = '0';
+        }
+        cadAsteroidSelected = false;
     } else {
-        //there is no asteroid selected so far, just display the info box & selected image
-        showCadInfo(elemName);
+        //Display the info box & if neccessary hide previous info boxes
+        showCadInfo(elemName, true);
         cadInfoDict[elemName] = true;
         cadAsteroidSelected = true;
 
-        //show asteroid_selected image
+        //Display the selecetd asteroid image
         if(elemSelectedImage){
             elemSelectedImage.style.opacity = '100%';
             elemSelectedImage.style.zIndex = '2';
         }
+
     }
 }
 
@@ -164,10 +149,12 @@ function hideCadInfo(elemName?: string){
     } else if(!elemName){
         for(const [key, ] of Object.entries(cadInfoDict)){
             cadInfoDict[key] = false;
+            //hide info boxes
             const elem = document.getElementById(`cad-elem-info-${key}`);
             if(elem){
                 elem.style.display = 'none';
             }
+            //hide selected asteroid images
             const elemSelected = document.getElementById(`cad-elem-img-selected-${key}`)
             if(elemSelected){
                 elemSelected.style.opacity = '0%';
