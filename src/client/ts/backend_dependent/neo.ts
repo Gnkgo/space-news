@@ -5,7 +5,7 @@ import { createSunBackButton, removeAllSpaces, getRandomInt } from '../base';
 //Close approach parameters
 const cadMinDate = getFormattedDate();
 const cadMaxDate = '30';
-const cadMinDistMax = '0.26'; //Distance to moon in unit 'au'
+const cadMinDistMax = '0.0026'; //Distance to moon in unit 'au'
 const cadApiUrl = `/nasa-cad-api?date-min=${cadMinDate}&date-max=${cadMaxDate}&min-dist-max=${cadMinDistMax}`;
 
 //Fireball parameters
