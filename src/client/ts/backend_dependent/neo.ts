@@ -15,7 +15,7 @@ const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=$
 
 //Bool dictionary for permanent cad info display
 let cadInfoDict: {[key: string] : boolean} = {};
-let cadInfoHover = false;
+let cadAsteroidSelected = false;
 
 
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
@@ -50,12 +50,14 @@ function processCloseApproachData(cadJson: CadJson){
     for (const elem of cadJson.data){
         const elemName = removeAllSpaces(elem[0]!);
         cadInfoDict[elemName] = false;
+        
         //Create Asteroid image
         const cadElemImg = document.createElement('img');
         cadElemImg.classList.add('cad-elem-img'); 
         cadElemImg.id = `cad-elem-img-${elemName}`;
         cadElemImg.src = '/src/client/img/asteroid.png';
 
+        //create selected_asteroid image
         const cadElemImgSelected = document.createElement('img');
         cadElemImgSelected.classList.add('cad-elem-img-selected');
         cadElemImgSelected.id = `cad-elem-img-selected-${elemName}`;
@@ -63,9 +65,14 @@ function processCloseApproachData(cadJson: CadJson){
 
         addVariableOrbitAnimation(cadElemImg, cadElemImgSelected);
 
+        //add eventlistener to asteroid image
         cadElemImg.addEventListener('mouseover', () => showCadInfo(elemName));
         cadElemImg.addEventListener('click', () => showPermanentCadInfo(elemName));
         cadElemImg.addEventListener('mouseleave', () => hideCadInfo(elemName));
+
+        //add eventlistener to selected_astroid image
+        cadElemImgSelected.addEventListener('click', () => showPermanentCadInfo(elemName));
+
         neoContainer?.appendChild(cadElemImg);
         neoContainer?.appendChild(cadElemImgSelected);
 
@@ -94,30 +101,59 @@ function processCloseApproachData(cadJson: CadJson){
     }
 }
 
-function showCadInfo(elemName: string){
+function showCadInfo(elemName: string, switchCadInfo?: boolean){
     const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
-    if(cadElemInfo && !cadInfoHover){
+    if(cadElemInfo && (!cadAsteroidSelected || switchCadInfo)){
         hideCadInfo();
         cadElemInfo.style.display = 'flex';
-    } else {
+    } else if(!cadElemInfo) {
         console.log('Error showing the cad info box for: ' + elemName);
     }
 }
 
 function showPermanentCadInfo(elemName: string){
-    showCadInfo(elemName);
-    cadInfoDict[elemName] = !cadInfoDict[elemName];
-    cadInfoHover = true;
-
-    //show asteroid_selected image
     const elemSelectedImage = document.getElementById(`cad-elem-img-selected-${elemName}`);
-    if(elemSelectedImage){
-        elemSelectedImage.style.opacity = '100%';
-        elemSelectedImage.style.zIndex = '2';
-    }
 
-    if(!cadInfoDict[elemName]){
-        cadInfoHover = !cadInfoHover;
+    if(cadAsteroidSelected){
+        if(cadInfoDict[elemName]){
+            //The selected Asteroid has been clicked again
+            //hide info box
+            const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
+            if(cadElemInfo){
+                cadElemInfo.style.display = 'none';
+            }
+            //hide asteroid_selected image
+            if(elemSelectedImage){
+                elemSelectedImage.style.opacity = '0%';
+                elemSelectedImage.style.zIndex = '0';
+            }
+            cadAsteroidSelected = false;
+        } else {
+            //switch the info box & selected asteroid to the new one
+            //hide old selected data
+
+
+            //show new selected data
+            showCadInfo(elemName, true);
+            cadInfoDict[elemName] = true;
+
+            if(elemSelectedImage){
+                elemSelectedImage.style.opacity = '100%';
+                elemSelectedImage.style.zIndex = '2';
+            }
+
+        }
+    } else {
+        //there is no asteroid selected so far, just display the info box & selected image
+        showCadInfo(elemName);
+        cadInfoDict[elemName] = true;
+        cadAsteroidSelected = true;
+
+        //show asteroid_selected image
+        if(elemSelectedImage){
+            elemSelectedImage.style.opacity = '100%';
+            elemSelectedImage.style.zIndex = '2';
+        }
     }
 }
 
@@ -128,9 +164,14 @@ function hideCadInfo(elemName?: string){
     } else if(!elemName){
         for(const [key, ] of Object.entries(cadInfoDict)){
             cadInfoDict[key] = false;
-            const elem = document.getElementById(`cad-elem-info${key}`);
+            const elem = document.getElementById(`cad-elem-info-${key}`);
             if(elem){
                 elem.style.display = 'none';
+            }
+            const elemSelected = document.getElementById(`cad-elem-img-selected-${key}`)
+            if(elemSelected){
+                elemSelected.style.opacity = '0%';
+                elemSelected.style.zIndex = '0';
             }
         }
     } else if(!cadElemInfo) {
