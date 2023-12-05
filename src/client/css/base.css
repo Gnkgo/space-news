@@ -4,80 +4,90 @@ therefore is this file linked by every HTML file
 */
 
 html {
-    font-family: 'Andale Mono', monospace;
+  font-family: 'Andale Mono', monospace;
 }
 
 footer {
-    grid-area: footer;
-    background-color: rgba(0, 0, 0, 0.2);
-    color: white;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    font-weight: 300;
-    color: white;
-    padding: 10px;
+  grid-area: footer;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-weight: 300;
+  color: white;
+  padding: 10px;
 
 }
 
 .sun-button {
-    grid-area: sun;
-    width: 45px;
-    height: 45px;
-    cursor: pointer;
+  grid-area: sun;
+  display: flex;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  justify-self: center; /* Align to the end (right) of the grid area */
+
+}
+
+.grey-box {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+
+  padding: 20px;
+  color: white;
+  margin: 10px;
+  line-height: normal;
+  font-size: 18pt;
+
+  > h3 {
+    font-size: 3rem;
+    padding-bottom: 5px;
+    border-bottom: 1px solid white;
+    margin: 0;
   }
 
-  .grey-box {
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  
-  
-    padding: 20px;
-    color: white;
-    margin: 10px;
-  
-    & h3 {
-      font-size: 16pt;
-    }
-  
-    & p {
-      font-size: 9pt;
-    }
-  }
-
-h3 {
-  margin: 0;
 }
 
 
 .title-box {
-    grid-area: title;
+  grid-area: title;
+  font-size: 2rem;
+
+  & .grey-box {
+    text-align: left;
+    display: inline-block;
+  }
+
+  & h1 {
+    margin: 0;
+    font-size: 3rem;
+    color: white;
+  }
+
+  & h2 {
+    margin: 0;
     font-size: 2rem;
-  
-    & .grey-box {
-      text-align: left;
-      line-height: 24pt;
-      display: inline-block;
-    }
-  
-    & h1 {
-      font-size: 2rem;
-      color: white;
-    }
-  
-    & h2 {
-      font-size: 1.5rem;
-      color: white;
-    }
+    color: white;
   }
-  
-  .paragraph-box {
-    grid-area: paragraph;
-  
-    & .grey-box {
-      line-height: 16pt;
-      text-align: left;
-    }
+}
+
+.paragraph-box {
+  grid-area: paragraph;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & .grey-box {
+    text-align: left;
   }
-  
+}
+
+
+
+
+.paragraph-box-small {
+  grid-area: paragrah;
+  display: none;
+}

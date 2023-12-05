@@ -1,23 +1,26 @@
-
 div#moon-container {
   display: none;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 40px 200px 1fr 40px; /* Adjusted rows to include 1fr for the remaining space */
-  grid-template-areas: 
-    "sun date-picker date-picker buttons"
-    "title countdown countdown moon-sunrise-sunset-box"
-    "moon moon moon moon"
-    "footer footer footer footer";
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 40px auto auto 40px;
+  /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-areas:
+    ". sun  buttons"
+    "title countdown moon-sunrise-sunset-box"
+    "moon moon moon"
+    "footer footer footer";
 
   gap: 10px;
-  min-height: 100vh; /* Ensure body takes up at least the full viewport height */
+  min-height: 100vh;
+
+  /* Ensure body takes up at least the full viewport height */
   .grey-box {
-    border: none; /* or border-width: 0; */
+    border: none;
+    /* or border-width: 0; */
     background-color: transparent;
   }
 }
 
-.title-box{
+.title-box {
   display: flex;
 
   & .grey-box {
@@ -50,16 +53,18 @@ div#moon-container {
   align-items: center;
   flex-direction: column;
   color: white;
+
   & h3 {
     font-size: 1.5rem;
     font-weight: 300;
   }
+
   & p {
     font-size: 1rem;
     font-weight: 300;
   }
 }
-  
+
 .image {
   padding-bottom: 20px;
   width: 50vh;
@@ -85,4 +90,58 @@ div#moon-container {
   color: white;
   font-size: 1.5rem;
   grid-area: countdown;
+}
+
+
+/* Media query for screens smaller than 660px */
+@media screen and (max-width: 660px) {
+  div#moon-container {
+    grid-template-rows: 40px auto auto auto auto 40px;
+    grid-template-columns: auto;
+    grid-template-areas:
+      "sun"
+      "title"
+      "countdown"
+      "moon-sunrise-sunset-box "
+      "moon "
+      "footer";
+
+    & .grey-box {
+      justify-self: center;
+      align-self: center;
+      & h3 {
+        font-size: 12pt;
+      }
+
+    }
+
+    & .countdown {
+      font-size: 12pt;
+
+    }
+
+
+
+    & .grey-box {
+      font-size: 9pt;
+    }
+
+    & .title-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      & h1 {
+        font-size: 12pt;
+      }
+
+      & h2 {
+        font-size: 10pt;
+      }
+    }
+  }
+
+
+  .image-container {
+    font-size: 10pt;
+  }
 }

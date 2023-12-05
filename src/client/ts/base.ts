@@ -32,8 +32,7 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
 
 
 export function createTitle(divContainer: HTMLDivElement, title: string, isSol: boolean, dateEarth: string, dateSol: string) {
-    let titleBox = divContainer.querySelector("#title-box");
-    titleBox?.parentNode?.removeChild(titleBox);
+    let titleBox = divContainer.querySelector(".title-box"); // Assuming you are using a class selector
     if (titleBox) titleBox.remove();
 
     titleBox = document.createElement("div");
@@ -94,7 +93,7 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
 }
 
 
-export function createText(divContainer: HTMLDivElement, text: string) {
+export function createText(divContainer: HTMLDivElement, text: string, textSmall: string) {
     const paragraphBox = document.createElement("div");
     paragraphBox.className = "paragraph-box";
     paragraphBox.id = "paragraph-box";
@@ -109,6 +108,21 @@ export function createText(divContainer: HTMLDivElement, text: string) {
 
     paragraphBox.appendChild(greyBox);
     divContainer.appendChild(paragraphBox);
+
+    const paragraphBoxSmall = document.createElement("div");
+    paragraphBoxSmall.className = "paragraph-box-small";
+    paragraphBoxSmall.id = "paragraph-box-small";
+
+    const textNodeSmall = document.createTextNode(textSmall);
+
+    const greyBoxSmall = document.createElement("div");
+    greyBoxSmall.id = "paragraph";
+    greyBoxSmall.className = "grey-box";
+
+    greyBoxSmall.appendChild(textNodeSmall);
+
+    paragraphBoxSmall.appendChild(greyBoxSmall);
+    divContainer.appendChild(paragraphBoxSmall);
 }
 
 export function createFooter(divContainer: HTMLDivElement) {
@@ -182,4 +196,15 @@ export function removeAllSpaces(str: string){
  */
 export function getRandomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min) + min);
+}
+/**
+ * Check if two dates are the same day
+ * @param date2 html id of the element to show
+ */
+export function isSameDay(date1: Date, date2: Date): boolean {
+    return (
+        date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate()
+    );
 }
