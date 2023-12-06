@@ -122,7 +122,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
     // Define a zoom behavior
     const zoom = d3.zoom()
-        .scaleExtent([1, 40])
+        .scaleExtent([1, 15])
         .translateExtent([[0, 0], [containerWidth, height]])
         .extent([[0, 0], [containerWidth, height]])
         .on('zoom', zoomed);
