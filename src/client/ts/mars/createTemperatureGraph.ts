@@ -149,14 +149,14 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         const zoomLevel = newTransform.k;
 
         // Adjust tick format based on zoom level
-        if (zoomLevel <= 2) {
+        if (zoomLevel <= 1) {
             xAxis.tickFormat(d3.timeFormat('%b')); // Adjust to your desired format after zooming in
         } else {
 
             xAxis.tickFormat(d3.timeFormat('%b %d')); // Adjust to your desired format after zooming in
         }
 
-        let numTicks = 5;
+        let numTicks = 8;
         if (containerWidth < 700) {
             numTicks = 5;
         }
