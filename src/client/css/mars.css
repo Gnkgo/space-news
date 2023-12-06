@@ -1,54 +1,23 @@
-div#mars-container {
-  background-image: url('/src/client/img/mars-modified.png');
-  background-size: 50vh;
-  background-position: center;
-  background-repeat: no-repeat;
+#mars-container {
+  background: url('/src/client/img/mars-modified.png') center/50vh no-repeat;
   margin: 0;
-  /* Remove default margin */
-
-
   display: none;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 40px auto auto 40px;
-  /* Adjusted rows to include 1fr for the remaining space */
-  grid-template-areas:
-    ". sun buttons"
-    "title today-weather-box paragraph"
-    "weather-boxes weather-boxes weather-boxes"
-    "footer footer footer";
-
+  grid-template: " . sun buttons"
+                 "title today-weather-box paragraph"
+                 "weather-boxes weather-boxes weather-boxes"
+                 "footer footer footer" / 1fr 1fr 1fr;
   gap: 10px;
   min-height: 100vh;
-  /* Ensure body takes up at least the full viewport height */
 
-
-  & .title-box {
-    grid-area: title;
-    font-size: 2rem;
-    justify-self: center;
-
-    & .grey-box {
-      display: flex;
-      align-items: baseline;
-      text-align: left;
-      height: fit-content; 
-
-      
-
-
-    }
-  }
-
-  & div#button-box {
+  & #button-box {
     grid-area: buttons;
     display: flex;
     justify-content: end;
     gap: 5px;
-    margin-right: 10px;
-    margin-top: 0;
+    margin: 0 10px;
 
-    & button.buttonChange {
-      background-color: rgba(0, 0, 0, 0.6);
+    & .buttonChange {
+      background: rgba(0, 0, 0, 0.6);
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: center;
@@ -59,9 +28,7 @@ div#mars-container {
       margin-right: 5px;
     }
 
-    & button#celsius-button,
-    button#mars-date-button,
-    button#test2-button {
+    #celsius-button, #mars-date-button, #test2-button {
       display: none;
     }
   }
@@ -76,10 +43,9 @@ div#mars-container {
 
     & svg {
       width: 95%;
-
     }
 
-    & div.weather-boxes {
+    & .weather-boxes {
       display: flex;
       justify-content: space-evenly;
 
@@ -89,93 +55,33 @@ div#mars-container {
     }
   }
 
-  & div#today-weather-box {
+  & #today-weather-box {
     grid-area: today-weather-box;
     justify-content: center;
-    /* Center the content horizontally */
     align-items: baseline;
-    /* Center the content vertically */
     display: flex;
     line-height: 15pt;
   }
 }
 
-
-/* Media query for screens smaller than 660px */
 @media screen and (max-width: 660px) {
-  div#mars-container {
-    grid-template-rows: 40px auto auto auto 40px;
-    grid-template-columns: auto auto;
-    grid-template-areas:
-      "sun buttons"
-      "title title"
-      "paragraph today-weather-box"
-      "weather-boxes weather-boxes"
-      "footer footer";
-
-    & .grey-box {
-      & h3 {
-        font-size: 12pt;
-      }
-
-    }
-
-    & div#button-box {
-      & button.buttonChange {
+  #mars-container {
+    grid-template: "sun buttons"
+                   "title title"
+                   "paragraph today-weather-box"
+                   "weather-boxes weather-boxes"
+                   "footer footer" / auto auto;
+    & #button-box {
+      & .buttonChange {
         width: 50px;
         padding: 4px;
         color: white;
         margin-right: 5px;
         font-size: 8pt;
-
       }
     }
-
     & .today-weather-box {
       display: none;
     }
-
-    & .grey-box {
-      font-size: 9pt;
-    }
-
-    & .title-box {
-      & h1 {
-        font-size: 12pt;
-      }
-
-      & h2 {
-        font-size: 10pt;
-      }
-    }
   }
-}
-
-
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.modal img {
-  width: 100%;
-  height: auto;
-  margin-top: 20px;
-}
-
-.close {
-  color: #fff;
-  position: absolute;
-  top: 15px;
-  right: 35px;
-  font-size: 30px;
-  font-weight: bold;
-  cursor: pointer;
 }

@@ -48,13 +48,17 @@ async function getMoonData(date: string): Promise<MoonData> {
 async function initMoon(): Promise<void> {
     try {
         if (moonContainer) {
+
             createSunBackButton(moonContainer);
+            
             createFooter(moonContainer);
             currentMoonData = await getMoonData("next30days");
             pickedMoonData = await getMoonData(getFormattedDate());
             createTitle(moonContainer, `Status Moon`, false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData, today);
             moonriseMoonset(currentMoonData);
+            updateCountdown(getTimeUntilNextFullMoon(), isCurrentDate);
+
         }
     } catch (error) {
         displayMoon(backup, '1900-01-01');
@@ -66,7 +70,8 @@ async function initMoon(): Promise<void> {
 
 
 initMoon();
+updateCountdown(getTimeUntilNextFullMoon(), isCurrentDate);
 
-setInterval(() => {
-    updateCountdown(getTimeUntilNextFullMoon(), isCurrentDate);
-}, 1000);
+//setInterval(() => {
+//    updateCountdown(getTimeUntilNextFullMoon(), isCurrentDate);
+//}, 1000);

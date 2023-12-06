@@ -50,16 +50,13 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
         dateElement.textContent = `${dateEarth}`;
     }
 
-    const innerTitle = document.createElement("div");
     const greyBox = document.createElement("div");
     
     greyBox.id = "inner-title";
     greyBox.className = "grey-box";
 
-    innerTitle.appendChild(titleElement);
-    innerTitle.appendChild(dateElement);
-
-    greyBox?.appendChild(innerTitle);
+    greyBox.appendChild(titleElement);
+    greyBox.appendChild(dateElement);
 
 
     titleBox.appendChild(greyBox);

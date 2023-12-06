@@ -18,7 +18,7 @@ export function moonriseMoonset(moonData: MoonData): void {
         moonContent.className = "grey-box";
 
         const title = document.createElement("h3");
-        title.textContent = "Events of the Moon";
+        title.textContent = "Moon Events";
 
         moonContent.appendChild(title);
         moonContent.innerHTML += `
