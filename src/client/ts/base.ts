@@ -197,3 +197,26 @@ export function isSameDay(date1: Date, date2: Date): boolean {
         date1.getDate() === date2.getDate()
     );
 }
+
+/**
+ * Uses HTML Geolocation API to retrieve the user's position.
+ * @returns a number array with [latitude, longitude], default is Zurich
+ */
+export function getUserLocation(): Promise<number[]>{
+    return new Promise((resolve) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve([position.coords.latitude, position.coords.longitude]);
+                },
+                (_error) => {
+                    //Geolocation has been declined by the user, use Zurich as default
+                    resolve([47.3725151766, 8.54219283122])
+                }
+            );
+        } else { 
+            //Geolocation is n/A therefore we use Zurich as default
+            resolve([47.3725151766, 8.54219283122]);
+        }
+    });
+}
