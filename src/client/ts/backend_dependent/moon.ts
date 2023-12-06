@@ -6,6 +6,7 @@ import { updateCountdown } from '../moon/countdown';
 import { getTimeUntilNextFullMoon } from '../moon/datePicker';
 import { displayMoon } from '../moon/datePicker';
 
+
 export const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
 let location = 'zurich';
 let today = getFormattedDate();
@@ -52,13 +53,13 @@ async function initMoon(): Promise<void> {
             createFooter(moonContainer);
             currentMoonData = await getMoonData("next30days");
             pickedMoonData = await getMoonData(getFormattedDate());
-            createTitle(moonContainer, `Status Moon`, false, formatDate(currentMoonData.days[0]?.datetime), "");
+            createTitle(moonContainer, `Status Moon`, "", false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData, today);
             moonriseMoonset(currentMoonData);
         }
     } catch (error) {
         displayMoon(backup, '1900-01-01');
-        createTitle(moonContainer, `Status Moon`, false, formatDate(backup.days[0]?.datetime), "");
+        createTitle(moonContainer, `Status Moon`, "", false, formatDate(backup.days[0]?.datetime), "");
         moonriseMoonset(backup);
         console.error("Error initializing weather app", error);
     }

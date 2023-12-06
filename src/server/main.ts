@@ -157,7 +157,6 @@ regUrlApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
   cache: cacheCreateDaily("mars_rover_photos"),
   genReq: async (req) => {
     const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${req.rover}?api_key=${marsRoverApiKey}`).then((data) => data.json());
-    console.log("MANIFEST", manifest);
     return `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.rover}/photos?sol=${manifest.photo_manifest.max_sol}&api_key=${marsRoverApiKey}`
   },
   genRes: async (res) => res as MarsRoverPhotosRes
