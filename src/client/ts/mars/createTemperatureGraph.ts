@@ -54,14 +54,16 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
     const yScale = d3.scaleLinear()
         .domain([Math.min(...averages), Math.max(...averages)])
-        .range([height -  margin.top - margin.bottom, 0]);
+        .range([height - margin.top - margin.bottom, 0])
+
 
 
     const xAxis = d3.axisBottom<Date>(xScale)
         .tickFormat((date: Date) => d3.timeFormat('%b')(date))
         .ticks(5);
 
-    const yAxis = d3.axisLeft(yScale);
+    const yAxis = d3.axisLeft(yScale).ticks(5); // Adjust the number of ticks as needed
+
 
     // Append x and y axes to the SVG
     svg.append('g')
@@ -88,7 +90,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .attr('id', 'clip-path')
         .append('rect')
         .attr('width', containerWidth - margin.left - margin.right - 100)
-        .attr('height', height -  margin.top - margin.bottom);
+        .attr('height', height - margin.top - margin.bottom);
 
 
     // Append path for average temperature line
@@ -102,7 +104,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
 
     svg.append('text')
-        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height -  margin.top + 50})`) // Adjust the y-coordinate to move the label higher
+        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height - margin.top + 50})`) // Adjust the y-coordinate to move the label higher
         .style('text-anchor', 'middle')
         .style('fill', 'white')
         .style('font-size', '1rem')
@@ -111,7 +113,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     svg.append('text')
         .attr('transform', 'rotate(-90)')
         .attr('y', 0 - margin.left)
-        .attr('x', 0 - (height -  margin.top - margin.bottom) / 2)
+        .attr('x', 0 - (height - margin.top - margin.bottom) / 2)
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
         .style('fill', 'white')
@@ -135,7 +137,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     // Create a rect to capture zoom events
     zoomableSvg.append('rect')
         .attr('width', containerWidth)
-        .attr('height', height -  margin.top - margin.bottom)
+        .attr('height', height - margin.top - margin.bottom)
         .style('fill', 'none')
         .style('pointer-events', 'all');
 
@@ -160,10 +162,10 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         if (containerWidth < 700) {
             numTicks = 5;
         }
-        
+
         // Update x-axis ticks to display labels for the visible data points
         (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
-            .attr('transform', `translate(0,${height -  margin.top - margin.bottom})`)
+            .attr('transform', `translate(0,${height - margin.top - margin.bottom})`)
             .call(xAxis.scale(newXScale).ticks(numTicks));
 
         svg.select('.x-axis')
@@ -195,10 +197,10 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         if (containerWidth < 700) {
             numTicks = 5;
         }
-        
+
         // Update x-axis ticks to display labels for the visible data points
         (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
-            .attr('transform', `translate(0,${height -  margin.top - margin.bottom})`)
+            .attr('transform', `translate(0,${height - margin.top - margin.bottom})`)
             .call(xAxis.ticks(numTicks));
 
         svg.select('.x-axis')
@@ -216,7 +218,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
         // Update x-axis ticks to display labels for the visible data points
         (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
-            .attr('transform', `translate(0,${height -  margin.top - margin.bottom})`)
+            .attr('transform', `translate(0,${height - margin.top - margin.bottom})`)
             .call(xAxis);
 
 
