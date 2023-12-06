@@ -50,7 +50,7 @@ export function renderWeather(): void {
   }
   let temperatureData: TemperatureData[] = [];
   if (marsMain && weatherData.soles.length > 0) {
-    for (let i = Math.min(weatherData.soles.length, 300); i > 0; i--) {
+    for (let i = Math.min(weatherData.soles.length, 200); i > 0; i--) {
       const sol = weatherData.soles[i];
       if (sol == undefined) continue;
       temperatureData.push({

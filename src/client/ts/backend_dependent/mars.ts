@@ -1,4 +1,4 @@
-import { createTitle, createText, createFooter, formatDate, createSunBackButton, changeElemDisplay } from '.././base';
+import { createTitle, createFooter, formatDate, createSunBackButton, changeElemDisplay } from '.././base';
 import { MarsWeatherRes as MarsData } from '../../../common/api';
 import * as d3 from 'd3';
 import { renderRoverPhotos } from '../mars/roverPhotos';

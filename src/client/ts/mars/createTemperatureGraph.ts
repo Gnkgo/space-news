@@ -11,7 +11,6 @@ export interface TemperatureData {
 
 export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius: boolean): void {
 
-    const minVisibleDataPoints = 3;
     // Extract relevant information
     const dates: Date[] = [];
     const averagesCelsius: number[] = [];
@@ -40,13 +39,12 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     const margin = { top: 20, right: 20, bottom: 10, left: 80 };
     let containerWidth = window.innerWidth;
 
-    const height = 250;
-    const removeHeight = 80;
+    const height = 170;
     // Create the SVG container
     const svg = d3.select('#mars-container').select('main').append('svg')
         .attr('class', 'grey-box')
         .attr('width', containerWidth)
-        .attr('height', height - margin.top - margin.bottom + 35)
+        .attr('height', height + 100 - margin.top - margin.bottom + 35)
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -56,10 +54,13 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
     const yScale = d3.scaleLinear()
         .domain([Math.min(...averages), Math.max(...averages)])
-        .range([height - removeHeight - margin.top - margin.bottom, 0]);
+        .range([height -  margin.top - margin.bottom, 0]);
 
-    // Create x and y axes
-    const xAxis = d3.axisBottom(xScale);
+
+    const xAxis = d3.axisBottom<Date>(xScale)
+        .tickFormat((date: Date) => d3.timeFormat('%b')(date))
+        .ticks(5);
+
     const yAxis = d3.axisLeft(yScale);
 
     // Append x and y axes to the SVG
@@ -79,14 +80,15 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     // Create line generator for average temperatures
     const avgLine = d3.line<any>()
         .x((d: any) => xScale(dates[d]!))
-        .y((d: any) => yScale(d));
+        .y((d: any) => yScale(d))
+        .curve(d3.curveBasis);
 
     // Create a clipPath element
     svg.append('clipPath')
         .attr('id', 'clip-path')
         .append('rect')
-        .attr('width', containerWidth - margin.left - margin.right - 120)
-        .attr('height', height - removeHeight - margin.top - margin.bottom);
+        .attr('width', containerWidth - margin.left - margin.right - 100)
+        .attr('height', height -  margin.top - margin.bottom);
 
 
     // Append path for average temperature line
@@ -100,7 +102,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
 
     svg.append('text')
-        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height - removeHeight - margin.top + 50})`) // Adjust the y-coordinate to move the label higher
+        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height -  margin.top + 50})`) // Adjust the y-coordinate to move the label higher
         .style('text-anchor', 'middle')
         .style('fill', 'white')
         .style('font-size', '1rem')
@@ -109,7 +111,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     svg.append('text')
         .attr('transform', 'rotate(-90)')
         .attr('y', 0 - margin.left)
-        .attr('x', 0 - (height - removeHeight - margin.top - margin.bottom) / 2)
+        .attr('x', 0 - (height -  margin.top - margin.bottom) / 2)
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
         .style('fill', 'white')
@@ -133,7 +135,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     // Create a rect to capture zoom events
     zoomableSvg.append('rect')
         .attr('width', containerWidth)
-        .attr('height', height - removeHeight - margin.top - margin.bottom)
+        .attr('height', height -  margin.top - margin.bottom)
         .style('fill', 'none')
         .style('pointer-events', 'all');
 
@@ -144,32 +146,25 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         const newXScale = newTransform.rescaleX(xScale);
         const newYScale = newTransform.rescaleY(yScale);
 
-        // Calculate the visible date range
-        const visibleDates: Date[] = newXScale.domain() as Date[];
-        if (visibleDates[0] == undefined || visibleDates[1] == undefined) return;
-        const dateRange = visibleDates[1].getTime() - visibleDates[0].getTime();
+        const zoomLevel = newTransform.k;
 
-        // Determine tick interval based on the visible date range
-        let tickInterval;
-        console.log("DATERANGE", dateRange);
-        if (dateRange > 90 * 24 * 60 * 60 * 1000) {
-            tickInterval = d3.timeMonth.every(1);
-        } else if (dateRange > 30 * 24 * 60 * 60 * 1000) {
-            tickInterval = d3.timeMonday.every(2);
-
-        } else if (dateRange > 17 * 24 * 60 * 60 * 1000) {
-            tickInterval = d3.timeDay.every(8);
+        // Adjust tick format based on zoom level
+        if (zoomLevel <= 2) {
+            xAxis.tickFormat(d3.timeFormat('%b')); // Adjust to your desired format after zooming in
         } else {
-            tickInterval = d3.timeDay.every(2);
+
+            xAxis.tickFormat(d3.timeFormat('%b %d')); // Adjust to your desired format after zooming in
         }
 
-        // Update container width based on the window size
-        containerWidth = window.innerWidth;
-
+        let numTicks = 5;
+        if (containerWidth < 700) {
+            numTicks = 5;
+        }
+        
         // Update x-axis ticks to display labels for the visible data points
         (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
-            .attr('transform', `translate(0,${height - removeHeight - margin.top - margin.bottom})`)
-            .call(xAxis.scale(newXScale).ticks(tickInterval));
+            .attr('transform', `translate(0,${height -  margin.top - margin.bottom})`)
+            .call(xAxis.scale(newXScale).ticks(numTicks));
 
         svg.select('.x-axis')
             .selectAll('text')
@@ -180,7 +175,8 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
             .call(yAxis.scale(newYScale));
 
         avgLine.x((d: any) => newXScale(dates[d]!))
-            .y((d: any) => newYScale(averages[d]!));
+            .y((d: any) => newYScale(averages[d]!))
+            .curve(d3.curveBasis);
 
         // Update average temperature line
         svg.select('.avg-line')
@@ -195,12 +191,21 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     function handleResize() {
         // Update container width based on the window size
         containerWidth = window.innerWidth;
-        let visibleDataPoints = 4;
-
+        let numTicks = 8;
         if (containerWidth < 700) {
-            visibleDataPoints = 2;
-            console.log('here', visibleDataPoints);
+            numTicks = 5;
         }
+        
+        // Update x-axis ticks to display labels for the visible data points
+        (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
+            .attr('transform', `translate(0,${height -  margin.top - margin.bottom})`)
+            .call(xAxis.ticks(numTicks));
+
+        svg.select('.x-axis')
+            .selectAll('text')
+            .attr('transform', 'rotate(-45)') // Adjust the rotation angle as needed
+            .style('text-anchor', 'end'); // Align the rotated text appropriately
+
 
         // Update SVG container size
         svg.attr('width', containerWidth);
@@ -211,7 +216,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
         // Update x-axis ticks to display labels for the visible data points
         (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
-            .attr('transform', `translate(0,${height - removeHeight - margin.top - margin.bottom})`)
+            .attr('transform', `translate(0,${height -  margin.top - margin.bottom})`)
             .call(xAxis);
 
 
@@ -224,7 +229,8 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         // Update line generator
         const avgLine = d3.line<any>()
             .x((d: any) => xScale(dates[d]!))
-            .y((d: any) => yScale(averages[d]!));
+            .y((d: any) => yScale(averages[d]!))
+            .curve(d3.curveBasis);
 
         // Update average temperature line
         svg.select('.avg-line')
