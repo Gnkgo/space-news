@@ -12,7 +12,6 @@ let today = getFormattedDate();
 let isCurrentDate = true;
 
 export let currentMoonData: MoonData;
-let pickedMoonData: MoonData;
 
 const backup: MoonData = {
     description: {
@@ -49,7 +48,6 @@ async function initMoon(): Promise<void> {
             createSunBackButton(moonContainer);
             createFooter(moonContainer);
             currentMoonData = await getMoonData("next30days");
-            pickedMoonData = await getMoonData(getFormattedDate());
             createTitle(moonContainer, `Status Moon`, false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData, today);
             moonriseMoonset(currentMoonData);
