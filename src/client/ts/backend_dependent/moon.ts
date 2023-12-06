@@ -1,13 +1,12 @@
 import { MoonRes as MoonData, moonTarget } from '../../../common/api';
 import { getFormattedDate } from '../../../common/utils';
-import { createTitle, createFooter, formatDate, createSunBackButton } from '.././base';
+import { createTitle, createFooter, formatDate, createSunBackButton, getUserLocation } from '.././base';
 import { moonriseMoonset } from '../moon/moonriseMoonset';
 import { updateCountdown } from '../moon/countdown';
 import { getTimeUntilNextFullMoon } from '../moon/datePicker';
 import { displayMoon } from '../moon/datePicker';
 
 export const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
-let location = 'zurich';
 let today = getFormattedDate();
 
 let isCurrentDate = true;
@@ -30,13 +29,12 @@ const backup: MoonData = {
         moonset: "2023-11-29T03:45:00",
       },
     ],
-  };
-  
-
+};
 
 async function getMoonData(date: string): Promise<MoonData> {
     try {
-        const response = await fetch(moonTarget.resolve({date: date, location: location}));
+        const location = await getUserLocation();
+        const response = await fetch(moonTarget.resolve({date: date, lat: location[0]!, lon: location[1]!}));
         const data = await response.json() as MoonData;
         return data;
     } catch (error) {
