@@ -12,7 +12,7 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
   if (sol == undefined) return innerWeatherBox;
 
 
-  const title = document.createElement('h3');
+  const title = document.createElement('h1');
   title.textContent = isSol ? `Sol ${sol.sol}` : `${formatDate(sol.terrestrial_date)}`;
   innerWeatherBox.appendChild(title);
 

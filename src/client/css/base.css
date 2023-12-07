@@ -21,11 +21,13 @@ footer {
 
 .sun-button {
   grid-area: sun;
+  margin: 10px;;
   display: flex;
   width: 45px;
   height: 45px;
   cursor: pointer;
-  justify-self: center; /* Align to the end (right) of the grid area */
+  justify-self: center;
+  /* Align to the end (right) of the grid area */
 
 }
 
@@ -44,10 +46,16 @@ footer {
   align-items: baseline;
   height: fit-content;
 
-  > h3 {
-    font-size: 2rem;
-    padding-bottom: 5px;
+  & h1 {
     margin: 0;
+    font-size: 2rem;
+    color: white;
+  }
+
+  & h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: white;
   }
 
 }
@@ -62,6 +70,7 @@ footer {
     justify-content: baseline;
 
   }
+
   & h1 {
     margin: 0;
     font-size: 2rem;
@@ -161,11 +170,10 @@ footer {
       font-size: 10pt;
     }
   }
-  
+
   & .grey-box {
     & h3 {
       font-size: 12pt;
     }
   }
 }
-

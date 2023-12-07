@@ -61,6 +61,7 @@ export function createTitle(divContainer: HTMLDivElement, title: string, paragra
 
     greyBox.appendChild(titleElement);
     greyBox.appendChild(dateElement);
+    greyBox.appendChild(paragraphElement);
 
 
 
