@@ -50,8 +50,6 @@ export async function initMoon(location?: number[]): Promise<void> {
             createTitle(moonContainer, `Status Moon`, "", false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData, today);
             moonriseMoonset(currentMoonData);
-
-            console.log("current moon data: " + currentMoonData + " - " + (location ? location : [47.3725151766, 8.54219283122]));
         }
     } catch (error) {
         displayMoon(backup, '1900-01-01');
