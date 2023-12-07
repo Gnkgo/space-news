@@ -1,7 +1,6 @@
 # Space News
 Here you can find the whole code for the project in the course Fundamentals of Webengineering 2023 from ETH.
 
-
 # READ ME from FoWE-TEAM Skeleton
 
 # Project Title
@@ -84,13 +83,17 @@ Document here the major milestones of your code and future planned steps.\
   - [X] Show current moon
   - [X] Show countdown
     - [ ] Fancy countdown   
-  - [ ] make button to choose a date in the future
+  - [X] make button to choose a date in the future
   - [X] make a back button
+  - [X] use location
       
 - [ ] Mars
   - [X] display weather
   - [X] have a paragraph that describes it
-  - [ ] have a nice layout
+  - [X] have a nice layout
+  - [X] make temperature graph
+    - [ ] make better ticks
+  - [X] make mars picture button
      
 - [ ] Earth
 - [ ] Backend
@@ -131,6 +134,22 @@ This will help you have a clearer overview of what you are currently doing, trac
 - Display back button
 - Show the moonrise and moonset
 
+### 30. November 2023 - 7. December 2023
+#### Gnkgo:
+##### Mars:
+- Temperature Graph that can zoom in
+- Make Mars button to show picture of Mars
+- Make modal for additional information for weather
+
+##### Moon:
+- Better layout
+
+## Questions Meeting
+- Better ticks in the graph?
+- How to run it in Github -> How to deploy it?
+  - Displaying of pictures do not work
+  - public folder outside src?
+- Do we need to copy paste it to Gitlab? 
 
 ## Versioning
 Create stable versions of your code each week by using gitlab tags.\
