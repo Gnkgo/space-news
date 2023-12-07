@@ -11,24 +11,8 @@ div#moon-container {
 
   gap: 10px;
   min-height: 100vh;
-
-  /* Ensure body takes up at least the full viewport height */
-  .grey-box {
-    border: none;
-    /* or border-width: 0; */
-    background-color: transparent;
-  }
 }
 
-.title-box {
-  display: flex;
-
-  & .grey-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
 
 .date-picker {
   display: flex;
@@ -45,48 +29,20 @@ div#moon-container {
 }
 
 
-
 .moon-box {
   grid-area: moon-sunrise-sunset-box;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: baseline;
   flex-direction: column;
   color: white;
-
-  & h3 {
-    font-size: 1.5rem;
-    font-weight: 300;
-  }
-
-  & p {
-    font-size: 1rem;
-    font-weight: 300;
-  }
 }
 
-.image {
-  padding-bottom: 20px;
-  width: 50vh;
-  height: 50vh;
-}
-
-.image-container {
-  display: flex;
-  grid-area: moon;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  color: white;
-  font-size: 1.5rem;
-
-}
 
 .countdown {
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  align-items: baseline;
   color: white;
   font-size: 1.5rem;
   grid-area: countdown;
@@ -106,42 +62,15 @@ div#moon-container {
       "moon "
       "footer";
 
-    & .grey-box {
-      justify-self: center;
-      align-self: center;
-      & h3 {
-        font-size: 12pt;
-      }
-
-    }
 
     & .countdown {
       font-size: 12pt;
-
     }
 
-
-
-    & .grey-box {
-      font-size: 9pt;
-    }
-
-    & .title-box {
+    & .moon-box {
       display: flex;
       justify-content: center;
       align-items: center;
-      & h1 {
-        font-size: 12pt;
-      }
-
-      & h2 {
-        font-size: 10pt;
-      }
     }
-  }
-
-
-  .image-container {
-    font-size: 10pt;
   }
 }
