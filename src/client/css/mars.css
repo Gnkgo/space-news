@@ -13,7 +13,7 @@ div#mars-container {
   /* Adjusted rows to include 1fr for the remaining space */
   grid-template-areas:
     ". sun buttons"
-    "title today-weather-box paragraph"
+    "title . today-weather-box"
     "weather-boxes weather-boxes weather-boxes"
     "footer footer footer";
 
@@ -31,10 +31,7 @@ div#mars-container {
       display: flex;
       align-items: baseline;
       text-align: left;
-      height: fit-content; 
-
-      
-
+      height: fit-content;
 
     }
   }
@@ -45,7 +42,7 @@ div#mars-container {
     justify-content: end;
     gap: 5px;
     margin-right: 10px;
-    margin-top: 0;
+    margin-top: 10px;
 
     & button.buttonChange {
       background-color: rgba(0, 0, 0, 0.6);
@@ -90,13 +87,20 @@ div#mars-container {
   }
 
   & div#today-weather-box {
+    cursor: pointer;
+
     grid-area: today-weather-box;
     justify-content: center;
     /* Center the content horizontally */
     align-items: baseline;
     /* Center the content vertically */
     display: flex;
-    line-height: 15pt;
+    line-height: 10pt;
+
+    & p {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
   }
 }
 
@@ -104,12 +108,11 @@ div#mars-container {
 /* Media query for screens smaller than 660px */
 @media screen and (max-width: 660px) {
   div#mars-container {
-    grid-template-rows: 40px auto auto auto 40px;
+    grid-template-rows: 40px auto auto 40px;
     grid-template-columns: auto auto;
     grid-template-areas:
       "sun buttons"
-      "title title"
-      "paragraph today-weather-box"
+      "title today-weather-box"
       "weather-boxes weather-boxes"
       "footer footer";
 
