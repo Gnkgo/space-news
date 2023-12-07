@@ -166,7 +166,7 @@ regUrlApi<MoonReq, MoonRes>({
   apiName: "Moon Data",
   target: moonTarget.raw(),
   cache: cacheCreateDaily("moon"),
-  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.location}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.lat}%2C%20${req.lon}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
   genRes: async (res) => res as MoonRes
 });
 
@@ -176,34 +176,6 @@ regUrlApi<FireballReq, FireballRes>({
   genReq: async (req) => `https://ssd-api.jpl.nasa.gov/fireball.api?date-min=${req["date-min"]}&req-loc=${req["req-loc"]}`,
   genRes: async (res) => res as FireballRes
 });
-
-
-
-
-
-
-
-// VALENTIN END
-
-// NICK START
-/*app.get('/', (_req, res) => {
-  res.sendFile(path.resolve('src', 'client', 'html', 'home.html'));
-});
-app.get('/neo.html', (_req, res) => {
-  res.sendFile(path.resolve('src', 'client', 'html', 'neo.html'));
-});
-app.get('/nasa-cad-api', async (req, res) => {
-  try {
-    const {'date-min': dateMin, 'date-max': dateMax, 'dist-max': distMax} = req.query as {'date-min': string, 'date-max': string, 'dist-max': string};
-    const response = await fetch(`https://ssd-api.jpl.nasa.gov/cad.api?date-min=${dateMin}&date-max=%2B${dateMax}&dist-max=${distMax}`);
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
-  }
-});*/
-// NICK END
 
 // Do not change below this line
 ViteExpress.listen(app, 5173, () =>

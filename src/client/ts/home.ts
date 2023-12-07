@@ -1,3 +1,6 @@
+import { getUserLocation } from "./base";
+import { initMoon } from "./backend_dependent/moon";
+
 //Add click-eventlistener to planets
 const mars = document.getElementById('mars');
 mars?.addEventListener('click', () => showPlanetInformation('mars'));
@@ -14,7 +17,7 @@ sun?.addEventListener('click', () => showSunEasterEgg(sun));
 
 
 
-function showPlanetInformation(planet: string) {
+async function showPlanetInformation(planet: string) {
         const homeContainer = document.getElementById("home-container");
         if(homeContainer){
             homeContainer.style.display = 'none';
@@ -38,6 +41,8 @@ function showPlanetInformation(planet: string) {
             const moonContainer = document.getElementById('moon-container');
             if(moonContainer){
                 moonContainer.style.display = 'grid';
+                const location = await getUserLocation();
+                initMoon(location);
             }
             break;
         default:

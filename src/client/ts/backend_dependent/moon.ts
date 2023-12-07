@@ -8,13 +8,11 @@ import { displayMoon } from '../moon/datePicker';
 
 
 export const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
-let location = 'zurich';
 let today = getFormattedDate();
 
 let isCurrentDate = true;
 
 export let currentMoonData: MoonData;
-let pickedMoonData: MoonData;
 
 const backup: MoonData = {
     description: {
@@ -31,13 +29,11 @@ const backup: MoonData = {
         moonset: "2023-11-29T03:45:00",
       },
     ],
-  };
-  
+};
 
-
-async function getMoonData(date: string): Promise<MoonData> {
+async function getMoonData(date: string, location: number[]): Promise<MoonData> {
     try {
-        const response = await fetch(moonTarget.resolve({date: date, location: location}));
+        const response = await fetch(moonTarget.resolve({date: date, lat: location[0]!, lon: location[1]!}));
         const data = await response.json() as MoonData;
         return data;
     } catch (error) {
@@ -46,16 +42,18 @@ async function getMoonData(date: string): Promise<MoonData> {
     }
 }
 
-async function initMoon(): Promise<void> {
+export async function initMoon(location?: number[]): Promise<void> {
     try {
         if (moonContainer) {
             createSunBackButton(moonContainer);
             createFooter(moonContainer);
-            currentMoonData = await getMoonData("next30days");
             pickedMoonData = await getMoonData(getFormattedDate());
-            createTitle(moonContainer, `Status Moon`, "", false, formatDate(currentMoonData.days[0]?.datetime), "");
+            currentMoonData = await getMoonData("next30days", (location ? location : [47.3725151766, 8.54219283122]));
+            createTitle(moonContainer, `Status Moon`, false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData, today);
             moonriseMoonset(currentMoonData);
+
+            console.log("current moon data: " + currentMoonData + " - " + (location ? location : [47.3725151766, 8.54219283122]));
         }
     } catch (error) {
         displayMoon(backup, '1900-01-01');
