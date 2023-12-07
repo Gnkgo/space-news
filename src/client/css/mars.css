@@ -9,12 +9,14 @@
   gap: 10px;
   min-height: 100vh;
 
+
   & #button-box {
     grid-area: buttons;
     display: flex;
     justify-content: end;
     gap: 5px;
     margin: 0 10px;
+
 
     & .buttonChange {
       background: rgba(0, 0, 0, 0.6);
@@ -55,12 +57,19 @@
     }
   }
 
-  & #today-weather-box {
+  & div#today-weather-box {
+    cursor: pointer;
+
     grid-area: today-weather-box;
     justify-content: center;
     align-items: baseline;
     display: flex;
-    line-height: 15pt;
+    line-height: 10pt;
+
+    & p {
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
   }
 }
 
@@ -73,6 +82,7 @@
                    "footer footer" / auto auto;
     & #button-box {
       & .buttonChange {
+
         width: 50px;
         padding: 4px;
         color: white;

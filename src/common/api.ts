@@ -98,7 +98,8 @@ export type FireballRes = {
 
 export type MoonReq = {
   'date': string;
-  'location': string;
+  'lat': number;
+  'lon': number;
 }
 
 export type MoonEntryRes = {

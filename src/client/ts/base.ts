@@ -31,7 +31,7 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
 }
 
 
-export function createTitle(divContainer: HTMLDivElement, title: string, isSol: boolean, dateEarth: string, dateSol: string) {
+export function createTitle(divContainer: HTMLDivElement, title: string, paragraph: string, isSol: boolean, dateEarth: string, dateSol: string) {
     let titleBox = divContainer.querySelector(".title-box"); // Assuming you are using a class selector
     if (titleBox) titleBox.remove();
 
@@ -44,6 +44,10 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
 
     const dateElement = document.createElement("h2");
 
+    const paragraphElement = document.createElement("p");
+    paragraphElement.textContent = paragraph;
+    paragraphElement.style.fontSize = "8pt";
+
     if (isSol) {
         dateElement.textContent = `Sol ${dateSol}`;
     } else {
@@ -51,12 +55,13 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
     }
 
     const greyBox = document.createElement("div");
-    
+
     greyBox.id = "inner-title";
     greyBox.className = "grey-box";
 
     greyBox.appendChild(titleElement);
     greyBox.appendChild(dateElement);
+
 
 
     titleBox.appendChild(greyBox);
@@ -193,4 +198,27 @@ export function isSameDay(date1: Date, date2: Date): boolean {
         date1.getMonth() === date2.getMonth() &&
         date1.getDate() === date2.getDate()
     );
+}
+
+/**
+ * Uses HTML Geolocation API to retrieve the user's position.
+ * @returns a number array with [latitude, longitude], default is Zurich
+ */
+export function getUserLocation(): Promise<number[]>{
+    return new Promise((resolve) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve([position.coords.latitude, position.coords.longitude]);
+                },
+                (_error) => {
+                    //Geolocation has been declined by the user, use Zurich as default
+                    resolve([47.3725151766, 8.54219283122])
+                }
+            );
+        } else { 
+            //Geolocation is n/A therefore we use Zurich as default
+            resolve([47.3725151766, 8.54219283122]);
+        }
+    });
 }

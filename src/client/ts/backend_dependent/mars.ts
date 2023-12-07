@@ -1,4 +1,4 @@
-import { createTitle, createText, createFooter, formatDate, createSunBackButton, changeElemDisplay } from '.././base';
+import { createTitle, createFooter, formatDate, createSunBackButton, changeElemDisplay } from '.././base';
 import { MarsWeatherRes as MarsData } from '../../../common/api';
 import * as d3 from 'd3';
 import { renderRoverPhotos } from '../mars/roverPhotos';
@@ -11,7 +11,8 @@ let currentDate: string = "";
 let currentDateSol: string = "";
 export const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 export let weatherData: MarsData;
-
+let text = "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
+If planning outdoor activities or rover missions, stay tuned for updates and exercise caution during storms. Embrace the challenges of Mars' atmosphere. Safe travels!";
 async function initMars(): Promise<void> {
   try {
     if (marsContainer) {
@@ -19,9 +20,7 @@ async function initMars(): Promise<void> {
       currentDate = weatherData.soles[0]?.terrestrial_date || '';
       currentDateSol = weatherData.soles[0]?.sol || '';
       renderWeather();
-      createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
-      createText(marsContainer, "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
-      If planning outdoor activities or rover missions, stay tuned for updates and exercise caution during storms. Embrace the challenges of Mars' atmosphere. Safe travels!");
+      createTitle(marsContainer, `Mars Weather`, text, isSol, formatDate(currentDate), currentDateSol);
       createFooter(marsContainer);
       createSunBackButton(marsContainer);
       createButtons();
@@ -32,7 +31,6 @@ async function initMars(): Promise<void> {
 }
 
 function handleButtonClick(label: string): void {
-  console.log("handle button");
   if (label === "mars-date") {
     changeElemDisplay('mars-date-button', 'earth-date-button');
     toggleDateUnit();
@@ -75,7 +73,6 @@ function createButton(className: string, label: string, id: string): HTMLButtonE
   button.className = className;
   button.id = `${id}-button`;
   button.textContent = label;
-  console.log("Creating buttons INNER");
 
   return button;
 
@@ -84,7 +81,9 @@ function createButton(className: string, label: string, id: string): HTMLButtonE
 async function toggleDateUnit() {
   isSol = !isSol;
   renderWeather();
-  createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
+  createTitle(marsContainer, `Mars Weather`, "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
+  If planning outdoor activities or rover missions, stay tuned for updates and exercise caution during storms. Embrace the challenges of Mars' atmosphere. Safe travels!",
+   isSol, formatDate(currentDate), currentDateSol);
 }
 
 async function toggleTemperatureUnit() {
