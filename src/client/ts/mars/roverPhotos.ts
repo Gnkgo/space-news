@@ -1,9 +1,10 @@
 import { createModal, openModal } from "./modal";
 import { marsRoverPhotosTarget } from '../../../common/api';
 import {  MarsRoverPhotosRes } from '../../../common/api';
+import { getRandomInt } from "../base";
 
 const rovers = ["curiosity", "opportunity", "spirit"];
-let randomRover = rovers[Math.floor(Math.random() * rovers.length)];
+let randomRover = rovers[getRandomInt(0, rovers.length)];
 
 export async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
     try {
@@ -21,7 +22,7 @@ export async function renderRoverPhotos(): Promise<void> {
     const photoData = await getRoverPhotos();
     let photo: any;
     if (photoData.photos.length > 0) {
-        photo = photoData.photos[Math.floor(Math.random() * photoData.photos.length)];
+        photo = photoData.photos[getRandomInt(0, photoData.photos.length)];
     }
     createModal();
     openModal(photo, null, true);

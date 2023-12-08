@@ -43,11 +43,7 @@ function handleButtonClick(label: string): void {
   } else if (label === "fahrenheit") {
     changeElemDisplay('fahrenheit-button', 'celsius-button');
     toggleTemperatureUnit();
-  } else if (label === "test") {
-    changeElemDisplay('test-button', 'test2-button');
-    renderRoverPhotos();
-  } else if (label === "test2") {
-    changeElemDisplay('test2-button', 'test-button');
+  } else if (label === "mars-image") {
     renderRoverPhotos();
   }
 }
@@ -57,7 +53,7 @@ function createButtons(): void {
   const buttonBox = document.createElement("div");
   buttonBox.id = "button-box";
   buttonBox.className = "button-box";
-  const buttonLabels = { 'test': 'Show Mars', 'test2': 'Show Mars', 'celsius': '°C', 'fahrenheit': '°F', 'earth-date': 'Earth', 'mars-date': 'Sol' };
+  const buttonLabels = { 'mars-image': 'Show Mars', 'celsius': '°C', 'fahrenheit': '°F', 'earth-date': 'Earth', 'mars-date': 'Sol' };
 
   for (const [key, label] of Object.entries(buttonLabels)) {
     const button = createButton('buttonChange', label, key);

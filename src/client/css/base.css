@@ -83,6 +83,8 @@ footer {
 
 .modal {
   display: none;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   z-index: 1;
   left: 0;
@@ -94,8 +96,7 @@ footer {
 }
 
 .modal img {
-  width: 100%;
-  height: auto;
+  height: calc(85 * var(--unit));
   margin-top: 20px;
 }
 

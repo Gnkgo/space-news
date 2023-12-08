@@ -24,7 +24,7 @@ export function openModal(photo: any, data : MarsData | null, isRover : boolean)
       modal.appendChild(modalWeatherBox);
       modal.className = "modal";
     }
-    modal.style.display = "block";
+    modal.style.display = "flex";
   }
   
   
