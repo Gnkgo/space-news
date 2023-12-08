@@ -9,8 +9,18 @@ div#moon-container {
     "moon moon moon"
     "footer footer footer";
 
-  gap: 10px;
   min-height: 100vh;
+
+  & .grey-box {
+    text-align: center;
+
+    & h1 {
+      font-size: 1.17em;
+    }
+    & p {
+      font-size: 0.8rem;
+    }
+  }
 }
 
 
@@ -34,8 +44,8 @@ div#moon-container {
   display: flex;
   justify-content: center;
   align-items: baseline;
-  flex-direction: column;
   color: white;
+  justify-self: center;
 }
 
 
