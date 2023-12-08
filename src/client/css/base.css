@@ -12,49 +12,45 @@ footer {
   background-color: rgba(0, 0, 0, 0.2);
   color: white;
   text-align: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   font-weight: 300;
-  color: white;
   padding: 10px;
 
 }
 
 .sun-button {
   grid-area: sun;
-  margin: 10px;;
+  margin: 5px;
   display: flex;
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
   justify-self: center;
   /* Align to the end (right) of the grid area */
-
 }
 
 .grey-box {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(55, 55, 55, 0.6);
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
 
-  padding: 20px;
+  padding: 10px;
   color: white;
   margin: 10px;
   line-height: normal;
-  font-size: 12pt;
+  font-size: 0.8rem;
 
   align-items: baseline;
   height: fit-content;
 
   & h1 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: white;
   }
 
   & h2 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1rem;
     color: white;
   }
 
@@ -64,23 +60,12 @@ footer {
   grid-area: title;
   font-size: 2rem;
 
+  justify-self: center;
   & .grey-box {
     text-align: left;
     display: inline-block;
     justify-content: baseline;
 
-  }
-
-  & h1 {
-    margin: 0;
-    font-size: 2rem;
-    color: white;
-  }
-
-  & h2 {
-    margin: 0;
-    font-size: 2rem;
-    color: white;
   }
 }
 

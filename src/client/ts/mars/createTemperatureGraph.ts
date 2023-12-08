@@ -39,12 +39,12 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     const margin = { top: 20, right: 20, bottom: 10, left: 80 };
     let containerWidth = window.innerWidth;
 
-    const height = 170;
+    const height = 140;
     // Create the SVG container
     const svg = d3.select('#mars-container').select('main').append('svg')
         .attr('class', 'grey-box')
         .attr('width', containerWidth)
-        .attr('height', height + 100 - margin.top - margin.bottom + 35)
+        .attr('height', height + 40 - margin.top - margin.bottom + 35)
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -104,7 +104,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
 
     svg.append('text')
-        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height - margin.top + 50})`) // Adjust the y-coordinate to move the label higher
+        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height - margin.top + 36})`) // Adjust the y-coordinate to move the label higher
         .style('text-anchor', 'middle')
         .style('fill', 'white')
         .style('font-size', '1rem')

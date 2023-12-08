@@ -6,6 +6,7 @@ import { MoonRes as MoonData } from '../../../common/api';
 import { moonriseMoonset } from "./moonriseMoonset";
 import { formatDate } from "../base";
 import { getMoonData } from "./moonDataCollection";
+import { location } from "../home";
 
 export function getTimeUntilNextFullMoon(): number {
     const currentDate = new Date();
@@ -49,10 +50,11 @@ export function createDatePicker(selectedDate: string) {
 
     async function handleInputEvent() {
         selectedDate = datePicker.value;
-        const pickedMoonData = await getMoonData(selectedDate);
+        const pickedMoonData = await getMoonData(selectedDate, location);
+        console.log("picked moon data: ", pickedMoonData);
         displayMoon(pickedMoonData, selectedDate);
         moonriseMoonset(pickedMoonData);
-        createTitle(moonContainer, `Status Moon`, false, formatDate(pickedMoonData.days[0]?.datetime), "");
+        createTitle(moonContainer, `Status Moon`, "", false, formatDate(pickedMoonData.days[0]?.datetime), "");
     }
     datePicker.addEventListener("input", handleInputEvent);
     dateContainer.appendChild(datePicker);

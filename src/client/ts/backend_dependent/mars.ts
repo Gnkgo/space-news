@@ -12,7 +12,7 @@ let currentDateSol: string = "";
 export const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 export let weatherData: MarsData;
 let text = "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
-If planning outdoor activities or rover missions, stay tuned for updates and exercise caution during storms. Embrace the challenges of Mars' atmosphere. Safe travels!";
+If planning outdoor activities or rover missions, stay tuned for updates. Embrace the challenges of Mars' atmosphere. Safe travels!";
 async function initMars(): Promise<void> {
   try {
     if (marsContainer) {

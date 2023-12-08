@@ -1,10 +1,11 @@
-import { MoonRes as MoonData, moonTarget } from '../../../common/api';
+import { MoonRes as MoonData } from '../../../common/api';
 import { getFormattedDate } from '../../../common/utils';
 import { createTitle, createFooter, formatDate, createSunBackButton } from '.././base';
 import { moonriseMoonset } from '../moon/moonriseMoonset';
 import { updateCountdown } from '../moon/countdown';
 import { getTimeUntilNextFullMoon } from '../moon/datePicker';
 import { displayMoon } from '../moon/datePicker';
+import { getMoonData } from '../moon/moonDataCollection';
 
 export const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
 let today = getFormattedDate();
@@ -12,6 +13,7 @@ let today = getFormattedDate();
 let isCurrentDate = true;
 
 export let currentMoonData: MoonData;
+export let pickMoonData: MoonData;
 
 const backup: MoonData = {
     description: {
@@ -30,26 +32,20 @@ const backup: MoonData = {
     ],
 };
 
-async function getMoonData(date: string, location: number[]): Promise<MoonData> {
-    try {
-        const response = await fetch(moonTarget.resolve({date: date, lat: location[0]!, lon: location[1]!}));
-        const data = await response.json() as MoonData;
-        return data;
-    } catch (error) {
-        console.error("Error fetching weather data", error);
-        throw error;
-    }
-}
+
 
 export async function initMoon(location?: number[]): Promise<void> {
     try {
         if (moonContainer) {
+            moonContainer.innerHTML = "";
             createSunBackButton(moonContainer);
             createFooter(moonContainer);
             currentMoonData = await getMoonData("next30days", (location ? location : [47.3725151766, 8.54219283122]));
-            createTitle(moonContainer, `Status Moon`, "", false, formatDate(currentMoonData.days[0]?.datetime), "");
+            pickMoonData = await getMoonData(today, (location ? location : [47.3725151766, 8.54219283122]));
+            createTitle(moonContainer, `Status Moon`, formatDate(currentMoonData.days[0]?.datetime), false, "", "");
             displayMoon(currentMoonData, today);
             moonriseMoonset(currentMoonData);
+            console.log("current moon data: " + currentMoonData + " - " + (location ? location : [47.3725151766, 8.54219283122]));
         }
     } catch (error) {
         displayMoon(backup, '1900-01-01');

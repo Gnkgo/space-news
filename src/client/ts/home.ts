@@ -1,5 +1,7 @@
 import { getUserLocation } from "./base";
 import { initMoon } from "./backend_dependent/moon";
+export let location: number[] = [0, 0];
+
 
 //Add click-eventlistener to planets
 const mars = document.getElementById('mars');
@@ -41,7 +43,7 @@ async function showPlanetInformation(planet: string) {
             const moonContainer = document.getElementById('moon-container');
             if(moonContainer){
                 moonContainer.style.display = 'grid';
-                const location = await getUserLocation();
+                location = await getUserLocation();
                 initMoon(location);
             }
             break;

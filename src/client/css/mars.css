@@ -1,12 +1,14 @@
 #mars-container {
-  background: url('/src/client/img/mars-modified.png') center/50vh no-repeat;
+  background: url('/src/client/img/mars-modified.png') center/35vh no-repeat;
   margin: 0;
   display: none;
   grid-template: " . sun buttons"
-                 "title . today-weather-box"
-                 "weather-boxes weather-boxes weather-boxes"
-                 "footer footer footer" / 1fr 1fr 1fr;
-  gap: 10px;
+    "title . today-weather-box"
+    "weather-boxes weather-boxes weather-boxes"
+    "footer footer footer";
+
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 30px auto auto 40px;
   min-height: 100vh;
 
 
@@ -15,22 +17,22 @@
     display: flex;
     justify-content: end;
     gap: 5px;
-    margin: 10px 10px;
+    margin: 5px 10px;
 
 
     & .buttonChange {
-      background: rgba(0, 0, 0, 0.6);
+      background-color: rgba(55, 55, 55, 0.6);
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: center;
-      font-size: 8pt;
-      width: 70px;
-      padding: 4px;
+      font-size: 7pt;
+      width: 7.5vw;
       color: white;
       margin-right: 5px;
     }
 
-    #celsius-button, #mars-date-button, #test2-button {
+    #celsius-button,
+    #mars-date-button,
+    #test2-button {
       display: none;
     }
   }
@@ -39,13 +41,16 @@
     display: flex;
     grid-area: weather-boxes;
     flex-wrap: wrap;
-    gap: 10px;
     justify-content: center;
     align-items: center;
 
     & svg {
-      width: 95%;
+      width: 100%;
+      justify-self: center;
+      margin-top: auto; /* Push the SVG to the bottom */
+      align-self: flex-end; /* Align the SVG to the bottom */
     }
+    
 
     & .weather-boxes {
       display: flex;
@@ -75,11 +80,16 @@
 
 @media screen and (max-width: 660px) {
   #mars-container {
-    grid-template: "sun buttons"
-                   "title title"
-                   "today-weather-box today-weather-box"
-                   "weather-boxes weather-boxes"
-                   "footer footer" / auto auto;
+    grid-template: 
+      "sun buttons"
+      "title title"
+      "today-weather-box today-weather-box"
+      "weather-boxes weather-boxes"
+      "footer footer";
+
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 30px auto auto auto 40px;
+
     & #button-box {
       & .buttonChange {
 
@@ -90,6 +100,7 @@
         font-size: 8pt;
       }
     }
+
     & .today-weather-box {
       display: none;
     }
