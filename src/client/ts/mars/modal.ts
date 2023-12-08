@@ -34,18 +34,26 @@ export function openModal(photo: any, data : MarsData | null, isRover : boolean)
   }
   
   
-  export function createModal(): void {
+  export function createModal(title?: string): void {
     let modal = document.getElementById("myModal") as HTMLElement;
     if (modal) modal.remove();    
     modal = document.createElement("div");
     modal.id = "myModal";
     modal.className = "modal";
   
-    const closeBtn = document.createElement("span");
-    closeBtn.className = "close";
+    //Add Modal close button
+    const closeBtn = document.createElement("i");
+    closeBtn.className = "close fa-solid fa-xmark";
     closeBtn.innerHTML = "&times;";
     closeBtn.onclick = closeModal;
 
+    //Add optional title
+    if(title){
+      const titleElem = document.createElement("h3");
+      titleElem.id = 'title';
+      titleElem.textContent = `Mars Rover: ${title}`;
+      modal.appendChild(titleElem);
+    }
   
     modal.appendChild(closeBtn);
   

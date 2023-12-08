@@ -24,7 +24,7 @@ export async function renderRoverPhotos(): Promise<void> {
     if (photoData.photos.length > 0) {
         photo = photoData.photos[getRandomInt(0, photoData.photos.length)];
     }
-    createModal();
+    createModal(randomRover);
     openModal(photo, null, true);
 }
 
