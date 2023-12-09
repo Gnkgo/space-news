@@ -39,23 +39,13 @@ div#moon-container {
 }
 
 
-.moon-box {
+.moon-events {
   grid-area: moon-sunrise-sunset-box;
   display: flex;
   justify-content: center;
   align-items: baseline;
   color: white;
   justify-self: center;
-}
-
-
-.countdown {
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  color: white;
-  font-size: 1.5rem;
-  grid-area: countdown;
 }
 
 
@@ -71,11 +61,6 @@ div#moon-container {
       "moon-sunrise-sunset-box "
       "moon "
       "footer";
-
-
-    & .countdown {
-      font-size: 12pt;
-    }
 
     & .moon-box {
       display: flex;
