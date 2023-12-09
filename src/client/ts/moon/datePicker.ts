@@ -7,6 +7,7 @@ import { displayMoonEvents } from "./moonEvents";
 import { formatDate } from "../base";
 import { getMoonData } from "./moonDataCollection";
 import { locationSave } from "../backend_dependent/moon";
+import { text } from "../backend_dependent/moon";
 
 export function getTimeUntilNextFullMoon(): number {
     const currentDate = new Date();
@@ -53,7 +54,7 @@ export function createDatePicker(selectedDate: string) {
         const pickedMoonData = await getMoonData(selectedDate, locationSave);
         displayMoon(pickedMoonData, selectedDate);
         displayMoonEvents(pickedMoonData);
-        createTitle(moonContainer,  formatDate(pickedMoonData.days[0]?.datetime), "", false, "", "");
+        createTitle(moonContainer, "Different Moon Information", text, false, formatDate(currentMoonData.days[0]?.datetime), "");
     }
     datePicker.addEventListener("input", handleInputEvent);
     dateContainer.appendChild(datePicker);

@@ -14,7 +14,7 @@ export function displayMoonEvents(moonData: MoonData): void {
   moonEvents.classList.add("moon-events");
   console.log("moonData: ", moonData);
 
-  if (moonData.days[0] !== undefined) {
+  if (moonData && (moonData.days[0] !== undefined)) {
     const moonrise = moonData.days[0].moonrise;
     const moonset = moonData.days[0].moonset;
 

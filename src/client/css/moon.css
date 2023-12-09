@@ -4,15 +4,15 @@ div#moon-container {
   grid-template-rows: 40px auto auto 40px;
   /* Adjusted rows to include 1fr for the remaining space */
   grid-template-areas:
-    ". sun  buttons"
-    "title countdown moon-sunrise-sunset-box"
-    "moon moon moon"
+    ". sun ."
+    "title . moon-sunrise-sunset-box"
+    "image image image"
     "footer footer footer";
 
   min-height: 100vh;
 
   & .grey-box {
-    text-align: center;
+    text-align: left;
 
     & h1 {
       font-size: 1.17em;
@@ -59,7 +59,7 @@ div#moon-container {
       "title"
       "countdown"
       "moon-sunrise-sunset-box "
-      "moon "
+      "image"
       "footer";
 
     & .moon-box {

@@ -31,7 +31,7 @@ footer {
 .grey-box {
   background-color: rgba(55, 55, 55, 0.6);
   border-radius: 8px;
-  text-align: center;
+  text-align: left;
 
   padding: 10px;
   color: white;
@@ -114,11 +114,12 @@ footer {
   padding-bottom: 20px;
   width: 50vh;
   height: 50vh;
+  grid-area: image;
 }
 
 .image-container {
   display: flex;
-  grid-area: moon;
+  grid-area: image;
   justify-content: center;
   align-items: center;
   flex-direction: column;
