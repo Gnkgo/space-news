@@ -1,30 +1,21 @@
 div#moon-container {
   display: none;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 40px auto auto 40px;
+  grid-template-rows: 40px auto 40px;
   /* Adjusted rows to include 1fr for the remaining space */
   grid-template-areas:
     ". sun ."
-    "title . moon-sunrise-sunset-box"
-    "image image image"
+    "title image moon-sunrise-sunset-box"
     "footer footer footer";
 
   min-height: 100vh;
 
-  & .grey-box {
-    text-align: left;
 
-    & h1 {
-      font-size: 1.17em;
-    }
-    & p {
-      font-size: 0.8rem;
-    }
-  }
 }
 
 
 .date-picker {
+  margin-top: 5px;
   display: flex;
   justify-content: center;
   align-items: center;

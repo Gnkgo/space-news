@@ -22,7 +22,7 @@ export function displayMoonEvents(moonData: MoonData): void {
     moonContent.id = "moon-content";
     moonContent.className = "grey-box";
 
-    const title = document.createElement("h3");
+    const title = document.createElement("h1");
     title.textContent = "Moon Events";
 
     moonContent.appendChild(title);

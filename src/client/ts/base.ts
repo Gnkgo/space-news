@@ -49,7 +49,6 @@ export function createTitle(divContainer: HTMLDivElement, title: string, paragra
 
     const paragraphElement = document.createElement("p");
     paragraphElement.textContent = paragraph;
-    paragraphElement.style.fontSize = "8pt";
 
     if (isSol) {
         dateElement.textContent = `Sol ${dateSol}`;
