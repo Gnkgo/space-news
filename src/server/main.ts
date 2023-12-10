@@ -2,7 +2,7 @@ import express from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import QueryString from "qs";
 import ViteExpress from "vite-express";
-import path from "path";
+// import path from "path";
 import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, MoonReq, MoonRes, FireballReq, FireballRes } from "../common/api";
 import { constants, accessSync, readFileSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
@@ -92,14 +92,14 @@ function apiInit<TReq, TRes>(api: ApiDef<TReq, TRes>): ApiDef<TReq, TRes> {
 }
 
 // Express shortcuts
-function regFile(target: string, ...paths: string[]): void {
-  app.get(target, (_req, res) => {
-    res.sendFile(path.resolve(...paths));
-  });
-}
-function regHtml(target: string, file: string): void {
-  regFile(target, 'src', 'client', 'html', file);
-}
+// function regFile(target: string, ...paths: string[]): void {
+//   app.get(target, (_req, res) => {
+//     res.sendFile(path.resolve(...paths));
+//   });
+// }
+// function regHtml(target: string, file: string): void {
+//   regFile(target, 'src', 'client', 'html', file);
+// }
 function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>, func: (req: express.Request<ParamsDictionary, any, any, QueryString.ParsedQs, Record<string, any>>) => any): void {
   apiInit(api);
   app.get(api.target, async (req, res) => {
@@ -135,8 +135,8 @@ function regUrlApi<TReq, TRes>(api: ApiDef<TReq, TRes>): void {
   regApi<TReq, TRes>(api, (req) => req.headers);
 }*/
 
-regHtml('/', 'home.html');
-regHtml('/neo.html', 'neo.html');
+// regHtml('/', 'home.html');
+// regHtml('/neo.html', 'neo.html');
 regUrlApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
   target: cadTarget.raw(),

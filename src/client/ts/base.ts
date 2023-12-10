@@ -1,5 +1,5 @@
 import { renderRoverPhotos } from "./mars/roverPhotos";
-
+import sunUrl from '../img/sun.png';
 
 export function formatDate(inputDate: string | undefined): string {
     if (inputDate === undefined) {
@@ -27,7 +27,7 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
     sunButton.id = "sun-button";
 
     // Set the path to your sun image
-    sunButton.src = "/src/client/img/sun.png";
+    sunButton.src = sunUrl;
 
     divContainer.appendChild(sunButton);
     sunButton?.addEventListener('click', goHome);
