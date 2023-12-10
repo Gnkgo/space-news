@@ -3,10 +3,11 @@ import { isSameDay } from "../base";
 import { createImage, createTitle } from "../base";
 import { moonContainer } from "../backend_dependent/moon";
 import { MoonRes as MoonData } from '../../../common/api';
-import { moonriseMoonset } from "./moonriseMoonset";
+import { displayMoonEvents } from "./moonEvents";
 import { formatDate } from "../base";
 import { getMoonData } from "./moonDataCollection";
-import { location } from "../home";
+import { locationSave } from "../backend_dependent/moon";
+import { text } from "../backend_dependent/moon";
 
 export function getTimeUntilNextFullMoon(): number {
     const currentDate = new Date();
@@ -50,11 +51,10 @@ export function createDatePicker(selectedDate: string) {
 
     async function handleInputEvent() {
         selectedDate = datePicker.value;
-        const pickedMoonData = await getMoonData(selectedDate, location);
-        console.log("picked moon data: ", pickedMoonData);
+        const pickedMoonData = await getMoonData(selectedDate, locationSave);
         displayMoon(pickedMoonData, selectedDate);
-        moonriseMoonset(pickedMoonData);
-        createTitle(moonContainer, `Status Moon`, "", false, formatDate(pickedMoonData.days[0]?.datetime), "");
+        displayMoonEvents(pickedMoonData);
+        createTitle(moonContainer, "Different Moon Information", text, false, formatDate(currentMoonData.days[0]?.datetime), "");
     }
     datePicker.addEventListener("input", handleInputEvent);
     dateContainer.appendChild(datePicker);
