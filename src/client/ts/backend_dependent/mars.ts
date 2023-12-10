@@ -27,7 +27,7 @@ async function initMars(): Promise<void> {
       createTitle(marsContainer, `Mars Weather`, text, isSol, formatDate(currentDate), currentDateSol);
       createFooter(marsContainer);
       createSunBackButton(marsContainer);
-      createImage(marsContainer,  '/src/client/img/mars-modified.png', "", null);
+      createImage(marsContainer, '/src/client/img/mars-modified.png', "", null);
 
     }
   } catch (error) {
