@@ -104,13 +104,8 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .attr('d', avgLine)
         .attr('clip-path', 'url(#clip-path)')
         .style('stroke', 'white')
-        .style('fill', 'none')
-        .on('mouseenter', function (event) {
-            handleMouseOver.call(this, event);
-        })
-        .on('mouseleave', handleMouseOut);
-
-
+        .style('fill', 'none');
+  
 
     function handleMouseOver(this: SVGSVGElement, event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
         const bisectDate = d3.bisector((d: any) => d).left;

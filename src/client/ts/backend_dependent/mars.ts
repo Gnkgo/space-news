@@ -6,8 +6,8 @@ import { extractAndDisplayTemperature } from '../mars/createTemperatureGraph';
 import { TemperatureData } from '../mars/createTemperatureGraph';
 import { createModal, openModal } from "../mars/modal";
 import { createImage } from '.././base';
-
-
+import marsModifiedUrl from '../../img/mars-modified.png';
+import marsModalUrl from '../../img/marsModal.jpg';
 
 export let isCelsius = true;
 export let isSol = true;
@@ -27,7 +27,7 @@ async function initMars(): Promise<void> {
       createTitle(marsContainer, `Mars Weather`, text, isSol, formatDate(currentDate), currentDateSol);
       createFooter(marsContainer);
       createSunBackButton(marsContainer);
-      createImage(marsContainer, '/src/client/img/mars-modified.png', "", null);
+      createImage(marsContainer, marsModifiedUrl, "", null);
 
     }
   } catch (error) {
@@ -102,7 +102,7 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
       toggleDateUnit();
     } else if (target.id === 'more-information') {
       createModal();
-      openModal("src/client/img/marsModal.jpg", weatherData, false);
+      openModal(marsModalUrl, weatherData, false);
     }
   });
 
