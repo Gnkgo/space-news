@@ -1,1 +1,309 @@
-{}
+{
+  "{\"date\":\"next30days\",\"lat\":\"47.23244\",\"lon\":\"9.19655\"}": {
+    "queryCost": 17,
+    "latitude": 47.23244,
+    "longitude": 9.19655,
+    "resolvedAddress": "47.23244, 9.19655",
+    "address": "47.23244, 9.19655",
+    "timezone": "Europe/Zurich",
+    "tzoffset": 1,
+    "days": [
+      {
+        "datetime": "2023-12-11",
+        "sunrise": "07:59:34",
+        "sunset": "16:33:01",
+        "moonphase": 0.95,
+        "moonrise": "06:24:57",
+        "moonset": "15:04:58",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-12",
+        "sunrise": "08:00:29",
+        "sunset": "16:33:03",
+        "moonphase": 0.98,
+        "moonrise": "07:43:14",
+        "moonset": "15:42:13",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-13",
+        "sunrise": "08:01:22",
+        "sunset": "16:33:07",
+        "moonphase": 0,
+        "moonrise": "08:56:45",
+        "moonset": "16:32:37",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-14",
+        "sunrise": "08:02:12",
+        "sunset": "16:33:14",
+        "moonphase": 0.05,
+        "moonrise": "10:00:06",
+        "moonset": "17:39:20",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-15",
+        "sunrise": "08:03:00",
+        "sunset": "16:33:25",
+        "moonphase": 0.09,
+        "moonrise": "10:49:22",
+        "moonset": "18:57:36",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-16",
+        "sunrise": "08:03:46",
+        "sunset": "16:33:38",
+        "moonphase": 0.12,
+        "moonrise": "11:26:23",
+        "moonset": "20:21:27",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-17",
+        "sunrise": "08:04:29",
+        "sunset": "16:33:53",
+        "moonphase": 0.16,
+        "moonrise": "11:53:47",
+        "moonset": "21:45:59",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-18",
+        "sunrise": "08:05:10",
+        "sunset": "16:34:12",
+        "moonphase": 0.2,
+        "moonrise": "12:15:14",
+        "moonset": "23:07:33",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-19",
+        "sunrise": "08:05:49",
+        "sunset": "16:34:34",
+        "moonphase": 0.25,
+        "moonrise": "12:33:43",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-20",
+        "sunrise": "08:06:25",
+        "sunset": "16:34:58",
+        "moonphase": 0.27,
+        "moonrise": "12:51:00",
+        "moonset": "00:26:27",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-21",
+        "sunrise": "08:06:58",
+        "sunset": "16:35:25",
+        "moonphase": 0.3,
+        "moonrise": "13:08:31",
+        "moonset": "01:44:51",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-22",
+        "sunrise": "08:07:29",
+        "sunset": "16:35:55",
+        "moonphase": 0.34,
+        "moonrise": "13:27:45",
+        "moonset": "03:02:34",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-23",
+        "sunrise": "08:07:57",
+        "sunset": "16:36:27",
+        "moonphase": 0.37,
+        "moonrise": "13:50:17",
+        "moonset": "04:20:50",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-24",
+        "sunrise": "08:08:22",
+        "sunset": "16:37:02",
+        "moonphase": 0.41,
+        "moonrise": "14:18:17",
+        "moonset": "05:39:46",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-25",
+        "sunrise": "08:08:45",
+        "sunset": "16:37:40",
+        "moonphase": 0.44,
+        "moonrise": "14:55:14",
+        "moonset": "06:55:09",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-26",
+        "sunrise": "08:09:04",
+        "sunset": "16:38:20",
+        "moonphase": 0.48,
+        "moonrise": "15:42:50",
+        "moonset": "08:03:39",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-27",
+        "sunrise": "08:09:22",
+        "sunset": "16:39:03",
+        "moonphase": 0.5,
+        "moonrise": "16:40:30",
+        "moonset": "09:00:57",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-28",
+        "sunrise": "08:09:36",
+        "sunset": "16:39:49",
+        "moonphase": 0.55,
+        "moonrise": "17:46:50",
+        "moonset": "09:45:47",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-29",
+        "sunrise": "08:09:47",
+        "sunset": "16:40:37",
+        "moonphase": 0.58,
+        "moonrise": "18:56:07",
+        "moonset": "10:19:01",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-30",
+        "sunrise": "08:09:56",
+        "sunset": "16:41:27",
+        "moonphase": 0.61,
+        "moonrise": "20:05:36",
+        "moonset": "10:44:36",
+        "normal": {}
+      },
+      {
+        "datetime": "2023-12-31",
+        "sunrise": "08:10:02",
+        "sunset": "16:42:19",
+        "moonphase": 0.64,
+        "moonrise": "21:13:44",
+        "moonset": "11:04:51",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-01",
+        "sunrise": "08:10:05",
+        "sunset": "16:43:14",
+        "moonphase": 0.68,
+        "moonrise": "22:19:26",
+        "moonset": "11:21:36",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-02",
+        "sunrise": "08:10:05",
+        "sunset": "16:44:11",
+        "moonphase": 0.71,
+        "moonrise": "23:24:58",
+        "moonset": "11:36:17",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-03",
+        "sunrise": "08:10:02",
+        "sunset": "16:45:11",
+        "moonphase": 0.74,
+        "moonset": "11:50:02",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-04",
+        "sunrise": "08:09:57",
+        "sunset": "16:46:12",
+        "moonphase": 0.75,
+        "moonrise": "00:29:49",
+        "moonset": "12:03:56",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-05",
+        "sunrise": "08:09:49",
+        "sunset": "16:47:15",
+        "moonphase": 0.8,
+        "moonrise": "01:37:18",
+        "moonset": "12:19:21",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-06",
+        "sunrise": "08:09:38",
+        "sunset": "16:48:21",
+        "moonphase": 0.84,
+        "moonrise": "02:46:53",
+        "moonset": "12:37:52",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-07",
+        "sunrise": "08:09:24",
+        "sunset": "16:49:28",
+        "moonphase": 0.87,
+        "moonrise": "04:00:42",
+        "moonset": "13:01:36",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-08",
+        "sunrise": "08:09:07",
+        "sunset": "16:50:37",
+        "moonphase": 0.9,
+        "moonrise": "05:17:31",
+        "moonset": "13:33:28",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-09",
+        "sunrise": "08:08:47",
+        "sunset": "16:51:48",
+        "moonphase": 0.93,
+        "moonrise": "06:33:13",
+        "moonset": "14:16:55",
+        "normal": {}
+      },
+      {
+        "datetime": "2024-01-10",
+        "sunrise": "08:08:25",
+        "sunset": "16:53:01",
+        "moonphase": 0.97,
+        "moonrise": "07:42:58",
+        "moonset": "15:17:05",
+        "normal": {}
+      }
+    ]
+  },
+  "{\"date\":\"2023-12-11\",\"lat\":\"47.23244\",\"lon\":\"9.19655\"}": {
+    "queryCost": 1,
+    "latitude": 47.23244,
+    "longitude": 9.19655,
+    "resolvedAddress": "47.23244, 9.19655",
+    "address": "47.23244, 9.19655",
+    "timezone": "Europe/Zurich",
+    "tzoffset": 1,
+    "days": [
+      {
+        "datetime": "2023-12-11",
+        "sunrise": "07:59:34",
+        "sunset": "16:33:01",
+        "moonphase": 0.95,
+        "moonrise": "06:24:57",
+        "moonset": "15:04:58"
+      }
+    ]
+  }
+}
