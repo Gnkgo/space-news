@@ -5,18 +5,149 @@
  */
 export type SizedArray<N extends number, T> = { [index: number]: T, length: N } & _SizedArrayHelper<N, T>;
 type _SizedArrayHelper<N extends number, T, R extends T[] = []> = R extends { length: N } ? R : _SizedArrayHelper<N, T, [T, ...R]>;
-/**
- * Size-safe matrix data of dimension M x N.
- * 
- * Note: This is literally just a nested SizeArray type.
- */
-export type MatrixData<M extends number, N extends number, T> = SizedArray<M, SizedArray<N, T>>;
 type _Canonical<N extends number, R extends any[] = []> = R extends { length: N } ? R : _Canonical<N, [any, ...R]>;
 type _Length<T extends any[]> = number & (T extends { length: infer L } ? L : never);
 type _Add<A extends number, B extends number> = _Length<[..._Canonical<A>, ..._Canonical<B>]>;
 type _Subtract<A extends number, B extends number> = number & (_Canonical<A> extends [..._Canonical<infer U>, ..._Canonical<B>] ? U : 0);
-type _LessThanOrEqual<B extends number> = B | _LessThan<B>;
-type _LessThan<B extends number> = B extends 0 ? never : _LessThanOrEqual<_Subtract<B, 1>>;
+type _MultiAdd<A extends number, B extends number, R extends number> = number & (A extends 0 ? R : _MultiAdd<_Subtract<A, 1>, B, _Add<R, B>>);
+type _Multiply<A extends number, B extends number> = _MultiAdd<A, B, 0>;
+
+/**
+ * Represents the way a matrix should be laid out in memory as 1D array.
+ */
+export enum MatrixDataLayout {
+    ROW_MAJOR = 0,
+    COL_MAJOR = 1
+}
+
+class Stack<T> {
+    private readonly _arr: T[];
+    private _index = 0;
+
+    constructor(initial: T[] = []) {
+        this._arr = initial;
+    }
+
+    public using<R>(supplier: () => T, consumer: (value: T) => R): R {
+        let value: T
+        if (this._index < this._arr.length)
+            value = this._arr[this._index++]!;
+        else
+            this._index = this._arr.push(value = supplier());
+        const res = consumer(value);
+        --this._index;
+        return res;
+    }
+
+    public size(): number {
+        return this._arr.length;
+    }
+}
+
+/**
+ * A data-representation-agnostic iterator over the elements of a matrix.
+ * Under the hood, two specific implementations are used for row and column major data representations. 
+ */
+export interface IMatrixIterator {
+    /**
+     * Prepare the iterator to iterate over a new matrix and resets the internal pointers. Returns the iterator.
+     * 
+     * Note: This leaves the iterator in a state where both {@link jumpRows} and {@link jumpCols} need to be called (even for the first element).
+     * @param m The row count.
+     * @param n The column count;
+     */
+    load(m: number, n: number): IMatrixIterator;
+    /**
+     * Returns the index for the current element.
+     */
+    current(): number;
+    /**
+     * Advance the iterator by the provided amount of rows. Returns the iterator.
+     * @param r The amount of rows to jump.
+     */
+    jumpRows(r?: number): IMatrixIterator;
+    /**
+     * Advance the iterator by the provided amount of columns. Returns the iterator.
+     * @param r The amount of columns to jump.
+     */
+    jumpCols(c?: number): IMatrixIterator;
+    /**
+     * Returns the index for the element at the specified row and column index without advancing the iterator. Returns the iterator.
+     * @param r The row index.
+     * @param c The column index.
+     */
+    at(r: number, c: number): number;
+    /**
+     * Jump back to the start of the current row. Returns the iterator. 
+     */
+    resetRow(): IMatrixIterator;
+    /**
+     * Jump back to the start of the current column. Returns the iterator.
+     */
+    resetCol(): IMatrixIterator;
+}
+class _RowMajorIterator implements IMatrixIterator {
+    private n: number = 0;
+    private index: number = 0;
+    private col: number = 0;
+    load<M extends number, N extends number>(_m: M, n: N): IMatrixIterator {
+        this.n = n;
+        return this.resetRow().resetCol();
+    }
+    current(): number {
+        return this.index;
+    }
+    jumpRows(r: number = 1): IMatrixIterator {
+        this.index += r * this.n;
+        return this;
+    }
+    jumpCols(c: number = 1): IMatrixIterator {
+        this.index += c;
+        this.col += c;
+        return this;
+    }
+    at(r: number, c: number) {
+        return r * this.n + c;
+    }
+    resetRow(): IMatrixIterator {
+        return this.jumpCols(-(this.col + 1));
+    }
+    resetCol(): IMatrixIterator {
+        this.index = this.col - this.n;
+        return this;
+    }
+}
+class _ColMajorIterator implements IMatrixIterator {
+    private m: number = 0;
+    private index: number = 0;
+    private row: number = 0;
+    load<M extends number, N extends number>(m: M, _n: N): IMatrixIterator {
+        this.m = m;
+        return this.resetCol().resetRow();
+    }
+    current(): number {
+        return this.index;
+    }
+    jumpRows(r: number = 1): IMatrixIterator {
+        this.index += r;
+        this.row += r;
+        return this;
+    }
+    jumpCols(c: number = 1): IMatrixIterator {
+        this.index += c * this.m;
+        return this;
+    }
+    at(r: number, c: number) {
+        return c * this.m + r;
+    }
+    resetRow() {
+        this.index = this.row - this.m;
+        return this;
+    }
+    resetCol() {
+        return this.jumpRows(-(this.row + 1));
+    }
+}
 
 /**
  * A M x N matrix with elements of type T.
@@ -103,43 +234,72 @@ export interface INumericOps<T> {
      */
     readonly mulId: () => T;
     /**
-     * Returns the 'dot product' of type T (e.g. multiplication of a complex number with its conjugate).
+     * Returns the 'dot product' of type T.
      * 
      * Note: The term 'dot product' was chosen as a lack of a better word and might get changed in the future.
      * @param a The value whose dot product shall be computed.
      * @returns The dot product.
      */
-    readonly dot: (a: T) => number;
+    readonly dot: (a: T, b: T) => T;
     /**
-     * Computes the sine of type T (e.g. a complex number).
+     * 'Norm' the 'dot product' of type T.
+     * 
+     * Note: The term 'norm' was chosen somewhat arbitrarily and might get changed in the future.
+     * Currently, this function is only used as part of vector normalization.
+     * @param a 
+     * @returns 
+     */
+    readonly norm: (a: T) => number;
+    /**
+     * Compute the sine of type T (e.g. a complex number).
      * @param angle The angle in radians.
      * @returns The sine.
      */
     readonly sin: (angle: number) => T;
     /**
-     * Computes the cosine of type T (e.g. a complex number).
+     * Compute the cosine of type T (e.g. a complex number).
      * @param angle The angle in radians.
      * @returns The cosine.
      */
     readonly cos: (angle: number) => T;
+    /**
+     * 'Embed' a numeric value into a value of type T. Think of converting a real value to a complex value.
+     * @param n The numeric value.
+     * @returns The embedded value.
+     */
+    readonly embed: (n: number) => T;
 }
 
-/**
- * Defines matrix operations for a M x N matrix with elements of type T.
- */
-export interface IMatrix<M extends number, N extends number, T> {
+export interface IMatrixBase {
     /**
      * The row dimension of the matrix.
      */
-    readonly m: M;
+    readonly m: number;
     /**
      * The column dimension of the matrix.
+     */
+    readonly n: number;
+    /**
+     * The data layout of the matrix.
+     */
+    readonly layout: MatrixDataLayout;
+}
+/**
+ * Defines matrix operations for a M x N matrix with elements of type T.
+ */
+export interface IMatrix<M extends number, N extends number, T> extends IMatrixBase {
+    /**
+     * The row count of the matrix.
+     */
+    readonly m: M;
+    /**
+     * The column count of the matrix.
      */
     readonly n: N;
     /**
      * The raw data of the matrix in two-dimensional array form (type-safe to be of size M x N with elements of type T).
      */
-    readonly data: MatrixData<M, N, T>;
+    readonly data: SizedArray<_Multiply<M, N>, T>;
     /**
      * Get a single T element at the specified indices.
      * @param i The row index.
@@ -147,98 +307,144 @@ export interface IMatrix<M extends number, N extends number, T> {
      */
     get(i: number, j: number): T;
     /**
-     * Set a single T element at the specified indices. Returns the new value (can be used for chaining).
+     * Set a single T element at the specified indices. Returns the new value.
      * @param i The row index.
      * @param j The column index.
      * @param v The new value.
      */
     set(i: number, j: number, v: T): T;
-
     /**
-     * Load a (sub-)matrix into the upper left corner of this matrix.
-     * @param data The (sub-)matrix.
+     * Run the given operation for each element of the matrix. Returns the matrix.
+     * @param op An operation taking the underlying data array, the row and column index (layout-agnostic) and the corresponding 1D index.
      */
-    load<P extends _LessThanOrEqual<M>, Q extends _LessThanOrEqual<N>>(data: MatrixData<P, Q, T>): void;
-    
+    forEach(op: (data: SizedArray<_Multiply<M, N>, T>, i: number, j: number, ij: number) => void): IMatrix<M, N, T>;
     /**
-     * Add another matrix to this matrix (component-wise) and store the result in another (possibly the same) matrix.
+     * Load data of another matrix into the upper left corner of this matrix. Returns this matrix.
+     * @param p The row count of the provided matrix data.
+     * @param q The column count of the provided matrix data.
+     * @param data The matrix data.
+     * @param layout The layout of the provided matrix data.
+     */
+    load<P extends number, Q extends number>(p: P, q: Q, data: SizedArray<_Multiply<P, Q>, T>, layout?: MatrixDataLayout): IMatrix<M, N, T>;
+    /**
+     * Load another matrix into the upper left corner of this matrix. Returns this matrix.
+     * @param other The matrix to load.
+     */
+    loadMatrix<P extends number, Q extends number>(other: IMatrix<P, Q, T>): IMatrix<M, N, T>;
+    /**
+     * Set all entries of this matrix to 0. Returns the matrix.
+     */
+    resetToZero(): IMatrix<M, N, T>;
+    /**
+     * Set all entries along the diagonal of this matrix to 1. Returns the matrix.
+     */
+    resetToIdentity(): IMatrix<M, N, T>;
+    /**
+     * Add another matrix to this matrix (component-wise) and store the result in another (possibly the same) matrix. Returns that matrix.
      * @param other The second operand.
      * @param store The matrix which will hold the result.
      */
     add(other: IMatrix<M, N, T>, store: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Subtract another matrix from this matrix (component-wise) and store the result in another (possibly the same) matrix.
+     * Subtract another matrix from this matrix (component-wise) and store the result in another (possibly the same) matrix. Returns that matrix.
      * @param other The second operand.
      * @param store The matrix which will hold the result.
      */
     sub(other: IMatrix<M, N, T>, store: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Multiply this matrix with another matrix (component-wise) and store the result in another (possibly the same) matrix.
+     * Multiply this matrix with another matrix (component-wise) and store the result in another (possibly the same) matrix. Returns that matrix.
      * @param other The second operand.
      * @param store The matrix which will hold the result.
      */
     mul(other: IMatrix<M, N, T>, store: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Divide this matrix by another matrix (component-wise) and store the result in another (possibly the same) matrix.
+     * Divide this matrix by another matrix (component-wise) and store the result in another (possibly the same) matrix. Returns that matrix.
      * @param other The second operand.
      * @param store The matrix which will hold the result.
      */
     div(other: IMatrix<M, N, T>, store: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Add another matrix to this matrix (component-wise) and store the result in this matrix.
+     * Add another matrix to this matrix (component-wise) and store the result in this matrix. Returns this matrix.
      * @param other The second operand.
      */
     addL(other: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Subtract another matrix from this matrix (component-wise) and store the result in this matrix.
+     * Subtract another matrix from this matrix (component-wise) and store the result in this matrix. Returns this matrix.
      * @param other The second operand.
      */
     subL(other: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Multiply this matrix with another matrix (component-wise) and store the result in this matrix.
+     * Multiply this matrix with another matrix (component-wise) and store the result in this matrix. Returns this matrix.
      * @param other The second operand.
      */
     mulL(other: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Divide this matrix by another matrix (component-wise) and store the result in this matrix.
+     * Divide this matrix by another matrix (component-wise) and store the result in this matrix. Returns this matrix.
      * @param other The second operand.
      */
     divL(other: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Add another matrix to this matrix (component-wise) and store the result in the other matrix.
+     * Add another matrix to this matrix (component-wise) and store the result in the other matrix. Returns the other matrix.
      * @param other The second operand.
      */
     addR(other: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Subtract another matrix from this matrix (component-wise) and store the result in the other matrix.
+     * Subtract another matrix from this matrix (component-wise) and store the result in the other matrix. Returns the other matrix.
      * @param other The second operand.
      */
     subR(other: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Multiply this matrix with another matrix (component-wise) and store the result in the other matrix.
+     * Multiply this matrix with another matrix (component-wise) and store the result in the other matrix. Returns the other matrix.
      * @param other The second operand.
      */
     mulR(other: IMatrix<M, N, T>): IMatrix<M, N, T>;
     /**
-     * Divide this matrix by another matrix (component-wise) and store the result in the other matrix.
+     * Divide this matrix by another matrix (component-wise) and store the result in the other matrix. Returns the other matrix.
      * @param other The second operand.
      */
     divR(other: IMatrix<M, N, T>): IMatrix<M, N, T>;
-
     /**
-     * Returns the component-wise 'dot-product' of this matrix.
-     * 
-     * Note: Currently only used by the norm.
+     * Returns the component-wise 'dot-product' of this matrix with another matrix.
      */
-    dot(): number;
+    dot(other: IMatrix<M, N, T>): T;
     /**
      * Returns the Euclidean norm of this matrix.
      */
     norm(): number;
     /**
-     * Returns a new matrix of size N x M and elements of same type T with transposed rows / columns.
+     * Store the transposed version of this matrix into another (provided / new) matrix. Returns that matrix.
+     * @param target The provided matrix.
      */
-    transposed(): IMatrix<N, M, T>;
+    transposed(target?: IMatrix<N, M, T>): IMatrix<N, M, T>;
+    /**
+     * Scale all elements of this matrix by a constant factor. Returns the matrix.
+     * @param s The factor.
+     */
+    scale(s: T): IMatrix<M, N, T>;
+    /**
+     * Scale each row of this matrix by a different factor. Returns the matrix.
+     * @param s The factor vector.
+     */
+    scaleRows(s: Vector<M, T>): IMatrix<M, N, T>;
+    /**
+     * Scale each column of this matrix by a different factor. Returns the matrix.
+     * @param s The factor vector.
+     */
+    scaleCols(s: Vector<N, T>): IMatrix<M, N, T>;
+    /**
+     * Store the normalized version of this matrix into another (provided / new) matrix. Returns that matrix.
+     * @param target 
+     */
+    normalized(target?: IMatrix<M, N, T>): IMatrix<M, N, T>;
+    /**
+     * Normalize this matrix. Returns the matrix.
+     */
+    normalize(): IMatrix<M, N, T>;
+    /**
+     * Copy the elements of this matrix into another (provided / new) matrix. Returns that matrix.
+     * @param target 
+     */
+    copy(target?: IMatrix<M, N, T>): IMatrix<M, N, T>;
 }
 
 export class _Affine<T> {
@@ -249,71 +455,20 @@ export class _Affine<T> {
     }
 
     /**
-     * Creates a new (N + 1) x (N + 1) translation matrix with the given (column) vector of length N as translation.
-     * @param t The translation vector.
-     * @returns The translation matrix.
+     * Create an (affine) translation matrix from a vector.
+     * @param mat The matrix to hold the translation.
+     * @param vec The translation vector.
+     * @returns The modified translation matrix.
      */
-    public createTranslationMatrix<N extends number, NPlusOne extends _Add<N, 1>>(t: Vector<N, T>): Matrix<NPlusOne, NPlusOne, T> {
-        const n = t.m;
-        const mat = this.linAlg.createIdentityMatrix((n + 1) as NPlusOne);
-        for (let i = 0; i < n; ++i)
-            mat.data[i]![n] = t.data[i]![0]!;
-        return mat;
-    }
-};
-export class _Affine2D<T> extends _Affine<T> {    
-    constructor(linAlg: LinAlg<T>) {
-        super(linAlg);
-    }
-
-    /**
-     * Creates a new affine 2D rotation matrix for the given angle.
-     * @param angle The angle in radians.
-     * @returns The rotation matrix.
-     */
-    public createRotationMatrix(angle: number): Matrix<3, 3, T> {
-        const mat = this.linAlg.createIdentityMatrix(3);
-        const rot = this.linAlg.TwoD.createRotationMatrix(angle);
-        mat.load(rot.data);
-        return mat;
-    }
-};
-export class _Affine3D<T> extends _Affine<T> {    
-    constructor(linAlg: LinAlg<T>) {
-        super(linAlg);
-    }
-
-    /**
-    * Creates a new affine 3D rotation matrix for the given angle around the x-axis.
-    * @param angle The angle in radians.
-    * @returns The rotation matrix.
-    */
-    public createXRotationMatrix(angle: number): Matrix<4, 4, T> {
-        const mat = this.linAlg.createIdentityMatrix(4);
-        const rot = this.linAlg.ThreeD.createXRotationMatrix(angle);
-        mat.load(rot.data);
-        return mat;
-    }
-    /**
-    * Creates a new affine 3D rotation matrix for the given angle around the y-axis.
-    * @param angle The angle in radians.
-    * @returns The rotation matrix.
-    */
-    public createYRotationMatrix(angle: number): Matrix<4, 4, T> {
-        const mat = this.linAlg.createIdentityMatrix(4);
-        const rot = this.linAlg.ThreeD.createYRotationMatrix(angle);
-        mat.load(rot.data);
-        return mat;
-    }
-    /**
-    * Creates a new affine 3D rotation matrix for the given angle around the z-axis.
-    * @param angle The angle in radians.
-    * @returns The rotation matrix.
-    */
-    public createZRotationMatrix(angle: number): Matrix<4, 4, T> {
-        const mat = this.linAlg.createIdentityMatrix(4);
-        const rot = this.linAlg.ThreeD.createZRotationMatrix(angle);
-        mat.load(rot.data);
+    translate<N extends number, NMinusOne extends N | _Subtract<N, 1>>(mat: IMatrix<N, N, T>, vec: Vector<NMinusOne, T>): IMatrix<N, N, T> {
+        this.linAlg.usingMatIt(mat, (aIt) => {
+            aIt.jumpCols(mat.n);
+            this.linAlg.usingMatIt(vec, (bIt) => {
+                bIt.jumpCols();
+                for (let i = 0; i < mat.m - 1; ++i)
+                    mat.data[aIt.jumpRows().current()] = vec.data[bIt.jumpRows().current()]!;
+            });
+        });
         return mat;
     }
 };
@@ -333,7 +488,7 @@ export class _Affine3D<T> extends _Affine<T> {
  * (also available separately for 2D and 3D, for even more convenience).
  * 
  * If your application is multi-threaded, use one LinAlg object per thread. Linear algebra operations
- * use pre-allocated buffers under the hood to ensure relatively good performance. Sharing a LinAlg
+ * use pre-allocated buffers and iterators under the hood to ensure relatively good performance. Sharing a LinAlg
  * objects between threads can lead to completely wrong results even if thread-local matrices are involved.
  */
 export class LinAlg<T> {
@@ -345,18 +500,28 @@ export class LinAlg<T> {
     
         addId: () => 0,
         mulId: () => 1,
-        dot: (a) => a * a,
+        dot: (a, b) => a * b,
+        norm: Math.sqrt,
 
         sin: Math.sin,
-        cos: Math.cos
+        cos: Math.cos,
+
+        embed: n => n
     }
 
     private readonly _ops: INumericOps<T>;
-    private readonly _buffers: Map<number, Map<number, unknown>>;
+    private readonly _buffers: Map<number, Stack<unknown>>;
+    private readonly _iterators: Map<MatrixDataLayout, Stack<IMatrixIterator>>;
+    /**
+     * The default layout used when creating new matrices / vectors from this LinAlg object.
+     */
+    public readonly defaultLayout: MatrixDataLayout;
 
-    private constructor(ops: INumericOps<T>) {
+    private constructor(ops: INumericOps<T>, defaultLayout: MatrixDataLayout = MatrixDataLayout.ROW_MAJOR) {
         this._ops = ops;
-        this._buffers = new Map<number, Map<number, unknown>>();
+        this._buffers = new Map<number, Stack<IMatrixIterator>>();
+        this._iterators = new Map<MatrixDataLayout, Stack<IMatrixIterator>>();
+        this.defaultLayout = defaultLayout;
     }
 
     /**
@@ -364,64 +529,85 @@ export class LinAlg<T> {
      * @param ops The numerical operations.
      * @returns The new LinAlg.
      */
-    public static create<T>(ops: INumericOps<T>) {
-        return new LinAlg<T>(ops);
+    public static create<T>(ops: INumericOps<T>, dataLayout?: MatrixDataLayout) {
+        return new LinAlg<T>(ops, dataLayout);
     }
 
     /**
      * Create a new LinAlg with numerical operations for the built-in 'number' type.
      * @returns The new LinAlg.
      */
-    public static number() {
-        return this.create(this._numberOps);
+    public static number(dataLayout?: MatrixDataLayout) {
+        return this.create(this._numberOps, dataLayout);
     }
 
     private readonly _MatrixImpl = class<M extends number, N extends number, T> implements IMatrix<M, N, T> {
         readonly linAlg: LinAlg<T>;
         readonly m: M;
         readonly n: N;
-        readonly data: MatrixData<M, N, T>;
+        readonly data: SizedArray<_Multiply<M, N>, T>;
+        readonly layout: MatrixDataLayout;
     
-        constructor(linAlg: LinAlg<T>, data: MatrixData<M, N, T>) {
+        constructor(linAlg: LinAlg<T>, m: M, n: N, data: SizedArray<_Multiply<M, N>, T>, layout: MatrixDataLayout = linAlg.defaultLayout) {
             this.linAlg = linAlg;
-            this.m = data.length as M;
-            this.n = (data[0] as SizedArray<N, T>).length as N;
+            this.m = m;
+            this.n = n;
             this.data = data;
+            this.layout = layout;
         }
         get(i: number, j: number): T {
-            return (this.data[i]! as SizedArray<N, T>)[j]!;
+            return this.data[this.linAlg.usingMatIt(this, (it) => it.at(i, j))]!;
         }
         set(i: number, j: number, v: T): T {
-            return this.data[i]![j] = v;
+            return this.data[this.linAlg.usingMatIt(this, (it) => it.at(i, j))] = v;
         }
-        forEach(op: (selfRow: SizedArray<N, T>, i: number, j: number) => void): void {
-            let selfRow: SizedArray<N, T>;
-            for (let i = 0; i < this.m; ++i) {
-                selfRow = this.data[i]!;
-                for (let j = 0; j < this.n; ++j)
-                    op(selfRow, i, j);
-            }
+        forEach(op: (data: SizedArray<_Multiply<M, N>, T>, i: number, j: number, ij: number) => void): IMatrix<M, N, T> {
+            this.linAlg.usingMatIt(this, (it) => {
+                for (let i = 0; i < this.m; ++i) {
+                    it.jumpRows().resetRow();
+                    for (let j = 0; j < this.n; ++j)
+                        op(this.data, i, j, it.jumpCols().current());
+                }
+            });
+            return this;
         }
-        zip<P extends number, Q extends number>(op: (selfRow: SizedArray<N, T>, dataRow: SizedArray<Q, T>, i: number, j: number) => T, otherData: MatrixData<P, Q, T>, target: IMatrix<M, N, T>) {
-            let selfRow: SizedArray<N, T>;
-            let dataRow: SizedArray<Q, T>
-            let targetRow: SizedArray<N, T>;
-            const p = otherData.length as P;
-            const q = (otherData[0] as SizedArray<Q, T>).length as Q;
-            for (let i = 0; i < p; ++i) {
-                selfRow = this.data[i]!;
-                dataRow = otherData[i]!;
-                targetRow = target.data[i]!;
-                for (let j = 0; j < q; ++j)
-                    targetRow[j] = op(selfRow, dataRow, i, j);
-            }
+        zip<P extends number, Q extends number>(p: P, q: Q, op: (selfData: SizedArray<_Multiply<M, N>, T>, otherData: SizedArray<_Multiply<P, Q>, T>, i: number, j: number, ijSelf: number, ijOther: number) => T, otherData: SizedArray<_Multiply<P, Q>, T>, otherLayout: MatrixDataLayout, target: IMatrix<M, N, T>): void {
+            //console.log("storing\r\n" + otherData + "to\r\n" + target + "\r\n");
+            this.linAlg.usingMatIt(this, (aIt) => {
+                this.linAlg.usingRawIt(p, q, (bIt) => {
+                    this.linAlg.usingMatIt(target, (cIt) => {
+                        const m = Math.min(this.m, p);
+                        const n = Math.min(this.n, q);
+                        for (let i = 0; i < m; ++i) {
+                            aIt.jumpRows().resetRow();
+                            bIt.jumpRows().resetRow();
+                            cIt.jumpRows().resetRow();
+                            for (let j = 0; j < n; ++j) {
+                                target.data[cIt.jumpCols().current()] = op(this.data, otherData, i, j, aIt.jumpCols().current(), bIt.jumpCols().current())
+                                //console.log(`i=${i} j=${j}: ${aIt.current()} ${bIt.current()} ${cIt.current()}\r\n`);
+                            }
+                        }
+                        //console.log("done:\r\n" + target + "\r\n")
+                    });
+                }, otherLayout);
+            });
         }
-        load<P extends _LessThanOrEqual<M>, Q extends _LessThanOrEqual<N>>(data: MatrixData<P, Q, T>) {
-            this.zip<P, Q>((_selfRow, dataRow, _i, j) => dataRow[j]!, data, this);
+        load<P extends number, Q extends number>(p: P, q: Q, data: SizedArray<_Multiply<P, Q>, T>, layout: MatrixDataLayout = this.linAlg.defaultLayout) {
+            this.zip<P, Q>(p, q, (_selfData, otherData, _i, _j, _ijSelf, ijOther) => otherData[ijOther]!, data, layout, this);
+            return this;
+        }
+        loadMatrix<P extends number, Q extends number>(other: IMatrix<P, Q, T>): IMatrix<M, N, T> {
+            return this.load(other.m, other.n, other.data, other.layout);
+        }
+        resetToZero(): IMatrix<M, N, T> {
+            return this.forEach((data, _i, _j, ij) => data[ij] = this.linAlg._ops.addId());
+        }
+        resetToIdentity(): IMatrix<M, N, T> {
+            return this.forEach((data, i, j, ij) => data[ij] = i == j ? this.linAlg._ops.mulId() : this.linAlg._ops.addId());
         }
         cwiseBinOp(op: (a: T, b: T) => T, other: IMatrix<M, N, T>, target: IMatrix<M, N, T>): IMatrix<M, N, T> {
-            this.zip<M, N>((selfRow, dataRow, _i, j) => op(selfRow[j]!, dataRow[j]!), other.data, target);
-            return this;
+            this.zip<M, N>(this.m, this.n, (selfData, otherData, _i, _j, ijSelf, ijOther) => op(selfData[ijSelf]!, otherData[ijOther]!), other.data, other.layout, target);
+            return target;
         }
         add(other: IMatrix<M, N, T>, store: IMatrix<M, N, T>) {
             return this.cwiseBinOp(this.linAlg._ops.add, other, store);
@@ -459,58 +645,181 @@ export class LinAlg<T> {
         divR(other: IMatrix<M, N, T>): IMatrix<M, N, T> {
             return this.div(other, other);
         }
-        dot(): number {
-            let sum = 0;
-            this.forEach((selfRow, _i, j) => sum += this.linAlg._ops.dot(selfRow[j]!));
+        dot(other: IMatrix<M, N, T>): T {
+            const ops = this.linAlg._ops;
+            let sum = ops.addId();
+            this.linAlg.usingMatIt(this, (aIt) => {
+                this.linAlg.usingMatIt(other, (bIt) => {
+                    for (let i = 0; i < this.m; ++i) {
+                        aIt.jumpRows().resetRow();
+                        bIt.jumpRows().resetRow();
+                        for (let j = 0; j < this.n; ++j) {
+                            sum = ops.add(sum, ops.dot(this.data[aIt.jumpCols().current()]!, other.data[bIt.jumpCols().current()]!));
+                        }
+                    }
+                });
+            });
             return sum;
         }
         norm(): number {
-            return Math.sqrt(this.dot());
+            return this.linAlg._ops.norm(this.dot(this));
         }
-        transposed(): IMatrix<N, M, T> {
-            return this.linAlg.createMatrix(this.linAlg._transposedMatrixData<M, N>(this.data));
+        transposed(target: IMatrix<N, M, T> = this.linAlg.createZeroMatrix(this.n, this.m)): IMatrix<N, M, T> {
+            this.linAlg.usingMatIt(this, (aIt) => {
+                //aIt.jumpRows();
+                this.linAlg.usingRawIt(this.n, this.m, (bIt) => {
+                    this.linAlg.usingBuffer(this.n, this.m, (buf) => {
+                        for (let i = 0; i < target.m; ++i) {
+                            aIt.jumpCols().resetCol();
+                            bIt.jumpRows().resetRow();
+                            for (let j = 0; j < target.n; ++j) {
+                                buf[bIt.jumpCols().current()] = this.data[aIt.jumpRows().current()]!;
+                                //console.log(`i=${i} j=${j}: a=${aIt.current()} b=${bIt.current()}\r\n`);
+                            }
+                        }
+                        target.load(this.n, this.m, buf);
+                    });
+                });
+            });
+            return target;
         }
-
-        toString() {
-            return (this.data as T[][]).join("\r\n") + "\r\n";
+        scale(s: T): IMatrix<M, N, T> {
+            const ops = this.linAlg._ops;
+            return this.forEach((data, _i, _j, ij) => {
+                data[ij] = ops.mul(s, data[ij]!);
+            });
+        }
+        scaleRows(s: Vector<M, T>): IMatrix<M, N, T> {
+            this.linAlg.usingMatIt(this, (aIt) => {
+                this.linAlg.usingMatIt(s, (bIt) => {
+                    bIt.jumpCols();
+                    const ops = this.linAlg._ops;
+                    let f: T;
+                    let e: T;
+                    for (let i = 0; i < this.m; ++i) {
+                        aIt.jumpRows().resetRow();
+                        f = s.data[bIt.jumpRows().current()]!;
+                        for (let j = 0; j < this.n; ++j) {
+                            e = this.data[aIt.jumpCols().current()]!;
+                            this.data[aIt.current()] = ops.mul(f, e);
+                        }
+                    }
+                });
+            });
+            return this;
+        }
+        scaleCols(s: Vector<N, T>): IMatrix<M, N, T> {
+            this.linAlg.usingMatIt(this, (aIt) => {
+                this.linAlg.usingMatIt(s, (bIt) => {
+                    bIt.jumpCols();
+                    const ops = this.linAlg._ops;
+                    let f: T;
+                    let e: T;
+                    for (let j = 0; j < this.n; ++j) {
+                        aIt.jumpCols().resetCol();
+                        f = s.data[bIt.jumpRows().current()]!;
+                        for (let i = 0; i < this.m; ++i) {
+                            e = this.data[aIt.jumpRows().current()]!;
+                            this.data[aIt.current()] = ops.mul(f, e);
+                        }
+                    }
+                });
+            });
+            return this;
+        }
+        normalized(target: IMatrix<M, N, T> = this.linAlg.createZeroMatrix(this.m, this.n)): IMatrix<M, N, T> {
+            const ops = this.linAlg._ops;
+            const invNorm = ops.div(ops.mulId(), ops.embed(this.norm()));
+            return target.forEach((data, _i, _j, ij) => {
+                data[ij] = ops.mul(invNorm, this.data[ij]!);
+            });
+        }
+        normalize(): IMatrix<M, N, T> {
+            return this.normalized(this);
+        }
+        copy(target: IMatrix<M, N, T> = this.linAlg.createZeroMatrix(this.m, this.n)): IMatrix<M, N, T> {
+            return target.load(this.m, this.n, this.data);
+        }
+        toString(): string {
+            let str = "";
+            this.linAlg.usingMatIt(this, (it) => {
+                for (let i = 0; i < this.m; ++i) {
+                    it.jumpRows().resetRow();
+                    for (let j = 0; j < this.n; ++j)
+                        str += this.data[it.jumpCols().current()] + ", ";
+                    str += "\r\n";
+                }
+            });
+            return str;         
         }
     }
 
-    private _createMatrixData<M extends number, N extends number>(m: M, n: N): MatrixData<M, N, T> {
-        const data: Array<Array<T>> = new Array<Array<T>>(m);
-        let row: Array<T>;
-        for (let i = 0; i < m; ++i) {
-            data[i] = row = new Array<T>(n);
-            for (let j = 0; j < n; ++j)
-                row[j] = this._ops.addId();
-        }
-        return data as MatrixData<M, N, T>;
+    /**
+     * Returns a string describing the iterator usage of this LinAlg object.
+     * @returns The describtive string.
+     */
+    public iteratorUsage(): string {
+        let str = "";
+        this._iterators.forEach((v, k, _m) => str += `${k}:${v.size()},`);
+        return str;
     }
-    private _transposedMatrixData<M extends number, N extends number>(data: MatrixData<M, N, T>): MatrixData<N, M, T> {
-        const m = data.length;
-        const n = data[0]!.length;
-        const transposed = this._createMatrixData<N, M>(n, m);
-        for (let i = 0; i < n; ++i)
-            for (let j = 0; j < m; ++j)
-                transposed[i]![j] = data[j]![i]!;
-        return transposed;
+    /**
+     * Returns a string describing the iterator usage of this LinAlg object.
+     * @returns The describtive string.
+     */
+    public bufferUsage(): string {
+        let str = "";
+        this._buffers.forEach((v, k, _m) => str += `${k}:${v.size()},`);
+        return str;
     }
-
+    private _createMatrixData<M extends number, N extends number>(m: M, n: N): SizedArray<_Multiply<M, N>, T> {
+        const length = m * n;
+        const data: Array<T> = new Array<T>(length);
+        for (let ij = 0; ij < length; ++ij)
+            data[ij] = this._ops.addId();
+        return data as SizedArray<_Multiply<M, N>, T>;
+    }
+    /**
+     * Fetch and use a raw (data) iterator in the provided consumer function.
+     * @param m The row count of the iterated data.
+     * @param n The column count of the iterated data.
+     * @param consumer The consumer function.
+     * @param layout The data layout of the iterated data (the LinAlg's by default).
+     * @returns The result returned by the consumer function.
+     */
+    public usingRawIt<R>(m: number, n: number, consumer: (it: IMatrixIterator) => R, layout: MatrixDataLayout = this.defaultLayout): R {
+        let stack = this._iterators.get(layout);
+        if (stack == undefined)
+            this._iterators.set(layout, stack = new Stack());
+        return stack.using(() => { console.log("This should not happen"); return layout == MatrixDataLayout.ROW_MAJOR ? new _RowMajorIterator() : new _ColMajorIterator(); }, (it) => {
+            it.load(m, n);
+            return consumer(it);
+        });
+    }
+    /**
+     * Fetch and use a matrix iterator in the provided consumer function.
+     * @param mat The iterated matrix.
+     * @param consumer The consumer function.
+     * @returns The result returned by the consumer function.
+     */
+    public usingMatIt<R>(mat: IMatrixBase, consumer: (it: IMatrixIterator) => R): R {
+        return this.usingRawIt(mat.m, mat.n, consumer, mat.layout);
+    }
     /**
      * Create a new M x N matrix with the given data (can be given as an M x N two-dimensional array).
      * @param data The backing data (not copied!).
      * @returns The created matrix.
      */
-    public createMatrix<M extends number, N extends number>(data: MatrixData<M, N, T>): Matrix<M, N, T> {
-        return new this._MatrixImpl<M, N, T>(this, data);
+    public createMatrix<M extends number, N extends number>(m: M, n: N, data: SizedArray<_Multiply<M, N>, T>, layout: MatrixDataLayout = this.defaultLayout): IMatrix<M, N, T> {
+        return new this._MatrixImpl<M, N, T>(this, m, n, data, layout);
     }
     /**
      * Create a new N x 1 (column) vector with the given data (can be given as a one-dimensional array of length N).
      * @param data The backing data (not copied!).
      * @returns The created vector.
      */
-    public createVector<N extends number>(data: SizedArray<N, T>): Vector<N, T> {
-        return this.createMatrix<N, 1>(this._transposedMatrixData<1, N>([data]));
+    public createVector<N extends number>(n: N, data: SizedArray<_Multiply<N, 1>, T>): Vector<N, T> {
+        return this.createMatrix<N, 1>(n, 1, data);
     }
     /**
      * Create a new M x N matrix where entries are initialized to 0.
@@ -518,88 +827,142 @@ export class LinAlg<T> {
      * @param n The column count.
      * @returns The created matrix.
      */
-    public createZeroMatrix<M extends number, N extends number>(m: M, n: N): Matrix<M, N, T> {
-        return this.createMatrix<M, N>(this._createMatrixData<M, N>(m, n));
+    public createZeroMatrix<M extends number, N extends number>(m: M, n: N, layout: MatrixDataLayout = this.defaultLayout): IMatrix<M, N, T> {
+        return this.createMatrix<M, N>(m, n, this._createMatrixData<M, N>(m, n), layout);
+    }
+    /**
+     * Create a new N x 1 vector where entries are initialized to 0.
+     * @param m The row count.
+     * @param n The column count.
+     * @returns The created vector.
+     */
+    public createZeroVector<N extends number>(n: N, layout: MatrixDataLayout = this.defaultLayout): IMatrix<N, 1, T> {
+        return this.createZeroMatrix(n, 1, layout);
+    }
+    /**
+     * Create a new M x N matrix where entries are initialized to 1.
+     * @param m The row count.
+     * @param n The column count.
+     * @returns The created matrix.
+     */
+    public createOnesMatrix<M extends number, N extends number>(m: M, n: N, layout: MatrixDataLayout = this.defaultLayout): IMatrix<M, N, T> {
+        const mat = this.createZeroMatrix<M, N>(m, n, layout);
+        this.usingMatIt(mat, (it) => {
+            for (let i = 0; i < m; ++i) {
+                it.jumpRows().resetRow();
+                for (let j = 0; j < n; ++j)
+                    mat.data[it.jumpCols().current()] = this._ops.mulId();;
+            }
+        });
+        return mat;
+    }
+    /**
+     * Create a new N x 1 vector where entries are initialized to 1.
+     * @param m The row count.
+     * @param n The column count.
+     * @returns The created vector.
+     */
+    public createOnesVector<N extends number>(n: N, layout: MatrixDataLayout = this.defaultLayout): IMatrix<N, 1, T> {
+        return this.createOnesVector(n, layout);
     }
     /**
      * Create a new N x N matrix where the diagonal entries are initialized to 1.
      * @param n The row / column count.
      * @returns The created matrix.
      */
-    public createIdentityMatrix<N extends number>(n: N): Matrix<N, N, T> {
-        const mat = this.createZeroMatrix<N, N>(n, n);
-        for (let i = 0; i < n; ++i)
-            mat.data[i]![i] = this._ops.mulId();
+    public createIdentityMatrix<N extends number>(n: N, layout: MatrixDataLayout = this.defaultLayout): IMatrix<N, N, T> {
+        const mat = this.createZeroMatrix<N, N>(n, n, layout);
+        //console.log(mat + "\r\n");
+        this.usingMatIt(mat, (it) => {
+            for (let i = 0; i < n; ++i) {
+                mat.data[it.jumpRows().jumpCols().current()] = this._ops.mulId();
+                //console.log(it.current());
+            }
+        });
         return mat;
     }
-    public loadVector<N extends number, Q extends _LessThanOrEqual<N>>(vec: Vector<N, T>, data: SizedArray<Q, T>): void {
-        for (let i = 0; i < data.length; ++i)
-            vec.data[i]![0] = data[i]!;
+    /**
+     * Fetch and use a buffer in the provided consumer function.
+     * @param m The row count of the buffer.
+     * @param n The column count of the buffer.
+     * @param consumer The consumer function.
+     * @returns The result returned by the consumer function.
+     */
+    public usingBuffer<M extends number, N extends number, R>(m: M, n: N, consumer: (buf: SizedArray<_Multiply<M, N>, T>) => R): R  {
+        const length = m * n;
+        let stack = this._buffers.get(length);
+        if (stack == undefined)
+            this._buffers.set(length, stack = new Stack());
+        return stack.using(() => { console.log("This should not happen"); return this._createMatrixData(m, n); }, (value) => consumer(value as SizedArray<_Multiply<M, N>, T>));
     }
-
-    private _getOrCreateBuffer<M extends number, N extends number>(m: M, n: N): MatrixData<M, N, T> {
-        let row = this._buffers.get(m);
-        if (row == undefined)
-            this._buffers.set(m, row = new Map<number, unknown>());
-        let col = row.get(n);
-        if (col == undefined)
-            row.set(n, col = this._createMatrixData(m, n));
-        return col as MatrixData<M, N, T>;
-    }
-    private _mmul<M extends number, N extends number, P extends number>(a: Matrix<M, N, T>, b: Matrix<N, P, T>): MatrixData<M, P, T> {
-        const buf = this._getOrCreateBuffer(a.m, b.n);
+    /**
+     * Multiply two matrices and store the result in the buffer.
+     * @param a The first matrix (of size M x N).
+     * @param b The second matrix (of size N x P).
+     * @param buf The buffer.
+     */
+    public mmulBuf<M extends number, N extends number, P extends number>(a: IMatrix<M, N, T>, b: IMatrix<N, P, T>, buf: SizedArray<_Multiply<M, P>, T>): void {
         let m = a.m;
         let n = a.n;
         let p = b.n;
         let ops = this._ops;
-        let aRow: SizedArray<N, T>;
-        let bufRow: SizedArray<P, T>;
         let acc: T;
-        for (let i = 0; i < m; ++i) {
-            aRow = a.data[i]!;
-            bufRow = buf[i]!;
-            for (let j = 0; j < p; ++j) {
-                acc = ops.addId();
-                for (let k = 0; k < n; ++k)
-                    acc = ops.add(acc, ops.mul(aRow[k]!, b.data[k]![j]!));
-                bufRow[j] = acc;
-            }
-        }
-        return buf;
+        this.usingMatIt(a, (aIt) => {
+            this.usingMatIt(b, (bIt) => {
+                this.usingRawIt(a.m, b.n, (cIt) => {
+                    for (let i = 0; i < m; ++i) {
+                        aIt.jumpRows();
+                        bIt.resetRow();
+                        cIt.jumpRows().resetRow();
+                        //console.log(`start of i=${i}: b=${bIt.current()} c=${cIt.current()}`);
+                        for (let j = 0; j < p; ++j) {
+                            acc = ops.addId();
+                            aIt.resetRow();
+                            bIt.jumpCols().resetCol();
+                            cIt.jumpCols();
+                            //console.log(`start of j=${j}: b=${bIt.current()} c=${cIt.current()}`);
+                            for (let k = 0; k < n; ++k) {
+                                acc = ops.add(acc, ops.mul(a.data[aIt.jumpCols().current()]!, b.data[bIt.jumpRows().current()]!));
+                                //console.log(`i=${i} j=${j} k=${k}: a=${aIt.current()} b=${bIt.current()} c=${cIt.current()}\r\n`);
+                            }
+                            buf[cIt.current()] = acc;
+                        }
+                    }
+                });
+            });
+        });
     }
     /**
-     * Does a matrix multiplication between two matrices and stores the result in the third matrix.
+     * Multiply two matrices and store the result in the third matrix.
      * @param a The first matrix (of size M x N).
      * @param b The second matrix (of size N x P).
      * @param c The third matrix (of size M x P).
      * @returns The third matrix (which has the result stored).
      */
-    public mmul<M extends number, N extends number, P extends number>(a: Matrix<M, N, T>, b: Matrix<N, P, T>, c: Matrix<M, P, T>): Matrix<M, P, T> {
-        const buf = this._mmul<M, N, P>(a, b);
-        c.load<M, P>(buf);
+    public mmul<M extends number, N extends number, P extends number>(a: IMatrix<M, N, T>, b: IMatrix<N, P, T>, c: IMatrix<M, P, T> = this.createZeroMatrix(a.m, b.n)): IMatrix<M, P, T> {
+        this.usingBuffer(a.m, b.n, (buf) => {
+            this.mmulBuf<M, N, P>(a, b, buf);
+            c.load(c.m, c.n, buf);
+        });
         return c;
     }
     /**
-     * Does a matrix multiplication between two matrices and stores the result in the first matrix.
+     * Multiply two matrices and store the result in the first matrix.
      * @param a The first matrix (of size M x N).
      * @param b The second matrix (of size N x N).
      * @returns The first matrix (which has the result stored).
      */
-    public mmulL<M extends number, N extends number>(a: Matrix<M, N, T>, b: Matrix<N, N, T>): Matrix<M, N, T> {
-        const buf = this._mmul<M, N, N>(a, b);
-        a.load<M, N>(buf);
-        return a;
+    public mmulL<M extends number, N extends number>(a: IMatrix<M, N, T>, b: IMatrix<N, N, T>): IMatrix<M, N, T> {
+        return this.mmul(a, b, a);
     }
     /**
-     * Does a matrix multiplication between two matrices and stores the result in the second matrix.
+     * Multiply two matrices and store the result in the second matrix.
      * @param a The first matrix (of size N x N).
      * @param b The second matrix (of size N x P).
      * @returns The second matrix (which has the result stored).
      */
-    public mmulR<N extends number, P extends number>(a: Matrix<N, N, T>, b: Matrix<N, P, T>): Matrix<N, P, T> {
-        const buf = this._mmul<N, N, P>(a, b);
-        b.load<N, P>(buf);
-        return b;
+    public mmulR<N extends number, P extends number>(a: IMatrix<N, N, T>, b: IMatrix<N, P, T>): IMatrix<N, P, T> {
+        return this.mmul(a, b, b);
     }
 
     /**
@@ -610,39 +973,62 @@ export class LinAlg<T> {
 
         constructor(linAlg: LinAlg<T>) {
             this.linAlg = linAlg;
-            this.Affine = new _Affine2D(linAlg);
         }
 
         /**
-         * Computes the cross product between two 2D vectors.
+         * Compute the cross product between two 2D vectors.
          * @param a The first vector.
          * @param b The second vector.
          * @returns The cross product.
          */
         public cross(a: Vector<2, T>, b: Vector<2, T>): T {
-            const ops = this.linAlg._ops;
-            return ops.sub(ops.mul(a.data[0][0], b.data[1][0]), ops.mul(a.data[1][0], b.data[0][0]));
+            return this.linAlg.usingMatIt(a, (aIt) => {
+                aIt.jumpCols();
+                return this.linAlg.usingMatIt(b, (bIt) => {
+                    bIt.jumpCols();
+                    const ops = this.linAlg._ops;
+                    const a00 = a.data[aIt.jumpRows().current()]!;
+                    const a10 = a.data[aIt.jumpRows().current()]!;
+                    const b00 = b.data[bIt.jumpRows().current()]!;
+                    const b10 = b.data[bIt.jumpRows().current()]!;
+                    return ops.sub(ops.mul(a00, b10), ops.mul(a10, b00));
+                });
+            })            
         }
-
         /**
-         * Creates a new (non-affine) 2D rotation matrix for the given angle.
-         * @param angle The angle in radians.
+         * Create a 2D rotation matrix.
+         * @param angle The rotation angle in radians.
+         * @param mat The matrix to use.
          * @returns The rotation matrix.
          */
-        public createRotationMatrix(angle: number): Matrix<2, 2, T> {
+        public rotate(angle: number, mat: IMatrix<2, 2, T>): IMatrix<2, 2, T> {
             const ops = this.linAlg._ops;
             const sin = ops.sin(angle);
             const cos = ops.cos(angle);
-            return this.linAlg.createMatrix<2, 2>([
-                [cos, ops.sub(ops.addId(), sin)],
-                [sin, cos]
-            ]);
+            this.linAlg.usingBuffer(2, 2, (buf) => {
+                buf[0] = cos; buf[1] = ops.sub(ops.addId(), sin);
+                buf[2] = sin; buf[3] = cos;
+                mat.load(2, 2, buf, MatrixDataLayout.ROW_MAJOR);
+            });
+            return mat;
         }
-        
         /**
-         * Used to access 2D-specific affine matrix functions.
+         * Create an affine 2D rotation matrix.
+         * @param angle The rotation angle in radians.
+         * @param mat The matrix to use.
+         * @returns The rotation matrix.
          */
-        public readonly Affine: _Affine2D<T>;
+        public rotateAffine(angle: number, mat: IMatrix<3, 3, T>): IMatrix<3, 3, T> {
+            const ops = this.linAlg._ops;
+            const sin = ops.sin(angle);
+            const cos = ops.cos(angle);
+            this.linAlg.usingBuffer(2, 2, (buf) => {
+                buf[0] = cos; buf[1] = ops.sub(ops.addId(), sin);
+                buf[2] = sin; buf[3] = cos;
+                mat.load(2, 2, buf, MatrixDataLayout.ROW_MAJOR);
+            });
+            return mat;
+        }
     }(this);
 
     /**
@@ -653,98 +1039,121 @@ export class LinAlg<T> {
 
         constructor(linAlg: LinAlg<T>) {
             this.linAlg = linAlg;
-            this.Affine = new _Affine3D(linAlg);
         }
 
         /**
-         * Computes the cross product vector between two 3D vectors.
+         * Compute the cross product vector between two 3D vectors.
          * @param a The first vector.
          * @param b The second vector.
-         * @param c (optional) The vector which stores the result. A new vector will be created if none is provided.
+         * @param c The (provided / new) vector which stores the result.
          * @returns The cross product.
          */
-        public cross(a: Vector<3, T>, b: Vector<3, T>, c?: Vector<3, T>): Vector<3, T> {
+        public cross(a: Vector<3, T>, b: Vector<3, T>, c: Vector<3, T> = this.linAlg.createZeroMatrix(3, 1)): Vector<3, T> {
             const ops = this.linAlg._ops;
-            const x = ops.sub(ops.mul(a.data[1]![0]!, b.data[2]![0]!), ops.mul(a.data[2]![0]!, b.data[1]![0]!));
-            const y = ops.sub(ops.mul(a.data[3]![0]!, b.data[0]![0]!), ops.mul(a.data[0]![0]!, b.data[3]![0]!));
-            const z = ops.sub(ops.mul(a.data[0]![0]!, b.data[1]![0]!), ops.mul(a.data[1]![0]!, b.data[0]![0]!));
-            const data = [x, y, z] as SizedArray<3, T>;
-            if (c == undefined)
-                return this.linAlg.createVector<3>(data);
-            else {
-                this.linAlg.loadVector(c, data);
-                return c;
-            }
+            this.linAlg.usingMatIt(a, (aIt) => {
+                aIt.jumpCols();
+                this.linAlg.usingMatIt(b, (bIt) => {
+                    bIt.jumpCols();
+                    const a00 = a.data[aIt.jumpRows().current()]!;
+                    const a10 = a.data[aIt.jumpRows().current()]!;
+                    const a20 = a.data[aIt.jumpRows().current()]!;
+                    const b00 = b.data[bIt.jumpRows().current()]!;
+                    const b10 = b.data[bIt.jumpRows().current()]!;
+                    const b20 = b.data[bIt.jumpRows().current()]!;
+                    const x = ops.sub(ops.mul(a10, b20), ops.mul(a20, b10));
+                    const y = ops.sub(ops.mul(a20, b00), ops.mul(a00, b20));
+                    const z = ops.sub(ops.mul(a00, b10), ops.mul(a10, b00));
+                    c.load(3, 1, [x, y, z]);
+                });
+            });
+            return c;
         }
-
-        private _createRotationMatrix(angle: number, assembler: (zero: T, one: T, sin: T, minusSin: T, cos: T) => MatrixData<3, 3, T>): Matrix<3, 3, T> {
+        private _withRotation<TMat extends IMatrix<3, 3, T> | IMatrix<4, 4, T>>(angle: number, builder: (zero: T, one: T, sin: T, minusSin: T, cos: T, buf: SizedArray<9, T>) => void, mat: TMat): TMat {
             const ops = this.linAlg._ops;
             const zero = ops.addId();
             const one = ops.mulId();
             const sin = ops.sin(angle);
             const minusSin = ops.sub(ops.addId(), sin);
             const cos = ops.cos(angle);
-            return this.linAlg.createMatrix(assembler(zero, one, sin, minusSin, cos));
+            this.linAlg.usingBuffer(3, 3, (buf) => {
+                builder(zero, one, sin, minusSin, cos, buf);
+                mat.load(3, 3, buf, MatrixDataLayout.ROW_MAJOR);
+            });     
+            return mat;       
         }
-
+        private _buildXRotation<T>(zero: T, one: T, sin: T, minusSin: T, cos: T, buf: SizedArray<9, T>): void {
+            buf[0] = one;  buf[1] = zero; buf[2] = zero;
+            buf[3] = zero; buf[4] = cos;  buf[5] = minusSin;
+            buf[6] = zero; buf[7] = sin;  buf[8] = cos;
+        }
+        private _buildYRotation<T>(zero: T, one: T, sin: T, minusSin: T, cos: T, buf: SizedArray<9, T>): void {
+            buf[0] = cos;      buf[1] = zero; buf[2] = sin;
+            buf[3] = zero;     buf[4] = one;  buf[5] = zero;
+            buf[6] = minusSin; buf[7] = zero; buf[8] = cos;
+        }
+        private _buildZRotation<T>(zero: T, one: T, sin: T, minusSin: T, cos: T, buf: SizedArray<9, T>): void {
+            buf[0] = cos;  buf[1] = minusSin; buf[2] = zero;
+            buf[3] = sin;  buf[4] = cos;      buf[5] = zero;
+            buf[6] = zero; buf[7] = zero;     buf[8] = one;
+        }
         /**
-         * Creates a new (non-affine) 3D rotation matrix for the given angle around the x-axis.
-         * @param angle The angle in radians.
+         * Create a 3D rotation matrix around the X axis.
+         * @param angle The rotation angle.
+         * @param mat The matrix to use.
          * @returns The rotation matrix.
          */
-        public createXRotationMatrix(angle: number): Matrix<3, 3, T> {
-            return this._createRotationMatrix(angle, (zero, one, sin, minusSin, cos) => {
-                return [
-                    [one,  zero, zero],
-                    [zero, cos,  minusSin],
-                    [zero, sin,  cos]
-                ]
-            });
+        public rotateX(angle: number, mat: IMatrix<3, 3, T> = this.linAlg.createIdentityMatrix(3)): IMatrix<3, 3, T> {
+            return this._withRotation(angle, this._buildXRotation, mat);
         }
         /**
-         * Creates a new (non-affine) 3D rotation matrix for the given angle around the y-axis.
-         * @param angle The angle in radians.
+         * Create an affine 3D rotation matrix around the X axis.
+         * @param angle The rotation angle.
+         * @param mat The matrix to use.
          * @returns The rotation matrix.
          */
-        public createYRotationMatrix(angle: number): Matrix<3, 3, T> {
-            return this._createRotationMatrix(angle, (zero, one, sin, minusSin, cos) => {
-                return [
-                    [cos,      zero, sin],
-                    [zero,     one,  zero],
-                    [minusSin, zero, cos]
-                ]
-            });
+        public rotateAffineX(angle: number, mat: IMatrix<4, 4, T> = this.linAlg.createIdentityMatrix(4)): IMatrix<4, 4, T> {
+            return this._withRotation(angle, this._buildXRotation, mat);
         }
         /**
-         * Creates a new (non-affine) 3D rotation matrix for the given angle around the z-axis.
-         * @param angle The angle in radians.
+         * Create a 3D rotation matrix around the Y axis.
+         * @param angle The rotation angle.
+         * @param mat The matrix to use.
          * @returns The rotation matrix.
          */
-        public createZRotationMatrix(angle: number): Matrix<3, 3, T> {
-            return this._createRotationMatrix(angle, (zero, one, sin, minusSin, cos) => {
-                return [
-                    [cos,  minusSin, zero],
-                    [sin,  cos,      zero],
-                    [zero, zero,     one]
-                ]
-            });
+        public rotateY(angle: number, mat: IMatrix<3, 3, T> = this.linAlg.createIdentityMatrix(3)): IMatrix<3, 3, T> {
+            return this._withRotation(angle, this._buildYRotation, mat);
         }
-
         /**
-         * Used to access 3D-specific affine matrix functions.
+         * Create an affine 3D rotation matrix around the Y axis.
+         * @param angle The rotation angle.
+         * @param mat The matrix to use.
+         * @returns The rotation matrix.
          */
-        public readonly Affine: _Affine3D<T>;
+        public rotateAffineY(angle: number, mat: IMatrix<4, 4, T> = this.linAlg.createIdentityMatrix(4)): IMatrix<4, 4, T> {
+            return this._withRotation(angle, this._buildYRotation, mat);
+        }
+        /**
+         * Create a 3D rotation matrix around the Z axis.
+         * @param angle The rotation angle.
+         * @param mat The matrix to use.
+         * @returns The rotation matrix.
+         */
+        public rotateZ(angle: number, mat: IMatrix<3, 3, T> = this.linAlg.createIdentityMatrix(3)): IMatrix<3, 3, T> {
+            return this._withRotation(angle, this._buildZRotation, mat);
+        }
+        /**
+         * Create an affine 3D rotation matrix around the Z axis.
+         * @param angle The rotation angle.
+         * @param mat The matrix to use.
+         * @returns The rotation matrix.
+         */
+        public rotateAffineZ(angle: number, mat: IMatrix<4, 4, T> = this.linAlg.createIdentityMatrix(4)): IMatrix<4, 4, T> {
+            return this._withRotation(angle, this._buildZRotation, mat);
+        }
     }(this);
 
     /**
      * Used to access (general) affine matrix functions.
      */
     public readonly Affine = new _Affine(this);
-    
 }
-/*const linAlg = LinAlg.number();
-const mat1: MatrixN<4,4> = linAlg.ThreeD.Affine.createTranslationMatrix(linAlg.createVector<3>([1,2,3]));
-const mat2: MatrixN<4,4> = linAlg.ThreeD.Affine.createXRotationMatrix(Math.PI / 2);
-console.log(mat1);
-console.log(mat2);
-console.log(linAlg.mmulL(mat1, mat2));*/
