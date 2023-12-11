@@ -47,8 +47,8 @@ export function openModal(photos: any, data : MarsData | null, isRover : boolean
 }
   
   
-export function closeModal(): void {
-  const modal = document.getElementById("myModal") as HTMLElement;
+export function closeModal(modalId: string): void {
+  const modal = document.getElementById(modalId) as HTMLElement;
   modal.style.display = "none";
 }
   
@@ -63,7 +63,7 @@ export function createModal(title?: string, multiObjectModal?: boolean): void {
   //Add Modal close button
   const closeBtn = document.createElement("i");
   closeBtn.className = "close fa-solid fa-xmark";
-  closeBtn.onclick = closeModal;
+  closeBtn.addEventListener('click', () => closeModal("myModal"));
 
   //Add optional title
   if(title){
@@ -112,4 +112,22 @@ export function createModal(title?: string, multiObjectModal?: boolean): void {
   modal.appendChild(closeBtn);
 
   document.body.appendChild(modal);
+}
+
+export function createAndOpenTutoralModal(){
+  let modal = document.createElement("div") as HTMLDivElement;
+  modal.id = "tutorial-modal";
+  modal.className = "modal";
+  modal.addEventListener('click', () => closeModal("tutorial-modal"));
+  document.addEventListener('keyup', (e) => {
+    if(e.key == "Escape") closeModal("tutorial-modal");
+  });
+
+  //Add tutorial text to modal
+  const prompt = document.createElement("h2") as HTMLHeadingElement;
+  prompt.innerHTML = "<i class=\"fa-solid fa-arrow-pointer\"></i> Click any celestial body to get more information.";
+  modal.appendChild(prompt);
+
+  document.body.appendChild(modal);
+  modal.style.display = "flex";
 }
