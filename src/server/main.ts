@@ -2,7 +2,7 @@ import express from "express";
 import { ParamsDictionary } from "express-serve-static-core";
 import QueryString from "qs";
 import ViteExpress from "vite-express";
-// import path from "path";
+//import path from "path";
 import { CADReq, CADRes, MarsRoverPhotosReq, MarsRoverPhotosRes, MarsWeatherReq, MarsWeatherRes, MoonReq, MoonRes, FireballReq, FireballRes } from "../common/api";
 import { cadTarget, marsRoverPhotosTarget, marsWeatherTarget, fireballTarget, moonTarget } from "../common/api";
 import { Cache, cacheCreateDaily, cacheCreateMinutely, cacheGetOrFetch } from "./cache";
@@ -76,17 +76,6 @@ export async function apiFetchNew<TReq, TRes>(api: ApiDef<TReq, TRes>, req: TReq
  */
 const app = express();
 
-// Express shortcuts
-// function regFile(target: string, ...paths: string[]): void {
-//   app.get(target, (_req, res) => {
-//     res.sendFile(path.resolve(...paths));
-//   });
-// }
-// function regHtml(target: string, file: string): void {
-//   regFile(target, 'src', 'client', 'html', file);
-// }
-function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>, func: (req: express.Request<ParamsDictionary, any, any, QueryString.ParsedQs, Record<string, any>>) => any): void {
-  apiInit(api);
 /**
  * Register a fetchable file at the given path.
  * @param target The HTTP target string for the server to listen to.
@@ -103,7 +92,7 @@ function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>, func: (req: express.Request
  * @param file The file name (without path!). Defaults to the target without the leading '/'.
  */
 //function regHtml(target: string, file: string = target.substring(1)): void {
- // regFile(target, 'src', 'client', 'html', file);
+//  regFile(target, 'src', 'client', 'html', file);
 //}
 /**
  * Register a fetchable image file with the given file name.
@@ -111,7 +100,7 @@ function regApi<TReq, TRes>(api: ApiDef<TReq, TRes>, func: (req: express.Request
  * @param file The file name (without path!). Defaults to the target without the leading '/'.
  */
 //function regImg(target: string, file: string = target.substring(1)): void {
- // regFile(target, 'src', 'client', 'img', file);
+//  regFile(target, 'src', 'client', 'img', file);
 //}
 /**
  * Register an API.
@@ -148,20 +137,17 @@ function regUrlApi<TReq, TRes>(api: ApiDef<TReq, TRes>): ApiDef<TReq, TRes> {
   regApi<TReq, TRes>(api, (req) => req.headers);
 }*/
 
-// regHtml('/', 'home.html');
-// regHtml('/neo.html', 'neo.html');
-regUrlApi<CADReq, CADRes>({
 // 3D stuff
 //regHtml('/spinning_earth.html');
 //regImg('/earth_texture.bmp');
 //regImg('/meteorite_texture.bmp');
-
-// HTML pages
+//
+//// HTML pages
 //regHtml('/', 'home.html');
 //regHtml('/neo.html', 'neo.html');
-
+//
 // Close Approach API
-const cadApi = regUrlApi<CADReq, CADRes>(
+const cadApi = regUrlApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
   target: cadTarget.raw(),
   genReq: async (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&min-dist-max=${req["min-dist-max"]}`,

@@ -1,6 +1,9 @@
 import {getFormattedDate} from '../../../common/utils';
 import { CADRes as CadJson, FireballRes as FireBallJson} from '../../../common/api';
 import { createSunBackButton, removeAllSpaces, getRandomInt } from '../base';
+import asteroid_selected from '../../img/asteroid_selected.png';
+import earth from '../../img/earth.png';
+import asteroid from '../../img/asteroid.png';
 
 //Close approach parameters
 const cadMinDate = getFormattedDate();
@@ -19,19 +22,26 @@ let cadAsteroidSelected = false;
 
 
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
-fetch('/neo.html')
-                .then(response => response.text())
-                .then(html => {
-                    if(neoContainer){
-                        neoContainer.innerHTML = html;
-                        getCloseApproachData(cadApiUrl);
-                        getFireballData(fireballApiUrl);
-                        
-                        //Add back to home page button
-                        createSunBackButton(neoContainer);
-                    }
-                })
-                .catch(error => console.error('Error loading neo.html:', error));
+
+const cadContainer = document.createElement('div');
+cadContainer.id = 'cad-container';
+const fireballContainer = document.createElement('div');
+fireballContainer.id = 'fireball-container';
+const neo = document.createElement('img');
+neo.id = 'neo';
+neo.src = earth;
+
+if (neoContainer) {
+    neoContainer.appendChild(cadContainer);
+    neoContainer.appendChild(neo);
+    neoContainer.appendChild(fireballContainer);
+    getCloseApproachData(cadApiUrl);
+    getFireballData(fireballApiUrl);
+
+    // Add back to the home page button
+    createSunBackButton(neoContainer);
+}
+
 
 async function getCloseApproachData(cadApiUrl: string){
     try{
@@ -55,13 +65,13 @@ function processCloseApproachData(cadJson: CadJson){
         const cadElemImg = document.createElement('img');
         cadElemImg.classList.add('cad-elem-img'); 
         cadElemImg.id = `cad-elem-img-${elemName}`;
-        cadElemImg.src = '/src/client/img/asteroid.png';
+        cadElemImg.src = asteroid;
 
         //create selected_asteroid image
         const cadElemImgSelected = document.createElement('img');
         cadElemImgSelected.classList.add('cad-elem-img-selected');
         cadElemImgSelected.id = `cad-elem-img-selected-${elemName}`;
-        cadElemImgSelected.src = '/src/client/img/asteroid_selected.png';
+        cadElemImgSelected.src = asteroid_selected;
 
         addVariableOrbitAnimation(cadElemImg, cadElemImgSelected);
 
@@ -177,12 +187,15 @@ function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLIma
             0% {
                 transform: rotate(${startingAngle}deg) translateY(${distance}vh) rotate(45deg);
             }
+            
 
             100% {
                 transform: rotate(${startingAngle + 360}deg) translateY(${distance}vh) rotate(45deg);
             }
         }
     `;
+
+    console.log(keyframes);
 
     styleSheet?.insertRule(keyframes, styleSheet.cssRules.length);
     elem.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
