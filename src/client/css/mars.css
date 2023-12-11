@@ -1,114 +1,92 @@
-div#mars-container {
+#mars-container {
+  margin: 0;
   display: none;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 25px 0.6fr 1fr 1fr 40px;
-  /* Adjusted rows to include 1fr for the remaining space */
-  grid-template-areas:
-    "sun . . buttons"
-    "title title . today-weather-box"
-    "paragraph paragraph paragraph today-weather-box"
-    "weather-boxes weather-boxes weather-boxes weather-boxes"
-    "footer footer footer footer";
+  grid-template: 
+    " . sun ."
+    "title image today-weather-box"
+    "weather-boxes weather-boxes weather-boxes"
+    "footer footer footer";
 
-  gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 50px auto auto 40px;
   min-height: 100vh;
-  /* Ensure body takes up at least the full viewport height */
 
-  & div#button-box {
-    grid-area: buttons;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-right: 10px;
-    margin-top: 0;
-
-    & button.buttonChange {
-      background-color: rgba(0, 0, 0, 0.8);
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      width: 100%;
-      padding: 4px;
-      color: white;
-      margin-right: 5px;
-    }
-
-    & button#celsius-button, button#mars-date-button {
-      display: none;
-    }
+  & .image {
+    width: 30vh;
+    height: 30vh;
   }
 
+
   & main {
+    display: flex;
     grid-area: weather-boxes;
     flex-wrap: wrap;
-    gap: 10px;
+    justify-content: center;
+    align-items: center;
 
-    & div.weather-boxes {
-      display: flex;
-      justify-content: space-evenly;
-    
-      & .grey-box {
-        margin: 5px;
-      }
+    & svg {
+      width: 100%;
+      justify-self: center;
+      margin-top: auto; /* Push the SVG to the bottom */
+      align-self: flex-end; /* Align the SVG to the bottom */
     }
+    
   }
 
   & div#today-weather-box {
+    & h1 {
+    cursor: pointer;
+  }
+
+  & span#celsius-unit-min,
+  & span#celsius-unit-max,
+  & span#fahrenheit-unit-min,
+  & span#fahrenheit-unit-max {
+    color: grey;
+    cursor: pointer;
+  }
+  & span#celsius-unit-min.selected,
+  & span#celsius-unit-max.selected,
+  & span#fahrenheit-unit-min.selected,
+  & span#fahrenheit-unit-max.selected {
+    color: white;
+    cursor: text;
+  }
+  
+
     grid-area: today-weather-box;
     justify-content: center;
-    /* Center the content horizontally */
-    align-items: center;
-    /* Center the content vertically */
+    align-items: baseline;
     display: flex;
-  
-    & .grey-box {
-  
-      & h3 {
-        font-size: 2rem;
-      }
-  
-      & p {
-        font-size: 1rem;
-      }
+    line-height: 10pt;
+
+    & p {
+      margin-top: 5px;
+      margin-bottom: 5px;
     }
   }
 }
 
+button {
+  background-color: black;
+  color: white;
+}
 
-/* Media query for screens smaller than 660px */
-@media only screen and (max-width: 750px) {
-  div#mars-container {
+@media screen and (max-width: 660px) {
+  #mars-container {
+    grid-template: 
+      "sun"
+      "title"
+      "image"
+      "today-weather-box"
+      "weather-boxes"
+      "footer";
+
     grid-template-columns: 1fr;
+    grid-template-rows: 30px auto auto auto auto 40px;
 
-    >.title-box {
-      display: inline-block;
-
-      /* Set display to inline-block */
-      & h1 {
-        font-size: 1.5rem;
-      }
+    & .today-weather-box {
+      display: none;
     }
-
-    >.today-weather-box {
-      justify-content: center;
-      align-items: center;
-      width: 160px;
-
-      & h3 {
-        font-size: 1rem;
-      }
-
-      & p {
-        font-size: 0.8rem;
-      }
-    }
-  }
-
-  .weather-boxes .grey-box {
-    width: 100%;
-  }
-
-  .weather-boxes .grey-box:nth-child(n+4) {
-    display: none;
   }
 }

@@ -1,8 +1,44 @@
+:root{
+    --rotate-start: 0deg;
+    --rotate-end: calc(var(--rotate-start) + 360deg);
+    --orbit-radius: 40vh;
+}
+
 div#neo-container {
     display: none;
     height: 100vh;
-    grid-template-columns: 1fr 1fr 1fr;
-    color: wheat;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-areas: '. neo fireball-container' ;
+    color: white;
+
+    & img.cad-elem-img {
+        align-self: center;
+        justify-self: center;
+        position: absolute;
+        width: 10vh;
+        z-index: 1;
+    }
+
+    & img.cad-elem-img-selected {
+        align-self: center;
+        justify-self: center;
+        position: absolute;
+        width: 10vh;
+        opacity: 0;
+        z-index: 0;
+    }
+
+    & img#neo {
+        align-self: center;
+        justify-self: center;
+        height: 75vh;
+    }
+
+    & img#sun-button {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 
     & div#cad-container, div#fireball-container {
         display: flex;
@@ -13,40 +49,51 @@ div#neo-container {
         -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
         scrollbar-width: none;  /* Hide scrollbar for Firefox */
 
-        & div#cad-Elem-box, div#fireball-Elem-box {
+        & div.cad-elem-info, div#fireball-Elem-box {
             display: flex;
             flex-direction: column;
-            line-height: 0.8;
             padding: 3px;
             margin: 5px;
             background-color: rgba(102, 102, 102, 0.6);;
             border-radius: 8px;
 
-            & h3{
+            & h4{
                 align-self: center;
-                font-size: 20pt;
+                font-size: 15pt;
                 margin: 8pt;
             }
           
             & p {
-                margin: 8pt;
-                font-size: 12pt;
+                margin-left: 8pt;
+                margin-right: 8pt;
+                margin-top: 0;
+                margin-bottom: 4pt;
+                font-size: 10pt;
             }
+        }
+
+        & div.cad-elem-info {
+            display: none;
         }
     }
 
-    & div#cad-container::-webkit-scrollbar, div#fireball-container::-webkit-scrollbar {
+    & div#cad-container {
+        justify-content: center;
+    }
+
+    & div#fireball-container::-webkit-scrollbar {
         display: none;
     }
+}
 
-    & img#neo {
-        align-self: center;
-        height: 75vh;
-    }
+@keyframes orbitAsteroid {
+    0% { 
+        transform: rotate(var(--rotate-start))  
+              translateY(var(--orbit-radius)) rotate(45deg); 
+    } 
 
-    & img#sun-button {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+    100% { 
+        transform: rotate(var(--rotate-end))  
+              translateY(var(--orbit-radius)) rotate(45deg); 
+    } 
 }

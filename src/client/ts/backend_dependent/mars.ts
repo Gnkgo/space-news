@@ -1,31 +1,33 @@
-import { createTitle, createText, createFooter, formatDate, celsiusToFahrenheit, createSunBackButton, changeElemDisplay } from '.././base';
-import { MarsWeatherRes as MarsData, MarsRoverPhotosRes, marsWeatherTarget } from '../../../common/api';
-import { marsRoverPhotosTarget } from '../../../common/api';
+import { createTitle, createFooter, formatDate, createSunBackButton } from '.././base';
+import { MarsWeatherRes as MarsData } from '../../../common/api';
+import * as d3 from 'd3';
+import { getWeatherData } from '../mars/weatherDataCollection';
+import { extractAndDisplayTemperature } from '../mars/createTemperatureGraph';
+import { TemperatureData } from '../mars/createTemperatureGraph';
+import { createModal, openModal } from "../mars/modal";
+import { createImage } from '.././base';
 
-const rovers = ["curiosity", "opportunity", "spirit"];
-let randomRover = rovers[Math.floor(Math.random() * rovers.length)];
 
-let isCelsius = true;
-let isSol = true;
+
+export let isCelsius = true;
+export let isSol = true;
 let currentDate: string = "";
 let currentDateSol: string = "";
-const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
-let weatherData: MarsData;
-
-
-async function init(): Promise<void> {
+export const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
+export let weatherData: MarsData;
+let text = "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
+If planning outdoor activities or rover missions, stay tuned for updates. Embrace the challenges of Mars' atmosphere. Safe travels!";
+async function initMars(): Promise<void> {
   try {
     if (marsContainer) {
-      createButtons();
       weatherData = await getWeatherData();
+      currentDate = weatherData.soles[0]?.terrestrial_date || '';
+      currentDateSol = weatherData.soles[0]?.sol || '';
       renderWeather();
-      renderRoverPhotos();
-      createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
-      createText(marsContainer, "Please be advised that our weather predictions on Mars are subject to occasional \
-      delays due to unpredictable dust storms. \
-      If you're planning outdoor activities or rover missions, stay tuned for real-time updates and exercise caution during stormy conditions. Stay tuned for the latest weather reports from the fourth rock from the sun, and embrace the unique challenges that Mars\' atmosphere presents. Safe travels!");
+      createTitle(marsContainer, `Mars Weather`, text, isSol, formatDate(currentDate), currentDateSol);
       createFooter(marsContainer);
       createSunBackButton(marsContainer);
+      createImage(marsContainer, '/src/client/img/mars-modified.png', "", null);
 
     }
   } catch (error) {
@@ -33,143 +35,83 @@ async function init(): Promise<void> {
   }
 }
 
-async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
-  try {
-    if (randomRover == undefined) randomRover = "opportunity";
-    const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover}));
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching rover photos", error);
-    throw error;
-  }
-}
-
-async function renderRoverPhotos(): Promise<void> {
-  const main = marsContainer.querySelector("main");
-  if (!main) {
-    const mainElement = document.createElement("main");
-    marsContainer.appendChild(mainElement);
-  }
-  let photo;
-
-  const photoData = await getRoverPhotos();
-
-  if (photoData.photos.length > 0) {
-    photo = photoData.photos[Math.floor(Math.random() * photoData.photos.length)];
-  }
-
-  marsContainer.style.backgroundImage = `url('${photo.img_src}')`;
-  marsContainer.style.backgroundSize = "cover";
-  marsContainer.style.backgroundPosition = "center";
-  marsContainer.style.backgroundRepeat = "no-repeat";
-  marsContainer.style.overflow = "hidden";
-}
 
 
-async function getWeatherData(): Promise<MarsData> {
-  try {
-    const response = await fetch(marsWeatherTarget.resolve({}));
-    const data = await response.json() as MarsData;
-    data.soles.forEach(sol => {
-      if (sol.min_temp) {
-        sol.min_temp_fahrenheit = celsiusToFahrenheit(parseFloat(sol.min_temp)).toFixed(2);
-      }
 
-      if (sol.max_temp) {
-        sol.max_temp_fahrenheit = celsiusToFahrenheit(parseFloat(sol.max_temp)).toFixed(2);
-      }
-    });
-    return data;
-  } catch (error) {
-    console.error("Error fetching weather data", error);
-    throw error;
-  }
-}
 
 async function toggleDateUnit() {
   isSol = !isSol;
   renderWeather();
-  createTitle(marsContainer, `Mars Weather`, isSol, formatDate(currentDate), currentDateSol);
+  createTitle(marsContainer, `Mars Weather`, "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
+  If planning outdoor activities or rover missions, stay tuned for updates and exercise caution during storms. Embrace the challenges of Mars' atmosphere. Safe travels!",
+    isSol, formatDate(currentDate), currentDateSol);
 }
 
 async function toggleTemperatureUnit() {
+  console.log("IAM PRESSED");
   isCelsius = !isCelsius;
   renderWeather();
 }
-function createButtons(): void {
-  const buttonBox = document.createElement("div");
-  buttonBox.id = "button-box";
-  buttonBox.className = "button-box";
-
-  const buttonLabels = {'celsius': '°C','fahrenheit': '°F','earth-date': 'Earth','mars-date': 'Sol'};
-
-  for (const [key, label] of Object.entries(buttonLabels)) {
-    const button = createButton('buttonChange', label, key);
-    button.addEventListener("click", () => handleButtonClick(key));
-    buttonBox.appendChild(button);
-  }
-
-  marsContainer.appendChild(buttonBox);
-}
-
-function createButton(className: string, label: string, id: string): HTMLButtonElement {
-  const button = document.createElement("button");
-  button.className = className;
-  button.id = `${id}-button`;
-  button.textContent = label;
-  return button;
-}
-
-function handleButtonClick(label: string): void {
-  if (label === "mars-date") {
-    changeElemDisplay('mars-date-button', 'earth-date-button');
-    toggleDateUnit();
-  } else if (label === "earth-date") {
-    changeElemDisplay('earth-date-button', 'mars-date-button');
-    toggleDateUnit();
-  } else if (label === "celsius") {
-    changeElemDisplay('celsius-button', 'fahrenheit-button');
-    toggleTemperatureUnit();
-  } else if (label === "fahrenheit") {
-    changeElemDisplay('fahrenheit-button', 'celsius-button');
-    toggleTemperatureUnit();
-  }
-}
-
-
-function createInnerWeatherBox(moreInfo: boolean): HTMLDivElement {
-  const sol = weatherData.soles[0];
+export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivElement {
   const innerWeatherBox = document.createElement('div');
   innerWeatherBox.classList.add('grey-box');
-  if (sol == undefined) return innerWeatherBox ;
+  if (sol == undefined) return innerWeatherBox;
 
-
-  const title = document.createElement('h3');
+  const title = document.createElement('h1');
   title.textContent = isSol ? `Sol ${sol.sol}` : `${formatDate(sol.terrestrial_date)}`;
-  innerWeatherBox.appendChild(title);
+  title.id = "mars-title";
 
-  const temperatureUnit = isCelsius ? '°C' : '°F';
+
+  const temperatureMin = isCelsius ? sol.min_temp : sol.min_temp_fahrenheit;
+  const temperatureMax = isCelsius ? sol.max_temp : sol.max_temp_fahrenheit;
+  innerWeatherBox.appendChild(title);
   innerWeatherBox.innerHTML += `
-    <p>Min.: ${sol.min_temp} ${temperatureUnit}</p>
-    <p>Max.: ${sol.max_temp} ${temperatureUnit}</p>
-    <p>Weather: ${sol.atmo_opacity}</p>
-    <p>UV: ${sol.local_uv_irradiance_index}</p>
+      <p>Min.: ${temperatureMin} <span id="celsius-unit-min" class="${isCelsius ? 'selected' : ''}">°C</span> | <span id="fahrenheit-unit-min" class="${!isCelsius ? 'selected' : ''}">°F</span></p>
+      <p>Max.: ${temperatureMax} <span id="celsius-unit-max" class="${isCelsius ? 'selected' : ''}">°C</span> | <span id="fahrenheit-unit-max" class="${!isCelsius ? 'selected' : ''}">°F</span></p>
   `;
+
+  const button = document.createElement('button');
+  button.id = 'more-information';
+  button.textContent = 'More Information';
+  innerWeatherBox.appendChild(button);
+
+  const test = document.getElementById('celsius-unit-min');
+  console.log("TEST CELSIUS UNTI", test);
 
   if (moreInfo) {
     innerWeatherBox.innerHTML += `
-      <p>Pressure: ${sol.pressure} Pa</p>
-      <p>Sunrise: ${sol.sunrise}</p>
-      <p>Sunset: ${sol.sunset}</p>
-    `;
+    <p>Weather: ${sol.atmo_opacity}</p>
+    <p>UV: ${sol.local_uv_irradiance_index}</p>
+        <p>Pressure: ${sol.pressure} Pa</p>
+        <p>Sunrise: ${sol.sunrise}</p>
+        <p>Sunset: ${sol.sunset}</p>
+        <p>Season: ${sol.season}</p>
+        <p>Wind Speed: ${sol.wind_speed} m/s</p>
+        <p>Wind Direction: ${sol.wind_direction}°</p>
+        
+      `;
   }
+
+  // Adding event listener directly to the created innerWeatherBox
+  innerWeatherBox.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    if (((target.id === 'celsius-unit-min' || target.id === 'celsius-unit-max') && !isCelsius) ||
+      ((target.id === 'fahrenheit-unit-min' || target.id === 'fahrenheit-unit-max') && isCelsius)) {
+      toggleTemperatureUnit();
+    } else if (target.id === 'mars-title') {
+      toggleDateUnit();
+    } else if (target.id === 'more-information') {
+      createModal();
+      openModal("src/client/img/marsModal.jpg", weatherData, false);
+    }
+  });
 
   return innerWeatherBox;
 }
 
 
-function renderWeather(): void {
+
+export function renderWeather(): void {
   let marsMain = marsContainer.querySelector("main");
   if (!marsMain) {
     marsMain = document.createElement("main");
@@ -177,42 +119,53 @@ function renderWeather(): void {
   } else {
     marsMain.innerHTML = '';
   }
+  let temperatureData: TemperatureData[] = [];
   if (marsMain && weatherData.soles.length > 0) {
-    const outerWeatherBox = document.createElement("div");
-    outerWeatherBox.className = "weather-boxes";
-    for (let i = Math.min(weatherData.soles.length, 6); i > 0; i--) {
+    for (let i = Math.min(weatherData.soles.length, 200); i > 0; i--) {
       const sol = weatherData.soles[i];
       if (sol == undefined) continue;
-      outerWeatherBox.appendChild(createInnerWeatherBox(false));
+      temperatureData.push({
+        terrestrial_date: sol.terrestrial_date,
+        min_temp: sol.min_temp,
+        max_temp: sol.max_temp,
+        min_temp_fahrenheit: sol.min_temp_fahrenheit || '',
+        max_temp_fahrenheit: sol.max_temp_fahrenheit || '',
+        isCelcius: isCelsius
+      });
     }
     todayWeather();
-    marsMain.appendChild(outerWeatherBox);
+    extractAndDisplayTemperature(temperatureData, isCelsius);
   }
 }
 
-function todayWeather(): void {
+
+
+export function todayWeather(): void {
   if (marsContainer && weatherData.soles.length > 0) {
     const sol = weatherData.soles[0];
     if (sol == undefined) return;
 
     let outerWeatherBox = marsContainer.querySelector("#today-weather-box");
 
+
     if (!outerWeatherBox) {
       outerWeatherBox = document.createElement("div");
       outerWeatherBox.id = "today-weather-box";
       outerWeatherBox.className = "today-weather-box";
-    } else {
-      outerWeatherBox.parentNode?.removeChild(outerWeatherBox);
-      outerWeatherBox.innerHTML = '';
+
+
     }
 
-    currentDate = sol.terrestrial_date;
-    currentDateSol = sol.sol;
-
     // Append the new box to the body
-    outerWeatherBox.appendChild(createInnerWeatherBox(true));
+    if (weatherData.soles[0] === undefined) return;
+    outerWeatherBox.innerHTML = '';
+    outerWeatherBox.appendChild(createInnerWeatherBox(false, weatherData.soles[0]));
+
     marsContainer.appendChild(outerWeatherBox);
   }
 }
 
-init();
+
+initMars();
+d3.select(window).on('resize', renderWeather);
+

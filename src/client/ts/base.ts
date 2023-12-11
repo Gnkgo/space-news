@@ -1,3 +1,6 @@
+import { renderRoverPhotos } from "./mars/roverPhotos";
+
+
 export function formatDate(inputDate: string | undefined): string {
     if (inputDate === undefined) {
         // Handle the case when inputDate is undefined
@@ -10,8 +13,8 @@ export function formatDate(inputDate: string | undefined): string {
     const day = parseInt(dateParts?.[2] ?? "N/A");
 
     const months = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ];
 
     const formattedDate = `${day} ${months[month - 1]} ${year}`;
@@ -31,9 +34,8 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
 }
 
 
-export function createTitle(divContainer: HTMLDivElement, title: string, isSol: boolean, dateEarth: string, dateSol: string) {
-    let titleBox = divContainer.querySelector("#title-box");
-    titleBox?.parentNode?.removeChild(titleBox);
+export function createTitle(divContainer: HTMLDivElement, title: string, paragraph: string, isSol: boolean, dateEarth: string, dateSol: string) {
+    let titleBox = divContainer.querySelector(".title-box"); // Assuming you are using a class selector
     if (titleBox) titleBox.remove();
 
     titleBox = document.createElement("div");
@@ -45,30 +47,31 @@ export function createTitle(divContainer: HTMLDivElement, title: string, isSol: 
 
     const dateElement = document.createElement("h2");
 
+    const paragraphElement = document.createElement("p");
+    paragraphElement.textContent = paragraph;
+
     if (isSol) {
         dateElement.textContent = `Sol ${dateSol}`;
     } else {
         dateElement.textContent = `${dateEarth}`;
     }
 
-    const innerTitle = document.createElement("div");
-    innerTitle.id = "inner-title";
-
     const greyBox = document.createElement("div");
+
     greyBox.id = "inner-title";
     greyBox.className = "grey-box";
 
-    innerTitle.appendChild(titleElement);
-    innerTitle.appendChild(dateElement);
+    greyBox.appendChild(titleElement);
+    greyBox.appendChild(dateElement);
+    greyBox.appendChild(paragraphElement);
 
-    greyBox?.appendChild(innerTitle);
 
 
     titleBox.appendChild(greyBox);
     divContainer.appendChild(titleBox);
 }
 
-export function createImage(container: HTMLElement, imagePath: string, description: string, dateContainer: HTMLDivElement): void {
+export function createImage(container: HTMLElement, imagePath: string, description: string, dateContainer: HTMLDivElement | null): void {
     const existingImage = container.querySelector('#image-container') as HTMLImageElement;
 
     if (existingImage) {
@@ -77,19 +80,26 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
 
     const image = document.createElement('img');
     image.className = 'image';
-    image.id = 'image';
+    image.id = `${container}-image`;
     image.src = imagePath;
 
-    image.width = 300;
-    image.height = 300;
 
     const imageContainer = document.createElement('div');
     imageContainer.className = 'image-container';
     imageContainer.id = 'image-container';
     imageContainer.appendChild(image);
     imageContainer.appendChild(document.createTextNode(description));
-    imageContainer.appendChild(dateContainer);
+    if (dateContainer) {
+        imageContainer.appendChild(dateContainer);
 
+    }
+
+    if (container.id == "mars-container") {
+        image.addEventListener("click", () => {
+            renderRoverPhotos();
+        }
+        );
+    }
     container.appendChild(imageContainer);
 }
 
@@ -109,6 +119,11 @@ export function createText(divContainer: HTMLDivElement, text: string) {
 
     paragraphBox.appendChild(greyBox);
     divContainer.appendChild(paragraphBox);
+
+    const paragraphBoxSmall = document.createElement("div");
+    paragraphBoxSmall.className = "paragraph-box-small";
+    paragraphBoxSmall.id = "paragraph-box-small";
+
 }
 
 export function createFooter(divContainer: HTMLDivElement) {
@@ -153,14 +168,67 @@ export function goHome() {
  * @param to html id of the element to show
  * @param newDisplayStyle optional parameter for TO element new display value, default is FROM.style.display
  */
-export function changeElemDisplay(from: string, to: string, newDisplayStyle?: string){
+export function changeElemDisplay(from: string, to: string, newDisplayStyle?: string) {
     const fromElem = document.getElementById(from);
     const toElem = document.getElementById(to);
-    if(fromElem && toElem){
-      const oldDisplay = window.getComputedStyle(fromElem).display;
-      fromElem.style.display = 'none';
-      toElem.style.display = newDisplayStyle ? newDisplayStyle : oldDisplay;
+    if (fromElem && toElem) {
+        const oldDisplay = window.getComputedStyle(fromElem).display;
+        fromElem.style.display = 'none';
+        toElem.style.display = newDisplayStyle ? newDisplayStyle : oldDisplay;
     } else {
-      console.log(`Error getting Element to change Display. FromElem: ${fromElem}, ToElem: ${toElem}`);
+        console.log(`Error getting Element to change Display. FromElem: ${fromElem}, ToElem: ${toElem}`);
     }
+}
+
+/**
+ * Removes all spaces in a string which results in one long word.
+ * @param str arbitrary string to edit
+ * @returns STR where are all spaces got deleted
+ */
+export function removeAllSpaces(str: string) {
+    return str.replace(/\s+/g, '');
+}
+
+/**
+ * Generate a random integer between min (inclusive) and max (exclusive)
+ * @param min 
+ * @param max
+ * @returns random Integer between MIN and MAX
+ */
+export function getRandomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min) + min);
+}
+/**
+ * Check if two dates are the same day
+ * @param date2 html id of the element to show
+ */
+export function isSameDay(date1: Date, date2: Date): boolean {
+    return (
+        date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate()
+    );
+}
+
+/**
+ * Uses HTML Geolocation API to retrieve the user's position.
+ * @returns a number array with [latitude, longitude], default is Zurich
+ */
+export function getUserLocation(): Promise<number[]> {
+    return new Promise((resolve) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve([position.coords.latitude, position.coords.longitude]);
+                },
+                (_error) => {
+                    //Geolocation has been declined by the user, use Zurich as default
+                    resolve([47.3725151766, 8.54219283122])
+                }
+            );
+        } else {
+            //Geolocation is n/A therefore we use Zurich as default
+            resolve([47.3725151766, 8.54219283122]);
+        }
+    });
 }

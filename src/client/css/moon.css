@@ -1,33 +1,21 @@
-
 div#moon-container {
   display: none;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 40px 200px 1fr 40px; /* Adjusted rows to include 1fr for the remaining space */
-  grid-template-areas: 
-    "sun date-picker date-picker buttons"
-    "title countdown countdown moon-sunrise-sunset-box"
-    "moon moon moon moon"
-    "footer footer footer footer";
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 40px auto 40px;
+  /* Adjusted rows to include 1fr for the remaining space */
+  grid-template-areas:
+    ". sun ."
+    "title image moon-sunrise-sunset-box"
+    "footer footer footer";
 
-  gap: 10px;
-  min-height: 100vh; /* Ensure body takes up at least the full viewport height */
-  .grey-box {
-    border: none; /* or border-width: 0; */
-    background-color: transparent;
-  }
+  min-height: 100vh;
+
+
 }
 
-.title-box{
-  display: flex;
-
-  & .grey-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
 
 .date-picker {
+  margin-top: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -42,47 +30,33 @@ div#moon-container {
 }
 
 
-
-.moon-box {
+.moon-events {
   grid-area: moon-sunrise-sunset-box;
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  align-items: baseline;
   color: white;
-  & h3 {
-    font-size: 1.5rem;
-    font-weight: 300;
+  justify-self: center;
+}
+
+
+/* Media query for screens smaller than 660px */
+@media screen and (max-width: 660px) {
+  div#moon-container {
+    grid-template-rows: 40px auto auto auto auto 40px;
+    grid-template-columns: auto;
+    grid-template-areas:
+      "sun"
+      "title"
+      "countdown"
+      "moon-sunrise-sunset-box "
+      "image"
+      "footer";
+
+    & .moon-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
-  & p {
-    font-size: 1rem;
-    font-weight: 300;
-  }
-}
-  
-.image {
-  padding-bottom: 20px;
-  width: 50vh;
-  height: 50vh;
-}
-
-.image-container {
-  display: flex;
-  grid-area: moon;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  color: white;
-  font-size: 1.5rem;
-
-}
-
-.countdown {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  color: white;
-  font-size: 1.5rem;
-  grid-area: countdown;
 }

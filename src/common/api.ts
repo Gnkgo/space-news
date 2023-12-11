@@ -36,7 +36,7 @@ export type CADRes = {
   };
   count: number;
   fields: string[];
-  data: Array<Array<string | number>>;
+  data: Array<Array<string>>;
 }
 
 // MARS WEATHER
@@ -98,7 +98,8 @@ export type FireballRes = {
 
 export type MoonReq = {
   'date': string;
-  'location': string;
+  'lat': number;
+  'lon': number;
 }
 
 export type MoonEntryRes = {
