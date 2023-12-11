@@ -45,7 +45,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     }
 
     const averages = isCelcius ? averagesCelsius : averagesFahrenheit;
-    const text = isCelcius ? '°C' : '°F';
+    //const text = isCelcius ? '°C' : '°F';
 
 
 
@@ -88,9 +88,9 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
     // Create line generator for valid average temperatures
     const line = d3.line<any>()
-        .x((d: any, i: number) => xScale(dates[i]!))
-        .y((d: any) => yScale(d))
-        .curve(d3.curveBasis);
+      //  .x((d: any, i: number) => xScale(dates[i]!))
+      //  .y((d: any) => yScale(d))
+      //  .curve(d3.curveBasis);
 
     // Append the path using the valid averages
     svg.append("path")
@@ -186,11 +186,11 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
             .style('text-anchor', 'end');
     
         // Create a new line generator for valid average temperatures
-        const line = d3.line<any>()
-            .x((d: any, i: number) => xScale(new Date(filteredData[i].terrestrial_date)))
-            .y((d: any, i: number) => yScale((+filteredData[i].min_temp + +filteredData[i].max_temp) / 2))
-            .curve(d3.curveBasis);
-    
+        //const line = d3.line<any>()
+        //    .x((d: any, i: number) => xScale(new Date(filteredData[i].terrestrial_date)))
+        //    .y((d: any, i: number) => yScale((+filteredData[i].min_temp + +filteredData[i].max_temp) / 2))
+        //    .curve(d3.curveBasis);
+    //
         // Update average temperature line
         svg.select('.line')
             .datum(d3.range(filteredData.length))

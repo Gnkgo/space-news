@@ -48,9 +48,9 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const tooltip = d3.select('#mars-container').select('main').append('div')
-        .attr('class', 'tooltip')
-        .style('opacity', 0);
+    //const tooltip = d3.select('#mars-container').select('main').append('div')
+    //    .attr('class', 'tooltip')
+    //    .style('opacity', 0);
 
 
     const xScale = d3.scaleTime()
@@ -107,27 +107,27 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .style('fill', 'none');
   
 
-    function handleMouseOver(this: SVGSVGElement, event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
-        const bisectDate = d3.bisector((d: any) => d).left;
-        const [mouseX, mouseY] = d3.pointer(event, this);
-        const invertedX = xScale.invert(mouseX);
-        const index = bisectDate(dates, invertedX, 1);
-        const currentTemperature = averages[index];
-
-        tooltip.transition()
-            .duration(200)
-            .style('opacity', 0.9);
-
-        tooltip.html(`Temperature: ${currentTemperature} ${text}`)
-            .style('left', (mouseX + margin.left) + 'px') // Adjusted to consider margin.left
-            .style('top', (mouseY - 28 + margin.top) + 'px'); // Adjusted to consider margin.top
-    }
-
-    function handleMouseOut() {
-        tooltip.transition()
-            .duration(500)
-            .style('opacity', 0);
-    }
+   // function handleMouseOver(this: SVGSVGElement, event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
+   //     const bisectDate = d3.bisector((d: any) => d).left;
+   //     const [mouseX, mouseY] = d3.pointer(event, this);
+   //     const invertedX = xScale.invert(mouseX);
+   //     const index = bisectDate(dates, invertedX, 1);
+   //     const currentTemperature = averages[index];
+//
+   //     tooltip.transition()
+   //         .duration(200)
+   //         .style('opacity', 0.9);
+//
+   //     tooltip.html(`Temperature: ${currentTemperature} ${text}`)
+   //         .style('left', (mouseX + margin.left) + 'px') // Adjusted to consider margin.left
+   //         .style('top', (mouseY - 28 + margin.top) + 'px'); // Adjusted to consider margin.top
+   // }
+//
+   // function handleMouseOut() {
+   //     tooltip.transition()
+   //         .duration(500)
+   //         .style('opacity', 0);
+   // }
 
 
 
