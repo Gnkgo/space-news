@@ -98,24 +98,14 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .attr('height', height - margin.top - margin.bottom);
 
 
-    // ... (previous code)
-
-    // Append path for average temperature line
     svg.append('path')
         .data([d3.range(dates.length)])
         .attr('class', 'line avg-line')
         .attr('d', avgLine)
         .attr('clip-path', 'url(#clip-path)')
         .style('stroke', 'white')
-        .style('fill', 'none')
-        .on('mouseenter', function (event) {
-            handleMouseOver.call(this as SVGSVGElement, event);
-        })
-        .on('mouseleave', handleMouseOut);
-
-    // ... (remaining code)
-
-
+        .style('fill', 'none');
+  
 
     function handleMouseOver(this: SVGSVGElement, event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
         const bisectDate = d3.bisector((d: any) => d).left;
