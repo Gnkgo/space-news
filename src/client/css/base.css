@@ -93,21 +93,52 @@ footer {
   height: 100%;
   overflow: auto;
   background: rgba(0, 0, 0, 0.8);
-}
 
-.modal img {
-  height: calc(85 * var(--unit));
-  margin-top: 20px;
-}
+  & h3#title {
+    position: absolute;
+    color: white;
+    top: 3.25vh;
+    margin: 0;
+  }
 
-.close {
-  color: #fff;
-  position: absolute;
-  top: 15px;
-  right: 35px;
-  font-size: 30px;
-  font-weight: bold;
-  cursor: pointer;
+  & img {
+    height: calc(85 * var(--unit));
+  }
+
+  .close {
+    font-style: normal;
+    color: #fff;
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  & i.switch-modal-object-button {
+    color: white;
+    position: absolute;
+    font-size: 30px;
+    font-weight: bold;
+    font-style: normal;
+    cursor: pointer;
+  }
+
+  & i#left-arrow {
+    left: 10vw;
+  }
+
+  & i#right-arrow {
+    right: 10vw;
+  }
+
+  & h5#modal-carousel-counter {
+    position: absolute;
+    color: white;
+    bottom: 3.25vh;
+    margin: 0;
+  }
 }
 
 .image {

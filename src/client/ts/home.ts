@@ -1,5 +1,6 @@
 import { getUserLocation } from "./base";
 import { initMoon } from "./backend_dependent/moon";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 
 //Add click-eventlistener to planets

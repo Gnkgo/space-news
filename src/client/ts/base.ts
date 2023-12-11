@@ -232,3 +232,14 @@ export function getUserLocation(): Promise<number[]> {
         }
     });
 }
+
+/**
+ * "Real" modulo function, since "%" operator is only remainder function in JS.
+ * @param n dividend
+ * @param m divosor
+ * @returns modulo-remainder
+ */
+export function modulo(n: number, m: number) {
+    return ((n % m) + m) % m;
+ }
+ 
