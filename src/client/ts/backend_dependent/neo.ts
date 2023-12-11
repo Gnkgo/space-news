@@ -181,7 +181,7 @@ function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLIma
     const distance = getRandomInt(35, 50);
     const startingAngle = getRandomInt(0,360);
 
-    const styleSheet = document.styleSheets[2];
+    const styleSheet = document.styleSheets[0];
     const keyframes = `
         @keyframes orbitAsteroid-${elem.id} {
             0% {
