@@ -58,7 +58,6 @@ div#neo-container {
             border-radius: 8px;
 
             & h4{
-                align-self: center;
                 font-size: 15pt;
                 margin: 8pt;
             }
