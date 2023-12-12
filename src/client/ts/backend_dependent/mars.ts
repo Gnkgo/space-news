@@ -15,8 +15,8 @@ let currentDate: string = "";
 let currentDateSol: string = "";
 export const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 export let weatherData: MarsData;
-let text = "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
-If planning outdoor activities or rover missions, stay tuned for updates. Embrace the challenges of Mars' atmosphere. Safe travels!";
+let text = "Note: Mars weather forecasts are subject to occasional delays due to dust storms. \
+Stay tuned for updates when planning outdoor activities or rover missions. Embrace the challenges of the Martian atmosphere. Safe travels!";
 async function initMars(): Promise<void> {
   try {
     if (marsContainer) {
@@ -42,8 +42,8 @@ async function initMars(): Promise<void> {
 async function toggleDateUnit() {
   isSol = !isSol;
   renderWeather();
-  createTitle(marsContainer, `Mars Weather`, "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
-  If planning outdoor activities or rover missions, stay tuned for updates and exercise caution during storms. Embrace the challenges of Mars' atmosphere. Safe travels!",
+  createTitle(marsContainer, `Mars Weather`, "Note: Mars weather forecasts are subject to occasional delays due to dust storms. \
+  Stay tuned for updates when planning outdoor activities or rover missions. Embrace the challenges of the Martian atmosphere. Safe travels!",
     isSol, formatDate(currentDate), currentDateSol);
 }
 
