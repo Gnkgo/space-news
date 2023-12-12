@@ -1,8 +1,9 @@
 import { initTexture } from "./util";
-
+import earth_texture from '../../img/earth_texture.png';
+import meteorite_texture from '../../img/meteorite_texture.png'
 const textures: ((gl: WebGL2RenderingContext) => void)[] = [];
-export const EARTH_TEXTURE = addTexture("./earth_texture.bmp");
-export const METEORITE_TEXTURE = addTexture("./meteorite_texture.bmp");
+export const EARTH_TEXTURE = addTexture(earth_texture);
+export const METEORITE_TEXTURE = addTexture(meteorite_texture);
 
 function addTexture(url: string): () => WebGLTexture {
     let texture: WebGLTexture;

@@ -48,6 +48,8 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    const butoon = d3.select('#mars-container').select('main').append('button')
+
     //const tooltip = d3.select('#mars-container').select('main').append('div')
     //    .attr('class', 'tooltip')
     //    .style('opacity', 0);
@@ -105,7 +107,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .attr('clip-path', 'url(#clip-path)')
         .style('stroke', 'white')
         .style('fill', 'none');
-  
+
 
    // function handleMouseOver(this: SVGSVGElement, event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
    //     const bisectDate = d3.bisector((d: any) => d).left;
@@ -131,9 +133,8 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
 
 
-
     svg.append('text')
-        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height - margin.top + 37})`) // Adjust the y-coordinate to move the label higher
+        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height - margin.top + 35})`) // Adjust the y-coordinate to move the label higher
         .style('text-anchor', 'middle')
         .style('fill', 'white')
         .style('font-size', '1rem')
@@ -148,6 +149,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .style('fill', 'white')
         .style('font-size', '1rem')
         .text(`Temperature ${text}`);
+
 
 
 

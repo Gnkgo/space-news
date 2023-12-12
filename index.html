@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,10 +9,13 @@
   <link rel="stylesheet" type="text/css" href="/src/client/css/neo.css" />
   <link rel="stylesheet" type="text/css" href="/src/client/css/mars.css" />
   <link rel="stylesheet" type="text/css" href="/src/client/css/moon.css" />
+  <link rel="stylesheet" type="text/css" href="/src/client/css/spinningEarth.css" />
+
   <script src="/src/client/ts/home.ts" type="module"></script>
   <script src="/src/client/ts/backend_dependent/neo.ts" type="module"></script>
   <script src="/src/client/ts/backend_dependent/mars.ts" type="module"></script>
   <script src="/src/client/ts/backend_dependent/moon.ts" type="module"></script>
+  <script type="module" src="/src/client/ts/spinning_earth/spinning-earth.ts"></script>
 
   <title>Space News</title>
 </head>
@@ -24,19 +28,25 @@
       <div id="moon-container-home">
         <img id="moon" src="/src/client/img/moon.png"></img>
         <svg id="moon-svg-container">
-          <ellipse id="moon-orbit"/>
+          <ellipse id="moon-orbit" />
         </svg>
       </div>
     </div>
     <img id="mars" src="/src/client/img/mars.png"></img>
     <svg>
       <ellipse id="mars-orbit" cx="50%" cy="50%" />
-      <ellipse id="earth-orbit" cx="50%" cy="50%"/>
+      <ellipse id="earth-orbit" cx="50%" cy="50%" />
     </svg>
   </div>
   <div class="content" id="mars-container"></div>
   <div id="neo-container"></div>
   <div class="content" id="moon-container"></div>
+  <div id="spinning-earth-container">
+    <canvas id="canvas" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; z-index: 0;"></canvas>
+    <canvas id="text" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; z-index: 1;"></canvas>
+</html>
+  </div>
+
 </body>
 
 </html>
