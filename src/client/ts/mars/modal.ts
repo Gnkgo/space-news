@@ -118,9 +118,15 @@ export function createAndOpenTutoralModal(){
   let modal = document.createElement("div") as HTMLDivElement;
   modal.id = "tutorial-modal";
   modal.className = "modal";
-  modal.addEventListener('click', () => closeModal("tutorial-modal"));
+  modal.addEventListener('click', () => {
+    localStorage.setItem("notFirstTimeUser", 'true');
+    closeModal("tutorial-modal")
+  });
   document.addEventListener('keyup', (e) => {
-    if(e.key == "Escape") closeModal("tutorial-modal");
+    if(e.key == "Escape") {
+      localStorage.setItem("notFirstTimeUser", 'true');
+      closeModal("tutorial-modal");
+    }
   });
 
   //Add tutorial text to modal

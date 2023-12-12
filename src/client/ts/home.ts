@@ -4,7 +4,7 @@ import { initMoon } from "./backend_dependent/moon";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 //Display Tutorial for NEW user
-createAndOpenTutoralModal()
+if(!localStorage.getItem("notFirstTimeUser")) createAndOpenTutoralModal();
 
 //Add click-eventlistener to planets
 const mars = document.getElementById('mars');
