@@ -1,7 +1,10 @@
 import { getUserLocation } from "./base";
+import { createAndOpenTutoralModal } from "./mars/modal";
 import { initMoon } from "./backend_dependent/moon";
-export let location: number[] = [0, 0];
+import "@fortawesome/fontawesome-free/css/all.css";
 
+//Display Tutorial for NEW user
+if(!localStorage.getItem("notFirstTimeUser")) createAndOpenTutoralModal();
 
 //Add click-eventlistener to planets
 const mars = document.getElementById('mars');
@@ -43,7 +46,7 @@ async function showPlanetInformation(planet: string) {
             const moonContainer = document.getElementById('moon-container');
             if(moonContainer){
                 moonContainer.style.display = 'grid';
-                location = await getUserLocation();
+                const location = await getUserLocation();
                 initMoon(location);
             }
             break;

@@ -1,3 +1,6 @@
+import { renderRoverPhotos } from "./mars/roverPhotos";
+import sunUrl from '../img/sun.png';
+
 export function formatDate(inputDate: string | undefined): string {
     if (inputDate === undefined) {
         // Handle the case when inputDate is undefined
@@ -24,7 +27,7 @@ export function createSunBackButton(divContainer: HTMLDivElement) {
     sunButton.id = "sun-button";
 
     // Set the path to your sun image
-    sunButton.src = "/src/client/img/sun.png";
+    sunButton.src = sunUrl;
 
     divContainer.appendChild(sunButton);
     sunButton?.addEventListener('click', goHome);
@@ -46,7 +49,6 @@ export function createTitle(divContainer: HTMLDivElement, title: string, paragra
 
     const paragraphElement = document.createElement("p");
     paragraphElement.textContent = paragraph;
-    paragraphElement.style.fontSize = "8pt";
 
     if (isSol) {
         dateElement.textContent = `Sol ${dateSol}`;
@@ -69,7 +71,7 @@ export function createTitle(divContainer: HTMLDivElement, title: string, paragra
     divContainer.appendChild(titleBox);
 }
 
-export function createImage(container: HTMLElement, imagePath: string, description: string, dateContainer: HTMLDivElement): void {
+export function createImage(container: HTMLElement, imagePath: string, description: string, dateContainer: HTMLDivElement | null): void {
     const existingImage = container.querySelector('#image-container') as HTMLImageElement;
 
     if (existingImage) {
@@ -78,19 +80,26 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
 
     const image = document.createElement('img');
     image.className = 'image';
-    image.id = 'image';
+    image.id = `${container}-image`;
     image.src = imagePath;
 
-    image.width = 300;
-    image.height = 300;
 
     const imageContainer = document.createElement('div');
     imageContainer.className = 'image-container';
     imageContainer.id = 'image-container';
     imageContainer.appendChild(image);
     imageContainer.appendChild(document.createTextNode(description));
-    imageContainer.appendChild(dateContainer);
+    if (dateContainer) {
+        imageContainer.appendChild(dateContainer);
 
+    }
+
+    if (container.id == "mars-container") {
+        image.addEventListener("click", () => {
+            renderRoverPhotos();
+        }
+        );
+    }
     container.appendChild(imageContainer);
 }
 
@@ -159,15 +168,15 @@ export function goHome() {
  * @param to html id of the element to show
  * @param newDisplayStyle optional parameter for TO element new display value, default is FROM.style.display
  */
-export function changeElemDisplay(from: string, to: string, newDisplayStyle?: string){
+export function changeElemDisplay(from: string, to: string, newDisplayStyle?: string) {
     const fromElem = document.getElementById(from);
     const toElem = document.getElementById(to);
-    if(fromElem && toElem){
-      const oldDisplay = window.getComputedStyle(fromElem).display;
-      fromElem.style.display = 'none';
-      toElem.style.display = newDisplayStyle ? newDisplayStyle : oldDisplay;
+    if (fromElem && toElem) {
+        const oldDisplay = window.getComputedStyle(fromElem).display;
+        fromElem.style.display = 'none';
+        toElem.style.display = newDisplayStyle ? newDisplayStyle : oldDisplay;
     } else {
-      console.log(`Error getting Element to change Display. FromElem: ${fromElem}, ToElem: ${toElem}`);
+        console.log(`Error getting Element to change Display. FromElem: ${fromElem}, ToElem: ${toElem}`);
     }
 }
 
@@ -176,7 +185,7 @@ export function changeElemDisplay(from: string, to: string, newDisplayStyle?: st
  * @param str arbitrary string to edit
  * @returns STR where are all spaces got deleted
  */
-export function removeAllSpaces(str: string){
+export function removeAllSpaces(str: string) {
     return str.replace(/\s+/g, '');
 }
 
@@ -205,7 +214,7 @@ export function isSameDay(date1: Date, date2: Date): boolean {
  * Uses HTML Geolocation API to retrieve the user's position.
  * @returns a number array with [latitude, longitude], default is Zurich
  */
-export function getUserLocation(): Promise<number[]>{
+export function getUserLocation(): Promise<number[]> {
     return new Promise((resolve) => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -217,9 +226,20 @@ export function getUserLocation(): Promise<number[]>{
                     resolve([47.3725151766, 8.54219283122])
                 }
             );
-        } else { 
+        } else {
             //Geolocation is n/A therefore we use Zurich as default
             resolve([47.3725151766, 8.54219283122]);
         }
     });
 }
+
+/**
+ * "Real" modulo function, since "%" operator is only remainder function in JS.
+ * @param n dividend
+ * @param m divosor
+ * @returns modulo-remainder
+ */
+export function modulo(n: number, m: number) {
+    return ((n % m) + m) % m;
+ }
+ 

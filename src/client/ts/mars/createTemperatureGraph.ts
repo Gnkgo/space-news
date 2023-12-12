@@ -48,6 +48,13 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
+    const butoon = d3.select('#mars-container').select('main').append('button')
+
+    //const tooltip = d3.select('#mars-container').select('main').append('div')
+    //    .attr('class', 'tooltip')
+    //    .style('opacity', 0);
+
+
     const xScale = d3.scaleTime()
         .domain(d3.extent(dates) as [Date, Date])
         .range([0, containerWidth - margin.left - margin.right])
@@ -93,7 +100,6 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .attr('height', height - margin.top - margin.bottom);
 
 
-    // Append path for average temperature line
     svg.append('path')
         .data([d3.range(dates.length)])
         .attr('class', 'line avg-line')
@@ -103,8 +109,32 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .style('fill', 'none');
 
 
+   // function handleMouseOver(this: SVGSVGElement, event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
+   //     const bisectDate = d3.bisector((d: any) => d).left;
+   //     const [mouseX, mouseY] = d3.pointer(event, this);
+   //     const invertedX = xScale.invert(mouseX);
+   //     const index = bisectDate(dates, invertedX, 1);
+   //     const currentTemperature = averages[index];
+//
+   //     tooltip.transition()
+   //         .duration(200)
+   //         .style('opacity', 0.9);
+//
+   //     tooltip.html(`Temperature: ${currentTemperature} ${text}`)
+   //         .style('left', (mouseX + margin.left) + 'px') // Adjusted to consider margin.left
+   //         .style('top', (mouseY - 28 + margin.top) + 'px'); // Adjusted to consider margin.top
+   // }
+//
+   // function handleMouseOut() {
+   //     tooltip.transition()
+   //         .duration(500)
+   //         .style('opacity', 0);
+   // }
+
+
+
     svg.append('text')
-        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height - margin.top + 36})`) // Adjust the y-coordinate to move the label higher
+        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height - margin.top + 35})`) // Adjust the y-coordinate to move the label higher
         .style('text-anchor', 'middle')
         .style('fill', 'white')
         .style('font-size', '1rem')
@@ -119,6 +149,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .style('fill', 'white')
         .style('font-size', '1rem')
         .text(`Temperature ${text}`);
+
 
 
 
