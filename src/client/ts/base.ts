@@ -1,5 +1,6 @@
 import { renderRoverPhotos } from "./mars/roverPhotos";
 import sunUrl from '../img/sun.png';
+import blueMoon from '../img/blueMoon.png'
 
 export function formatDate(inputDate: string | undefined): string {
     if (inputDate === undefined) {
@@ -70,7 +71,6 @@ export function createTitle(divContainer: HTMLDivElement, title: string, paragra
     titleBox.appendChild(greyBox);
     divContainer.appendChild(titleBox);
 }
-
 export function createImage(container: HTMLElement, imagePath: string, description: string, dateContainer: HTMLDivElement | null): void {
     const existingImage = container.querySelector('#image-container') as HTMLImageElement;
 
@@ -83,25 +83,52 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
     image.id = `${container}-image`;
     image.src = imagePath;
 
-
     const imageContainer = document.createElement('div');
     imageContainer.className = 'image-container';
     imageContainer.id = 'image-container';
     imageContainer.appendChild(image);
-    imageContainer.appendChild(document.createTextNode(description));
+    const descriptionTextNode = document.createTextNode(description);
+
+    imageContainer.appendChild(descriptionTextNode);
     if (dateContainer) {
         imageContainer.appendChild(dateContainer);
-
     }
 
-    if (container.id == "mars-container") {
-        image.addEventListener("click", () => {
+    if (container.id === 'mars-container') {
+        image.addEventListener('click', () => {
             renderRoverPhotos();
-        }
-        );
+        });
+    } else if (container.id === 'moon-container') {
+        image.addEventListener('click', () => {
+            
+            const catImage = document.createElement('img');
+            catImage.className = 'image';
+            catImage.src = blueMoon;
+            imageContainer.removeChild(descriptionTextNode);
+
+            imageContainer.removeChild(image);
+            if (dateContainer) {
+                imageContainer.removeChild(dateContainer);
+            }
+            imageContainer.appendChild(catImage);
+            container.appendChild(imageContainer);
+
+            setTimeout(() => {
+                imageContainer.removeChild(catImage);
+                imageContainer.appendChild(image);
+                imageContainer.appendChild(descriptionTextNode);
+                if (dateContainer) {
+                    imageContainer.appendChild(dateContainer);
+                }
+                container.appendChild(imageContainer);
+
+            }, 1000);
+        });
     }
+
     container.appendChild(imageContainer);
 }
+
 
 
 export function createText(divContainer: HTMLDivElement, text: string) {
@@ -241,5 +268,4 @@ export function getUserLocation(): Promise<number[]> {
  */
 export function modulo(n: number, m: number) {
     return ((n % m) + m) % m;
- }
- 
+}

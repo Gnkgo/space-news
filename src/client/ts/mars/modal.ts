@@ -5,10 +5,34 @@ import { createInnerWeatherBox } from "./todayWeatherBox";
 let currentModalImageIndex = 0;
 let photoArrayLength: number;
 
-export function openModal(photos: any, data : MarsData | null, isRover : boolean): void {
+export function openModal(photos: any, data : MarsData | null, isRover : boolean, easteregg : boolean): void {
   let modal = document.getElementById("myModal") as HTMLElement;
   let modalImages = document.getElementsByClassName("modal-image") as HTMLCollectionOf<HTMLImageElement>;
   let modalWeatherBox = document.getElementById("modalText") as HTMLElement;
+  console.log("modalOUT", modal);
+
+
+
+  if (easteregg) {
+    const text = document.createElement("h1");
+    text.textContent = "THANK YOU FOR VISITING MILKYWAY!";
+    const paragraph = document.createElement("p");
+    paragraph.textContent = `We hope you enjoyed your stay. Please come back soon!
+    A huge thanks goes to the best team: VaBaal, Gnkgo, and Nick. Thanks for all the discussions, the meetings, and for pulling off this crazy website!
+    A lot of work and time (and some tears because crappy CSS is still new to some of the team members), and we are ready to show the world our creation!
+    Thanks to everyone outside the team who helped us achieve it!
+    A special thanks goes to NoRelect who showed us important tips and tricks! It is always a pleasure to work with you!
+    A huge thanks goes to W. Paceley, who showed us where we can get all the important data from. Check out his nice Mars Weather App in the App Store.
+    And last but not least, a thank you to my dog Chuma, who was always there for me when I needed a break from coding.`;
+    
+    modal.appendChild(text);
+    modal.appendChild(paragraph);
+    modal.className = "modal";
+    console.log("modalIN", modal);
+    modal.style.display = "block";
+
+    return;
+  }
 
   if (modalImages.length > 0){
     for (const modalImage of modalImages){
@@ -44,6 +68,8 @@ export function openModal(photos: any, data : MarsData | null, isRover : boolean
     modal.className = "modal";
   }
   modal.style.display = "flex";
+
+
 }
   
   

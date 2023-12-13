@@ -1,0 +1,26 @@
+.explosion { 
+    width: 100px; /* Increased width */
+    height: 100px; /* Increased height */
+    background: rgb(255, 0, 0); /* Red color */
+    border-radius: 50%; 
+    box-shadow: 0 0 40px rgb(255, 50, 50), 
+                0 0 80px rgb(255, 100, 100),  
+                0 0 120px rgb(255, 150, 150),  
+                0 0 160px rgb(255, 200, 200),  
+                0 0 240px rgb(255, 100, 100), 
+                0 0 440px rgb(255, 0, 0), 
+                0 0 640px rgb(255, 50, 50); 
+    transition: 2s; 
+} 
+  
+.explosion:hover { 
+    box-shadow: 0 0 0 60px rgb(255, 50, 50),  
+                0 0 0 120px rgb(255, 100, 100), 
+                0 0 0 200px rgb(255, 150, 150), 
+                0 0 0 240px rgb(255, 200, 200),  
+                0 0 0 400px rgb(255, 100, 100), 
+                0 0 0 800px rgb(255, 0, 0),  
+                0 0 0 900px rgb(255, 50, 50); 
+}
+
+
