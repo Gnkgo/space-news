@@ -72,6 +72,14 @@ button {
   color: white;
 }
 
+.chart-info {
+  color: white;
+}
+
+.chart-wrapper {
+  color: white;
+}
+
 @media screen and (max-width: 660px) {
   #mars-container {
     grid-template: 

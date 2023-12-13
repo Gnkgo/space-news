@@ -8,6 +8,7 @@ import { createModal, openModal } from "../mars/modal";
 import { createImage } from '.././base';
 import marsModifiedUrl from '../../img/mars-modified.png';
 import marsModalUrl from '../../img/marsModal.jpg';
+import {check} from '../mars/brush'
 
 export let isCelsius = true;
 export let isSol = true;
@@ -134,7 +135,7 @@ export function renderWeather(): void {
       });
     }
     todayWeather();
-    extractAndDisplayTemperature(temperatureData, isCelsius);
+    check(temperatureData, isCelsius)
   }
 }
 
