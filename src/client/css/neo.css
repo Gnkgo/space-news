@@ -54,7 +54,7 @@ div#neo-container {
             flex-direction: column;
             padding: 3px;
             margin: 5px;
-            background-color: rgba(102, 102, 102, 0.6);;
+            background-color: rgba(102, 102, 102, 0.6);
             border-radius: 8px;
 
             & h4{
