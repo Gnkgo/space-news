@@ -102,7 +102,7 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
       toggleDateUnit();
     } else if (target.id === 'more-information') {
       createModal();
-      openModal(marsModalUrl, weatherData, false);
+      openModal(marsModalUrl, weatherData, false, false);
     }
   });
 

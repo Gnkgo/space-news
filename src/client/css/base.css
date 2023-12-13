@@ -105,6 +105,17 @@ footer {
     height: calc(85 * var(--unit));
   }
 
+  & h1 {
+    justify-content: center;
+    margin: 20px;
+
+  }
+
+  & p {
+    justify-content: center;
+    margin: 20px;
+  }
+
   .close {
     font-style: normal;
     position: absolute;
@@ -158,6 +169,10 @@ footer {
 }
 
 @media screen and (max-width: 660px) {
+  & .image {
+    width:50vw;
+    height: 50vw;
+  }
   .image-container {
     font-size: 10pt;
 

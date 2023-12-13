@@ -43,8 +43,13 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     // Set up the dimensions and margins for the SVG
     const margin = { top: 30, right: 20, bottom: 10, left: 80 };
     let containerWidth = window.innerWidth - margin.left - margin.right;
+    let height = 0
+    if (containerWidth < 700) {
+        height = window.innerHeight / (4.5);
+    } else {
+        height = window.innerHeight / (3);
 
-    const height = 140;
+    }
     // Create the SVG container
     const svg = d3.select('#mars-container').select('main').append('svg')
         .attr('id', 'temperature-graph')
