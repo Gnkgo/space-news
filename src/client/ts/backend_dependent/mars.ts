@@ -21,6 +21,7 @@ Stay tuned for updates when planning outdoor activities or rover missions. Embra
 async function initMars(): Promise<void> {
   try {
     if (marsContainer) {
+      marsContainer.innerHTML = '';
       weatherData = await getWeatherData();
       currentDate = weatherData.soles[0]?.terrestrial_date || '';
       currentDateSol = weatherData.soles[0]?.sol || '';

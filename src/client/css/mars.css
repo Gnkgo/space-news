@@ -1,9 +1,9 @@
 #mars-container {
+  background: url('/src/client/img/mars-modified.png') center/35vh no-repeat;
   margin: 0;
   display: none;
-  grid-template: 
-    " . sun ."
-    "title image today-weather-box"
+  grid-template: " . sun buttons"
+    "title . today-weather-box"
     "weather-boxes weather-boxes weather-boxes"
     "footer footer footer";
 
