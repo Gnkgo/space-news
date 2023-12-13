@@ -1,9 +1,14 @@
-import { createTitle, createFooter, formatDate, createSunBackButton, changeElemDisplay } from '.././base';
+import { createTitle, createFooter, formatDate, createSunBackButton } from '.././base';
 import { MarsWeatherRes as MarsData } from '../../../common/api';
 import * as d3 from 'd3';
-import { renderRoverPhotos } from '../mars/roverPhotos';
-import { renderWeather } from '../mars/todayWeatherBox';
 import { getWeatherData } from '../mars/weatherDataCollection';
+import { extractAndDisplayTemperature } from '../mars/createTemperatureGraph';
+import { TemperatureData } from '../mars/createTemperatureGraph';
+import { createModal, openModal } from "../mars/modal";
+import { createImage } from '.././base';
+import marsModifiedUrl from '../../img/mars-modified.png';
+import marsModalUrl from '../../img/marsModal.jpg';
+import {check} from '../mars/brush'
 
 export let isCelsius = true;
 export let isSol = true;
@@ -11,8 +16,8 @@ let currentDate: string = "";
 let currentDateSol: string = "";
 export const marsContainer = document.getElementById('mars-container') as HTMLDivElement;
 export let weatherData: MarsData;
-let text = "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
-If planning outdoor activities or rover missions, stay tuned for updates. Embrace the challenges of Mars' atmosphere. Safe travels!";
+let text = "Note: Mars weather forecasts are subject to occasional delays due to dust storms. \
+Stay tuned for updates when planning outdoor activities or rover missions. Embrace the challenges of the Martian atmosphere. Safe travels!";
 async function initMars(): Promise<void> {
   try {
     if (marsContainer) {
@@ -24,6 +29,7 @@ async function initMars(): Promise<void> {
       createTitle(marsContainer, `Mars Weather`, text, isSol, formatDate(currentDate), currentDateSol);
       createFooter(marsContainer);
       createSunBackButton(marsContainer);
+<<<<<<< HEAD
       createButtons();
 
       const image = document.createElement('img');
@@ -31,65 +37,148 @@ async function initMars(): Promise<void> {
       image.id = 'MarsImage';
       image.src = '/src/client/img/mars-modified.png';
       marsContainer.appendChild(image);
+=======
+      createImage(marsContainer, marsModifiedUrl, "", null);
+
+>>>>>>> 38f4d0f693f6f4379d535a1f6627583a95c0883c
     }
   } catch (error) {
     console.error("Error initializing weather app", error);
   }
 }
 
-function handleButtonClick(label: string): void {
-  if (label === "mars-date") {
-    changeElemDisplay('mars-date-button', 'earth-date-button');
-    toggleDateUnit();
-  } else if (label === "earth-date") {
-    changeElemDisplay('earth-date-button', 'mars-date-button');
-    toggleDateUnit();
-  } else if (label === "celsius") {
-    changeElemDisplay('celsius-button', 'fahrenheit-button');
-    toggleTemperatureUnit();
-  } else if (label === "fahrenheit") {
-    changeElemDisplay('fahrenheit-button', 'celsius-button');
-    toggleTemperatureUnit();
-  } else if (label === "mars-image") {
-    renderRoverPhotos();
-  }
-}
 
-function createButtons(): void {
-  console.log("Creating buttons");
-  const buttonBox = document.createElement("div");
-  buttonBox.id = "button-box";
-  buttonBox.className = "button-box";
-  const buttonLabels = { 'mars-image': 'Show Mars', 'celsius': '°C', 'fahrenheit': '°F', 'earth-date': 'Earth', 'mars-date': 'Sol' };
 
-  for (const [key, label] of Object.entries(buttonLabels)) {
-    const button = createButton('buttonChange', label, key);
-    button.addEventListener("click", () => handleButtonClick(key));
-    buttonBox.appendChild(button);
-  }
 
-  marsContainer.appendChild(buttonBox);
-}
-
-function createButton(className: string, label: string, id: string): HTMLButtonElement {
-  const button = document.createElement("button");
-  button.className = className;
-  button.id = `${id}-button`;
-  button.textContent = label;
-
-  return button;
-
-}
 
 async function toggleDateUnit() {
   isSol = !isSol;
   renderWeather();
+<<<<<<< HEAD
   createTitle(marsContainer, `Mars Weather`, text, isSol, formatDate(currentDate), currentDateSol);
+=======
+  createTitle(marsContainer, `Mars Weather`, "Note: Mars weather forecasts are subject to occasional delays due to dust storms. \
+  Stay tuned for updates when planning outdoor activities or rover missions. Embrace the challenges of the Martian atmosphere. Safe travels!",
+    isSol, formatDate(currentDate), currentDateSol);
+>>>>>>> 38f4d0f693f6f4379d535a1f6627583a95c0883c
 }
 
 async function toggleTemperatureUnit() {
+  console.log("IAM PRESSED");
   isCelsius = !isCelsius;
   renderWeather();
+}
+export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivElement {
+  const innerWeatherBox = document.createElement('div');
+  innerWeatherBox.classList.add('grey-box');
+  if (sol == undefined) return innerWeatherBox;
+
+  const title = document.createElement('h1');
+  title.textContent = isSol ? `Sol ${sol.sol}` : `${formatDate(sol.terrestrial_date)}`;
+  title.id = "mars-title";
+
+
+  const temperatureMin = isCelsius ? sol.min_temp : sol.min_temp_fahrenheit;
+  const temperatureMax = isCelsius ? sol.max_temp : sol.max_temp_fahrenheit;
+  innerWeatherBox.appendChild(title);
+  innerWeatherBox.innerHTML += `
+      <p>Min.: ${temperatureMin} <span id="celsius-unit-min" class="${isCelsius ? 'selected' : ''}">°C</span> | <span id="fahrenheit-unit-min" class="${!isCelsius ? 'selected' : ''}">°F</span></p>
+      <p>Max.: ${temperatureMax} <span id="celsius-unit-max" class="${isCelsius ? 'selected' : ''}">°C</span> | <span id="fahrenheit-unit-max" class="${!isCelsius ? 'selected' : ''}">°F</span></p>
+  `;
+
+  const button = document.createElement('button');
+  button.id = 'more-information';
+  button.textContent = 'More Information';
+  innerWeatherBox.appendChild(button);
+
+  const test = document.getElementById('celsius-unit-min');
+  console.log("TEST CELSIUS UNTI", test);
+
+  if (moreInfo) {
+    innerWeatherBox.innerHTML += `
+    <p>Weather: ${sol.atmo_opacity}</p>
+    <p>UV: ${sol.local_uv_irradiance_index}</p>
+        <p>Pressure: ${sol.pressure} Pa</p>
+        <p>Sunrise: ${sol.sunrise}</p>
+        <p>Sunset: ${sol.sunset}</p>
+        <p>Season: ${sol.season}</p>
+        <p>Wind Speed: ${sol.wind_speed} m/s</p>
+        <p>Wind Direction: ${sol.wind_direction}°</p>
+        
+      `;
+  }
+
+  // Adding event listener directly to the created innerWeatherBox
+  innerWeatherBox.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    if (((target.id === 'celsius-unit-min' || target.id === 'celsius-unit-max') && !isCelsius) ||
+      ((target.id === 'fahrenheit-unit-min' || target.id === 'fahrenheit-unit-max') && isCelsius)) {
+      toggleTemperatureUnit();
+    } else if (target.id === 'mars-title') {
+      toggleDateUnit();
+    } else if (target.id === 'more-information') {
+      createModal();
+      openModal(marsModalUrl, weatherData, false);
+    }
+  });
+
+  return innerWeatherBox;
+}
+
+
+
+export function renderWeather(): void {
+  let marsMain = marsContainer.querySelector("main");
+  if (!marsMain) {
+    marsMain = document.createElement("main");
+    marsContainer.appendChild(marsMain);
+  } else {
+    marsMain.innerHTML = '';
+  }
+  let temperatureData: TemperatureData[] = [];
+  if (marsMain && weatherData.soles.length > 0) {
+    for (let i = Math.min(weatherData.soles.length, 200); i > 0; i--) {
+      const sol = weatherData.soles[i];
+      if (sol == undefined) continue;
+      temperatureData.push({
+        terrestrial_date: sol.terrestrial_date,
+        min_temp: sol.min_temp,
+        max_temp: sol.max_temp,
+        min_temp_fahrenheit: sol.min_temp_fahrenheit || '',
+        max_temp_fahrenheit: sol.max_temp_fahrenheit || '',
+        isCelcius: isCelsius
+      });
+    }
+    todayWeather();
+    check(temperatureData, isCelsius)
+  }
+}
+
+
+
+export function todayWeather(): void {
+  if (marsContainer && weatherData.soles.length > 0) {
+    const sol = weatherData.soles[0];
+    if (sol == undefined) return;
+
+    let outerWeatherBox = marsContainer.querySelector("#today-weather-box");
+
+
+    if (!outerWeatherBox) {
+      outerWeatherBox = document.createElement("div");
+      outerWeatherBox.id = "today-weather-box";
+      outerWeatherBox.className = "today-weather-box";
+
+
+    }
+
+    // Append the new box to the body
+    if (weatherData.soles[0] === undefined) return;
+    outerWeatherBox.innerHTML = '';
+    outerWeatherBox.appendChild(createInnerWeatherBox(false, weatherData.soles[0]));
+
+    marsContainer.appendChild(outerWeatherBox);
+  }
 }
 
 

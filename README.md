@@ -6,7 +6,7 @@ Here you can find the whole code for the project in the course Fundamentals of W
 # Project Title
 Space-News
 ## Team Members
-1. DaValdi
+1. DeValdi
 2. Gnkgo
 3. Nick
 

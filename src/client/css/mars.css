@@ -1,49 +1,21 @@
 #mars-container {
-  /*background: url('/src/client/img/mars-modified.png') center/35vh no-repeat;*/
+  background: url('/src/client/img/mars-modified.png') center/35vh no-repeat;
   margin: 0;
   display: none;
-  grid-template: 
-  " . sun buttons"
-    "title image today-weather-box"
+  grid-template: " . sun buttons"
+    "title . today-weather-box"
     "weather-boxes weather-boxes weather-boxes"
     "footer footer footer";
 
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 30px auto auto 40px;
+  grid-template-rows: 50px auto auto 40px;
   min-height: 100vh;
-  gap: 5px;
 
   & .image {
     width: 30vh;
     height: 30vh;
-    justify-self: center;
-    align-self: center;
   }
 
-  & #button-box {
-    grid-area: buttons;
-    display: flex;
-    justify-content: end;
-    gap: 5px;
-    margin: 5px 10px;
-
-
-    & .buttonChange {
-      background-color: rgba(55, 55, 55, 0.6);
-      border-radius: 8px;
-      text-align: center;
-      font-size: 7pt;
-      width: 7.5vw;
-      color: white;
-      margin-right: 5px;
-    }
-
-    #celsius-button,
-    #mars-date-button,
-    #test2-button {
-      display: none;
-    }
-  }
 
   & main {
     display: flex;
@@ -59,19 +31,28 @@
       align-self: flex-end; /* Align the SVG to the bottom */
     }
     
-
-    & .weather-boxes {
-      display: flex;
-      justify-content: space-evenly;
-
-      & .grey-box {
-        margin: 5px;
-      }
-    }
   }
 
   & div#today-weather-box {
+    & h1 {
     cursor: pointer;
+  }
+
+  & span#celsius-unit-min,
+  & span#celsius-unit-max,
+  & span#fahrenheit-unit-min,
+  & span#fahrenheit-unit-max {
+    color: grey;
+    cursor: pointer;
+  }
+  & span#celsius-unit-min.selected,
+  & span#celsius-unit-max.selected,
+  & span#fahrenheit-unit-min.selected,
+  & span#fahrenheit-unit-max.selected {
+    color: white;
+    cursor: text;
+  }
+  
 
     grid-area: today-weather-box;
     justify-content: center;
@@ -86,36 +67,31 @@
   }
 }
 
+button {
+  background-color: black;
+  color: white;
+}
 
+.chart-info {
+  color: white;
+}
+
+.chart-wrapper {
+  color: white;
+}
 
 @media screen and (max-width: 660px) {
   #mars-container {
     grid-template: 
-      "sun buttons"
-      "title title"
-      "today-weather-box today-weather-box"
-      "weather-boxes weather-boxes"
-      "footer footer";
+      "sun"
+      "title"
+      "image"
+      "today-weather-box"
+      "weather-boxes"
+      "footer";
 
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 30px auto auto auto 40px;
-
-    & .image {
-      display: none;
-    }
-
-    background: url('/src/client/img/mars-modified.png') center/35vh no-repeat;
-
-    & #button-box {
-      & .buttonChange {
-
-        width: 50px;
-        padding: 4px;
-        color: white;
-        margin-right: 5px;
-        font-size: 8pt;
-      }
-    }
+    grid-template-columns: 1fr;
+    grid-template-rows: 30px auto auto auto auto 40px;
 
     & .today-weather-box {
       display: none;

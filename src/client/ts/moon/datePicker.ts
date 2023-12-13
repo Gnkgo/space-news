@@ -8,6 +8,15 @@ import { formatDate } from "../base";
 import { getMoonData } from "./moonDataCollection";
 import { locationSave } from "../backend_dependent/moon";
 import { text } from "../backend_dependent/moon";
+import  firstQuarter from "../../img/moon_images/firstQuarter.png";
+import  full from "../../img/moon_images/full.png";
+import  newMoon  from "../../img/moon_images/newMoon.png";
+import  thirdQuarter from "../../img/moon_images/thirdQuarter.png";
+import  waningCrescent from "../../img/moon_images/waningCrescent.png";
+import  waningGibbous from "../../img/moon_images/waningGibbous.png";
+import  waxingCrescent from "../../img/moon_images/waxingCrescent.png";
+import  waxingGibbous from "../../img/moon_images/waxingGibbous.png";
+
 
 export function getTimeUntilNextFullMoon(): number {
     const currentDate = new Date();
@@ -69,42 +78,34 @@ export function displayMoon(moonData: MoonData, selectedDate : string): void {
         moonText = 'Error';
         return;
     }
-    switch (true) {
-        case moonphase === 0:
-            moonText = 'New Moon';
-            moonImage = 'src/client/img/moon_images/new-moon-modified.png';
-            break;
-        case moonphase < 0.25:
-            moonText = 'Waxing Crescent';
-            moonImage = 'src/client/img/moon_images/waxing-crescent-modified.png';
-            break;
-        case moonphase === 0.25:
-            moonText = 'First Quarter';
-            moonImage = 'src/client/img/moon_images/first-quarter-modified.png';
-            break;
-        case moonphase < 0.5:
-            moonText = 'Waxing Gibbous';
-            moonImage = 'src/client/img/moon_images/waxing-gibbous-modified.png';
-            break;
-        case moonphase === 0.5:
-            moonText = 'Full Moon';
-            moonImage = 'src/client/img/moon_images/full-modified.png';
-            break;
-        case moonphase < 0.75:
-            moonText = 'Waning Gibbous';
-            moonImage = 'src/client/img/moon_images/waning-gibbous-modified.png';
-            break;
-        case moonphase === 0.75:
-            moonText = 'Last Quarter';
-            moonImage = 'src/client/img/moon_images/third-quarter-modified.png';
-            break;
-        case moonphase < 1:
-            moonText = 'Waning Crescent';
-            moonImage = 'src/client/img/moon_images/waning-crescent-modified.png';
-            break;
-        default:
-            moonText = 'Error';
-            break;
+    
+    if (moonphase === 0) {
+        moonText = 'New Moon';
+        moonImage = newMoon;
+    } else if (moonphase < 0.25) {
+        moonText = 'Waxing Crescent';
+        moonImage = waxingCrescent;
+    } else if (moonphase === 0.25) {
+        moonText = 'First Quarter';
+        moonImage = firstQuarter;
+    } else if (moonphase < 0.5) {
+        moonText = 'Waxing Gibbous';
+        moonImage = waxingGibbous;
+    } else if (moonphase === 0.5) {
+        moonText = 'Full Moon';
+        moonImage = full;
+    } else if (moonphase < 0.75) {
+        moonText = 'Waning Gibbous';
+        moonImage = waningGibbous;
+    } else if (moonphase === 0.75) {
+        moonText = 'Last Quarter';
+        moonImage = thirdQuarter;
+    } else if (moonphase < 1) {
+        moonText = 'Waning Crescent';
+        moonImage = waningCrescent;
+    } else {
+        moonText = 'Error';
     }
+    
     createImage(moonContainer, moonImage, moonText, createDatePicker(selectedDate));
 }

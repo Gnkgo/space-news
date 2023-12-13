@@ -1,6 +1,10 @@
-import {getFormattedDate} from '../../../common/utils';
-import { CADRes as CadJson, FireballRes as FireBallJson} from '../../../common/api';
+import { getFormattedDate } from '../../../common/utils';
+import { CADRes as CadJson, FireballRes as FireBallJson } from '../../../common/api';
 import { createSunBackButton, removeAllSpaces, getRandomInt } from '../base';
+import asteroid_selected from '../../img/asteroid_selected.png';
+import earth from '../../img/earth.png';
+import asteroid from '../../img/asteroid.png';
+import { initializeEverythin } from '../spinning_earth/spinning-earth';
 
 //Close approach parameters
 const cadMinDate = getFormattedDate();
@@ -14,54 +18,81 @@ const fireballReqLocBool = true;
 const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=${fireballReqLocBool}`;
 
 //Bool dictionary for permanent cad info display
-let cadInfoDict: {[key: string] : boolean} = {};
+let cadInfoDict: { [key: string]: boolean } = {};
 let cadAsteroidSelected = false;
 
 
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
-fetch('/neo.html')
-                .then(response => response.text())
-                .then(html => {
-                    if(neoContainer){
-                        neoContainer.innerHTML = html;
-                        getCloseApproachData(cadApiUrl);
-                        getFireballData(fireballApiUrl);
-                        
-                        //Add back to home page button
-                        createSunBackButton(neoContainer);
-                    }
-                })
-                .catch(error => console.error('Error loading neo.html:', error));
 
-async function getCloseApproachData(cadApiUrl: string){
-    try{
+const cadContainer = document.createElement('div');
+cadContainer.id = 'cad-container';
+const fireballContainer = document.createElement('div');
+fireballContainer.id = 'fireball-container';
+const neo = document.createElement('img');
+neo.id = 'neo';
+neo.src = earth;
+
+function displaySpinningEarth() {
+
+
+    const spinningEarth = document.getElementById('spinning-earth-container');
+    const neoContainer = document.getElementById('neo-container');
+
+    console.log("SPIN TEST", spinningEarth?.style.display);
+    if (neoContainer) {
+        neoContainer.style.display = 'none';
+
+    }
+    if (spinningEarth) {
+        spinningEarth.style.display = 'block';
+        initializeEverythin();
+    }
+}
+
+if (neoContainer) {
+    neoContainer.appendChild(cadContainer);
+    neoContainer.appendChild(neo);
+    neoContainer.appendChild(fireballContainer);
+    getCloseApproachData(cadApiUrl);
+    getFireballData(fireballApiUrl);
+
+    // Add back to the home page button
+    createSunBackButton(neoContainer);
+}
+
+neo.addEventListener('click', () => displaySpinningEarth());
+
+
+
+async function getCloseApproachData(cadApiUrl: string) {
+    try {
         const res = await fetch(cadApiUrl);
         const cad = await res.json() as CadJson;
         processCloseApproachData(cad);
-    } catch (error){
+    } catch (error) {
         console.log("Error fetching close approach data: " + error)
     }
 }
 
-function processCloseApproachData(cadJson: CadJson){
+function processCloseApproachData(cadJson: CadJson) {
     const neoContainer = document.getElementById('neo-container');
     const cadContainer = document.getElementById('cad-container');
 
-    for (const elem of cadJson.data){
+    for (const elem of cadJson.data) {
         const elemName = removeAllSpaces(elem[0]!);
         cadInfoDict[elemName] = false;
-        
+
         //Create Asteroid image
         const cadElemImg = document.createElement('img');
-        cadElemImg.classList.add('cad-elem-img'); 
+        cadElemImg.classList.add('cad-elem-img');
         cadElemImg.id = `cad-elem-img-${elemName}`;
-        cadElemImg.src = '/src/client/img/asteroid.png';
+        cadElemImg.src = asteroid;
 
         //create selected_asteroid image
         const cadElemImgSelected = document.createElement('img');
         cadElemImgSelected.classList.add('cad-elem-img-selected');
         cadElemImgSelected.id = `cad-elem-img-selected-${elemName}`;
-        cadElemImgSelected.src = '/src/client/img/asteroid_selected.png';
+        cadElemImgSelected.src = asteroid_selected;
 
         addVariableOrbitAnimation(cadElemImg, cadElemImgSelected);
 
@@ -101,28 +132,28 @@ function processCloseApproachData(cadJson: CadJson){
     }
 }
 
-function showCadInfo(elemName: string, switchCadInfo?: boolean){
+function showCadInfo(elemName: string, switchCadInfo?: boolean) {
     const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
-    if(cadElemInfo && (!cadAsteroidSelected || switchCadInfo)){
+    if (cadElemInfo && (!cadAsteroidSelected || switchCadInfo)) {
         hideCadInfo();
         cadElemInfo.style.display = 'flex';
-    } else if(!cadElemInfo) {
+    } else if (!cadElemInfo) {
         console.log('Error showing the cad info box for: ' + elemName);
     }
 }
 
-function showPermanentCadInfo(elemName: string){
+function showPermanentCadInfo(elemName: string) {
     const elemSelectedImage = document.getElementById(`cad-elem-img-selected-${elemName}`);
 
-    if(cadInfoDict[elemName]){
+    if (cadInfoDict[elemName]) {
         //The selected Asteroid has been clicked again
         //hide info box
         const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
-        if(cadElemInfo){
+        if (cadElemInfo) {
             cadElemInfo.style.display = 'none';
         }
         //hide asteroid_selected image
-        if(elemSelectedImage){
+        if (elemSelectedImage) {
             elemSelectedImage.style.opacity = '0%';
             elemSelectedImage.style.zIndex = '0';
         }
@@ -134,7 +165,7 @@ function showPermanentCadInfo(elemName: string){
         cadAsteroidSelected = true;
 
         //Display the selecetd asteroid image
-        if(elemSelectedImage){
+        if (elemSelectedImage) {
             elemSelectedImage.style.opacity = '100%';
             elemSelectedImage.style.zIndex = '2';
         }
@@ -142,41 +173,42 @@ function showPermanentCadInfo(elemName: string){
     }
 }
 
-function hideCadInfo(elemName?: string){
+function hideCadInfo(elemName?: string) {
     const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
-    if(elemName && !cadInfoDict[elemName] && cadElemInfo){
+    if (elemName && !cadInfoDict[elemName] && cadElemInfo) {
         cadElemInfo.style.display = 'none';
-    } else if(!elemName){
-        for(const [key, ] of Object.entries(cadInfoDict)){
+    } else if (!elemName) {
+        for (const [key,] of Object.entries(cadInfoDict)) {
             cadInfoDict[key] = false;
             //hide info boxes
             const elem = document.getElementById(`cad-elem-info-${key}`);
-            if(elem){
+            if (elem) {
                 elem.style.display = 'none';
             }
             //hide selected asteroid images
             const elemSelected = document.getElementById(`cad-elem-img-selected-${key}`)
-            if(elemSelected){
+            if (elemSelected) {
                 elemSelected.style.opacity = '0%';
                 elemSelected.style.zIndex = '0';
             }
         }
-    } else if(!cadElemInfo) {
+    } else if (!cadElemInfo) {
         console.log('Error hiding the cad info box for: ' + elemName);
     }
 }
 
-function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLImageElement){
+function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLImageElement) {
     const duration = getRandomInt(60, 181);
     const distance = getRandomInt(35, 50);
-    const startingAngle = getRandomInt(0,360);
+    const startingAngle = getRandomInt(0, 360);
 
-    const styleSheet = document.styleSheets[2];
+    const styleSheet = document.styleSheets[0];
     const keyframes = `
         @keyframes orbitAsteroid-${elem.id} {
             0% {
                 transform: rotate(${startingAngle}deg) translateY(${distance}vh) rotate(45deg);
             }
+            
 
             100% {
                 transform: rotate(${startingAngle + 360}deg) translateY(${distance}vh) rotate(45deg);
@@ -184,12 +216,14 @@ function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLIma
         }
     `;
 
+    console.log(keyframes);
+
     styleSheet?.insertRule(keyframes, styleSheet.cssRules.length);
     elem.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
     elemSelected.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
 }
 
-async function getFireballData(fireballApiUrl: string){
+async function getFireballData(fireballApiUrl: string) {
     try {
         const res = await fetch(fireballApiUrl);
         const fireballData = await res.json();
@@ -200,10 +234,10 @@ async function getFireballData(fireballApiUrl: string){
     }
 }
 
-function processFireballData(fireballJson: FireBallJson){
+function processFireballData(fireballJson: FireBallJson) {
     const fireballContainer = document.getElementById('fireball-container');
 
-    for (const elem of fireballJson.data){
+    for (const elem of fireballJson.data) {
         const fireballElemBox = document.createElement('div');
         fireballElemBox.id = 'fireball-Elem-box';
 

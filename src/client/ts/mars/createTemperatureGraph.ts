@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import zoomIcon from '../../img/zoomIcon.svg';
 
 export interface TemperatureData {
     terrestrial_date: string;
@@ -8,6 +9,10 @@ export interface TemperatureData {
     max_temp_fahrenheit: string;
     isCelcius: boolean;
 }
+
+
+
+
 
 export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius: boolean): void {
 
@@ -33,20 +38,57 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     const text = isCelcius ? '°C' : '°F';
 
 
+    const xAccessor = (d: any) => new Date(d.terrestrial_date);
+    const yAccessor = (d: any) => ((d.min_temp) + parseInt(d.max_temp)) / 2;
 
 
     // Set up the dimensions and margins for the SVG
-    const margin = { top: 20, right: 20, bottom: 10, left: 80 };
-    let containerWidth = window.innerWidth;
+    const margin = { top: 30, right: 20, bottom: 10, left: 80 };
+    let containerWidth = window.innerWidth - margin.left - margin.right;
 
     const height = 140;
     // Create the SVG container
     const svg = d3.select('#mars-container').select('main').append('svg')
+        .attr('id', 'temperature-graph')
         .attr('class', 'grey-box')
-        .attr('width', containerWidth)
-        .attr('height', height + 40 - margin.top - margin.bottom + 35)
+        .attr('height', height + 80 - margin.top - margin.bottom)
         .append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
+
+
+    const tooltip = d3.select('#mars-container').select('main').append('div')
+        .attr('class', 'tooltip')
+        .style('opacity', 0);
+
+
+
+    function handleMouseOver(this: SVGSVGElement, event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
+        console.log("MOUSE In");
+
+        const bisectDate = d3.bisector((d: any) => d).left;
+        const [mouseX, mouseY] = d3.pointer(event, this);
+        const invertedX = xScale.invert(mouseX);
+        const index = bisectDate(dates, invertedX, 1);
+        const currentTemperature = averages[index];
+
+        tooltip.transition()
+            .duration(200)
+            .style('opacity', 0.9);
+
+        tooltip.html(`Temperature: ${currentTemperature} ${text}`)
+            .style('left', (mouseX + margin.left) + 'px') // Adjusted to consider margin.left
+            .style('top', (mouseY - 28 + margin.top) + 'px'); // Adjusted to consider margin.top
+    }
+
+    function handleMouseOut(this: SVGSVGElement) {
+        tooltip.transition()
+            .duration(500)
+            .style('opacity', 0);
+        console.log("MOUSE OUT");
+
+    }
+
+
 
     const xScale = d3.scaleTime()
         .domain(d3.extent(dates) as [Date, Date])
@@ -89,22 +131,38 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     svg.append('clipPath')
         .attr('id', 'clip-path')
         .append('rect')
-        .attr('width', containerWidth - margin.left - margin.right - 100)
+        .attr('width', containerWidth - 40)
         .attr('height', height - margin.top - margin.bottom);
 
 
-    // Append path for average temperature line
-    svg.append('path')
-        .data([d3.range(dates.length)])
-        .attr('class', 'line avg-line')
-        .attr('d', avgLine)
-        .attr('clip-path', 'url(#clip-path)')
-        .style('stroke', 'white')
-        .style('fill', 'none');
+    
+    function reset() {
+        const svg = document.getElementById('temperature-graph');
+        d3.select(svg as any).transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+        console.log("BUTTON RESED");
+    }
+
+
+    // Append a 'g' element to the SVG
+    const resetButtonGroup = svg.append('g')
+        .attr('class', 'reset-button-group')
+        .attr('transform', `translate(${containerWidth - 84}, ${margin.top - 60})`); // Adjust the position as needed
+    // Create the reset button and append it to the 'g' element
+    const resetButton = resetButtonGroup.append('image')
+        .attr('xlink:href', zoomIcon) // Replace 'path/to/your/image.svg' with the actual path to your SVG image
+        .attr('width', 50)
+        .attr('height', 20)
+        .attr('class', 'reset-button')
+        .style('cursor', 'pointer')
+        .on('click', reset);
+
+    // Add click event listener to the button
+    resetButton.select('button').on('click', reset);
+
 
 
     svg.append('text')
-        .attr('transform', `translate(${(containerWidth - margin.left - margin.right - 100) / 2},${height - margin.top + 36})`) // Adjust the y-coordinate to move the label higher
+        .attr('transform', `translate(${(containerWidth - margin.left) / 2},${height - margin.top + 35})`) // Adjust the y-coordinate to move the label higher
         .style('text-anchor', 'middle')
         .style('fill', 'white')
         .style('font-size', '1rem')
@@ -119,6 +177,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .style('fill', 'white')
         .style('font-size', '1rem')
         .text(`Temperature ${text}`);
+
 
 
 
@@ -192,7 +251,7 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     // Resize function
     function handleResize() {
         // Update container width based on the window size
-        containerWidth = window.innerWidth;
+        containerWidth = window.innerWidth + 60;
         let numTicks = 8;
         if (containerWidth < 700) {
             numTicks = 5;

@@ -1,0 +1,10 @@
+#spinning-earth-container {
+    display: none;
+    
+
+    & html, body {
+        overflow: hidden;
+        height: 100%;
+        margin: 0;
+    }
+}
