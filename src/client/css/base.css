@@ -193,3 +193,11 @@ footer {
     }
   }
 }
+
+.tooltip {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  opacity: 0;
+}

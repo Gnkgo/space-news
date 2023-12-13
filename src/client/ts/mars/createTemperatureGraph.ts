@@ -38,6 +38,8 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
     const text = isCelcius ? '°C' : '°F';
 
 
+    const xAccessor = (d: any) => new Date(d.terrestrial_date);
+    const yAccessor = (d: any) => ((d.min_temp) + parseInt(d.max_temp)) / 2;
 
 
     // Set up the dimensions and margins for the SVG
@@ -54,9 +56,38 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
 
-    //const tooltip = d3.select('#mars-container').select('main').append('div')
-    //    .attr('class', 'tooltip')
-    //    .style('opacity', 0);
+    const tooltip = d3.select('#mars-container').select('main').append('div')
+        .attr('class', 'tooltip')
+        .style('opacity', 0);
+
+
+
+    function handleMouseOver(this: SVGSVGElement, event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
+        console.log("MOUSE In");
+
+        const bisectDate = d3.bisector((d: any) => d).left;
+        const [mouseX, mouseY] = d3.pointer(event, this);
+        const invertedX = xScale.invert(mouseX);
+        const index = bisectDate(dates, invertedX, 1);
+        const currentTemperature = averages[index];
+
+        tooltip.transition()
+            .duration(200)
+            .style('opacity', 0.9);
+
+        tooltip.html(`Temperature: ${currentTemperature} ${text}`)
+            .style('left', (mouseX + margin.left) + 'px') // Adjusted to consider margin.left
+            .style('top', (mouseY - 28 + margin.top) + 'px'); // Adjusted to consider margin.top
+    }
+
+    function handleMouseOut(this: SVGSVGElement) {
+        tooltip.transition()
+            .duration(500)
+            .style('opacity', 0);
+        console.log("MOUSE OUT");
+
+    }
+
 
 
     const xScale = d3.scaleTime()
@@ -104,20 +135,13 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
         .attr('height', height - margin.top - margin.bottom);
 
 
-    svg.append('path')
-        .data([d3.range(dates.length)])
-        .attr('class', 'line avg-line')
-        .attr('d', avgLine)
-        .attr('clip-path', 'url(#clip-path)')
-        .style('stroke', 'white')
-        .style('fill', 'none');
-
-
+    
     function reset() {
         const svg = document.getElementById('temperature-graph');
         d3.select(svg as any).transition().duration(750).call(zoom.transform, d3.zoomIdentity);
         console.log("BUTTON RESED");
     }
+
 
     // Append a 'g' element to the SVG
     const resetButtonGroup = svg.append('g')
@@ -134,30 +158,6 @@ export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius:
 
     // Add click event listener to the button
     resetButton.select('button').on('click', reset);
-
-
-
-    // function handleMouseOver(this: SVGSVGElement, event: d3.D3ZoomEvent<SVGSVGElement, unknown>) {
-    //     const bisectDate = d3.bisector((d: any) => d).left;
-    //     const [mouseX, mouseY] = d3.pointer(event, this);
-    //     const invertedX = xScale.invert(mouseX);
-    //     const index = bisectDate(dates, invertedX, 1);
-    //     const currentTemperature = averages[index];
-    //
-    //     tooltip.transition()
-    //         .duration(200)
-    //         .style('opacity', 0.9);
-    //
-    //     tooltip.html(`Temperature: ${currentTemperature} ${text}`)
-    //         .style('left', (mouseX + margin.left) + 'px') // Adjusted to consider margin.left
-    //         .style('top', (mouseY - 28 + margin.top) + 'px'); // Adjusted to consider margin.top
-    // }
-    //
-    // function handleMouseOut() {
-    //     tooltip.transition()
-    //         .duration(500)
-    //         .style('opacity', 0);
-    // }
 
 
 
