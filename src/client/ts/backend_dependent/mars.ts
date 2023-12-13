@@ -16,6 +16,7 @@ If planning outdoor activities or rover missions, stay tuned for updates. Embrac
 async function initMars(): Promise<void> {
   try {
     if (marsContainer) {
+      marsContainer.innerHTML = '';
       weatherData = await getWeatherData();
       currentDate = weatherData.soles[0]?.terrestrial_date || '';
       currentDateSol = weatherData.soles[0]?.sol || '';
@@ -24,6 +25,12 @@ async function initMars(): Promise<void> {
       createFooter(marsContainer);
       createSunBackButton(marsContainer);
       createButtons();
+
+      const image = document.createElement('img');
+      image.className = 'image';
+      image.id = 'MarsImage';
+      image.src = '/src/client/img/mars-modified.png';
+      marsContainer.appendChild(image);
     }
   } catch (error) {
     console.error("Error initializing weather app", error);
@@ -77,9 +84,7 @@ function createButton(className: string, label: string, id: string): HTMLButtonE
 async function toggleDateUnit() {
   isSol = !isSol;
   renderWeather();
-  createTitle(marsContainer, `Mars Weather`, "Note: Mars weather predictions are subject to occasional delays due to dust storms. \
-  If planning outdoor activities or rover missions, stay tuned for updates and exercise caution during storms. Embrace the challenges of Mars' atmosphere. Safe travels!",
-   isSol, formatDate(currentDate), currentDateSol);
+  createTitle(marsContainer, `Mars Weather`, text, isSol, formatDate(currentDate), currentDateSol);
 }
 
 async function toggleTemperatureUnit() {

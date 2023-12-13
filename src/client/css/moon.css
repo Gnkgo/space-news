@@ -6,7 +6,7 @@ div#moon-container {
   grid-template-areas:
     ". sun  buttons"
     "title countdown moon-sunrise-sunset-box"
-    "moon moon moon"
+    "image image image"
     "footer footer footer";
 
   min-height: 100vh;
@@ -24,18 +24,14 @@ div#moon-container {
 }
 
 
-.date-picker {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  grid-area: date-picker;
-}
+
 
 .date-container {
   display: flex;
   justify-content: center;
   align-items: center;
   grid-area: date-picker;
+  padding: 10px;
 }
 
 
@@ -69,7 +65,7 @@ div#moon-container {
       "title"
       "countdown"
       "moon-sunrise-sunset-box "
-      "moon "
+      "image "
       "footer";
 
 

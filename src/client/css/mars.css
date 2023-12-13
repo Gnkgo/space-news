@@ -1,16 +1,24 @@
 #mars-container {
-  background: url('/src/client/img/mars-modified.png') center/35vh no-repeat;
+  /*background: url('/src/client/img/mars-modified.png') center/35vh no-repeat;*/
   margin: 0;
   display: none;
-  grid-template: " . sun buttons"
-    "title . today-weather-box"
+  grid-template: 
+  " . sun buttons"
+    "title image today-weather-box"
     "weather-boxes weather-boxes weather-boxes"
     "footer footer footer";
 
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 30px auto auto 40px;
   min-height: 100vh;
+  gap: 5px;
 
+  & .image {
+    width: 30vh;
+    height: 30vh;
+    justify-self: center;
+    align-self: center;
+  }
 
   & #button-box {
     grid-area: buttons;
@@ -78,6 +86,8 @@
   }
 }
 
+
+
 @media screen and (max-width: 660px) {
   #mars-container {
     grid-template: 
@@ -89,6 +99,12 @@
 
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 30px auto auto auto 40px;
+
+    & .image {
+      display: none;
+    }
+
+    background: url('/src/client/img/mars-modified.png') center/35vh no-repeat;
 
     & #button-box {
       & .buttonChange {

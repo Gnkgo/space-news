@@ -46,7 +46,7 @@ export function createTitle(divContainer: HTMLDivElement, title: string, paragra
 
     const paragraphElement = document.createElement("p");
     paragraphElement.textContent = paragraph;
-    paragraphElement.style.fontSize = "8pt";
+    paragraphElement.style.fontSize = "1rem";
 
     if (isSol) {
         dateElement.textContent = `Sol ${dateSol}`;
@@ -81,8 +81,8 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
     image.id = 'image';
     image.src = imagePath;
 
-    image.width = 300;
-    image.height = 300;
+    image.style.width = '40vh';
+    image.style.height = '40vh';
 
     const imageContainer = document.createElement('div');
     imageContainer.className = 'image-container';

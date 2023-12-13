@@ -44,13 +44,13 @@ footer {
 
   & h1 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: white;
   }
 
   & h2 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.5rem;
     color: white;
   }
 
@@ -114,11 +114,13 @@ footer {
   padding-bottom: 20px;
   width: 50vh;
   height: 50vh;
+  grid-area: image;
+
 }
 
 .image-container {
   display: flex;
-  grid-area: moon;
+  grid-area: image;
   justify-content: center;
   align-items: center;
   flex-direction: column;
