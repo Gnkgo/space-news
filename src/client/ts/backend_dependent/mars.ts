@@ -29,18 +29,8 @@ async function initMars(): Promise<void> {
       createTitle(marsContainer, `Mars Weather`, text, isSol, formatDate(currentDate), currentDateSol);
       createFooter(marsContainer);
       createSunBackButton(marsContainer);
-<<<<<<< HEAD
-      createButtons();
-
-      const image = document.createElement('img');
-      image.className = 'image';
-      image.id = 'MarsImage';
-      image.src = '/src/client/img/mars-modified.png';
-      marsContainer.appendChild(image);
-=======
       createImage(marsContainer, marsModifiedUrl, "", null);
 
->>>>>>> 38f4d0f693f6f4379d535a1f6627583a95c0883c
     }
   } catch (error) {
     console.error("Error initializing weather app", error);
@@ -54,13 +44,9 @@ async function initMars(): Promise<void> {
 async function toggleDateUnit() {
   isSol = !isSol;
   renderWeather();
-<<<<<<< HEAD
-  createTitle(marsContainer, `Mars Weather`, text, isSol, formatDate(currentDate), currentDateSol);
-=======
   createTitle(marsContainer, `Mars Weather`, "Note: Mars weather forecasts are subject to occasional delays due to dust storms. \
   Stay tuned for updates when planning outdoor activities or rover missions. Embrace the challenges of the Martian atmosphere. Safe travels!",
     isSol, formatDate(currentDate), currentDateSol);
->>>>>>> 38f4d0f693f6f4379d535a1f6627583a95c0883c
 }
 
 async function toggleTemperatureUnit() {
