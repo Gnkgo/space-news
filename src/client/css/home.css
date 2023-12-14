@@ -4,10 +4,10 @@
     --unit: 1vw;
 }
 
-/* Media query for screens with height greater than or equal to width */
+/* Media query for screens with width greater than or equal to heigth */
 @media screen and (min-aspect-ratio: 1/1) {
     :root {
-        --unit: 1vh; /* Switch to vw when height is greater than or equal to width */
+        --unit: 1vh; /* Switch to vh when width is greater than or equal to heigth */
     }
 }
 
