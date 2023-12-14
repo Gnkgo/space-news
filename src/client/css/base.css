@@ -37,20 +37,20 @@ footer {
   color: white;
   margin: 10px;
   line-height: normal;
-  font-size: 1rem;
+  font-size: 0.9rem;
 
   align-items: baseline;
   height: fit-content;
 
   & h1 {
     margin: 0;
-    font-size: 3rem;
+    font-size: 1.6rem;
     color: white;
   }
 
   & h2 {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1rem;
     color: white;
   }
 
@@ -58,7 +58,7 @@ footer {
 
 .title-box {
   grid-area: title;
-  font-size: 3rem;
+  font-size: 1.6rem;
 
   justify-self: center;
   & .grey-box {
@@ -203,6 +203,11 @@ footer {
   }
 
   & .grey-box {
+
+    & h1 {
+      font-size: 12pt;
+    }
+
     & h3 {
       font-size: 12pt;
     }

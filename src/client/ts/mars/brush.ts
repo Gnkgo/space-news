@@ -67,7 +67,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.attr('id', 'data-heading')
 			.attr('text-anchor', 'middle')
 			.attr('fill', 'white')
-			.attr('font-size', '1.2rem')
+			.attr('font-size', '0.6rem')
 			.text('Average Temperature on Mars');
 
 
@@ -134,17 +134,17 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.attr('transform', `translate(${(dimensions.width - dimensions.marginLeft) / 2},${dimensions.height - dimensions.marginBottom + 45})`) // Center X-axis title
 			.style('text-anchor', 'middle')
 			.style('fill', 'white')
-			.style('font-size', '1rem')
+			.style('font-size', '0.6rem')
 			.text('Date');
 
 		svg.append('text')
 			.attr('transform', 'rotate(-90)')
 			.attr('y', 0 - dimensions.marginLeft / 2 - 30) // Adjust Y-axis title position
 			.attr('x', 0 - (dimensions.height - dimensions.marginTop) / 2)
-			.attr('dy', '1em')
+			.attr('dy', '0.7em')
 			.style('text-anchor', 'middle')
 			.style('fill', 'white')
-			.style('font-size', '1rem')
+			.style('font-size', '0.6rem')
 			.text(`Temperature ${text}`);
 
 
