@@ -161,8 +161,16 @@ const marsWeatherApi = regUrlApi<MarsWeatherReq, MarsWeatherRes>({
   apiName: "Mars Weather Data",
   target: marsWeatherTarget.raw(),
   genReq: async (_req) => 'https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json',
-  genRes: async (res) => res as MarsWeatherRes,
-  log: logCreate("mars_weather")
+  genRes: async (res) => {
+    const data = res as MarsWeatherRes;
+    // Ensure that 'sols' property exists and is an array
+    if (data.soles && Array.isArray(data.soles)) {
+      // Shorten the 'sols' array to only the first 300 elements
+      data.soles = data.soles.length >= 400 ? data.soles.slice(0, 400) : data.soles;
+    }
+    return data;
+  },
+  log: logCreate("mars_weather"),
 });
 cacheCreateDaily("mars_weather", marsWeatherApi, [{}]);
 

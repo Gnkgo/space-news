@@ -14,7 +14,7 @@ export interface TemperatureData {
 
 
 const dimensions = {
-	width: 600,
+	width: window.innerWidth * 0.8,
 	height: 170,
 	marginTop: 25,
 	marginBottom: 50,
@@ -67,7 +67,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.attr('id', 'data-heading')
 			.attr('text-anchor', 'middle')
 			.attr('fill', 'white')
-			.attr('font-size', '0.6rem')
+			.attr('font-size', '0.9rem')
 			.text('Average Temperature on Mars');
 
 
@@ -134,7 +134,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.attr('transform', `translate(${(dimensions.width - dimensions.marginLeft) / 2},${dimensions.height - dimensions.marginBottom + 45})`) // Center X-axis title
 			.style('text-anchor', 'middle')
 			.style('fill', 'white')
-			.style('font-size', '0.6rem')
+			.style('font-size', '0.9rem')
 			.text('Date');
 
 		svg.append('text')
@@ -144,7 +144,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.attr('dy', '0.7em')
 			.style('text-anchor', 'middle')
 			.style('fill', 'white')
-			.style('font-size', '0.6rem')
+			.style('font-size', '0.9rem')
 			.text(`Temperature ${text}`);
 
 
