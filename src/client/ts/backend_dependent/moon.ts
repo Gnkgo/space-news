@@ -6,6 +6,7 @@ import { displayMoon, getTimeUntilNextFullMoon } from '../moon/datePicker';
 import { getMoonData } from '../moon/moonDataCollection';
 import { updateCountdown } from '../moon/countdown';
 
+
 export const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
 let today = getFormattedDate();
 export let locationSave: number[];

@@ -2,13 +2,16 @@ import { createTitle, createFooter, formatDate, createSunBackButton } from '../.
 import { MarsWeatherRes as MarsData } from '../../../common/api';
 import * as d3 from 'd3';
 import { getWeatherData } from '../mars/weatherDataCollection';
-import { extractAndDisplayTemperature } from '../mars/createTemperatureGraph';
 import { TemperatureData } from '../mars/createTemperatureGraph';
 import { createModal, openModal } from "../mars/modal";
 import { createImage } from '.././base';
 import marsModifiedUrl from '../../img/mars-modified.png';
 import marsModalUrl from '../../img/marsModal.jpg';
 import {check} from '../mars/brush'
+
+
+
+
 
 export let isCelsius = true;
 export let isSol = true;

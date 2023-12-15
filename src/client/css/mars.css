@@ -24,6 +24,7 @@
     align-items: center;
 
     & svg {
+      /*this is a test*/
       justify-self: center;
       margin-top: auto; /* Push the SVG to the bottom */
       align-self: flex-end; /* Align the SVG to the bottom */

@@ -1,4 +1,4 @@
-import { HOME_COMPONENT_ID, getUserLocation, tryShowTutorial } from "./base";
+import { HOME_COMPONENT_ID, MARS_COMPONENT_ID, MOON_COMPONENT_ID, getUserLocation, tryShowTutorial } from "./base";
 //import { createAndOpenTutoralModal } from "./mars/modal";
 import { initMoon } from "./backend_dependent/moon";
 import "@fortawesome/fontawesome-free/css/all.css";
@@ -55,6 +55,9 @@ async function showPlanetInformation(planet: string) {
             const marsContainer = document.getElementById('mars-container');
             if (marsContainer) {
                 marsContainer.style.display = 'grid';
+                tryShowTutorial(MARS_COMPONENT_ID, {
+                    "en": "<i class=\"fa-solid fa-arrow-pointer\"></i> Discover the weather on Mars. You can zoom in and out of the temperature graph. Discover what it looks like on Mars. Press on the planet to see an image from one of the three Rovers on Mars.",
+                })
             }
             break;
 
@@ -70,6 +73,9 @@ async function showPlanetInformation(planet: string) {
                 moonContainer.style.display = 'grid';
                 const location = await getUserLocation();
                 initMoon(location);
+                tryShowTutorial(MOON_COMPONENT_ID, {
+                    "en": "<i class=\"fa-solid fa-arrow-pointer\"></i> Cannot sleep tonight? Maybe the moon is keeping you awake. Find out when the next full moon is.",
+                })
             }
             break;
         default:

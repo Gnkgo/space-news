@@ -11,7 +11,7 @@ export interface TemperatureData {
 	isCelcius: boolean;
 }
 
-
+/*this is a test*/
 
 const dimensions = {
 	width: window.innerWidth * 0.9,

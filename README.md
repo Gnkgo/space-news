@@ -20,8 +20,7 @@ The project is about wanting to create a website with three different components
   
 ### Data Sources
 - [NASA API](https://api.nasa.gov/)
-- [Moon API](https://dev.qweather.com/en/docs/api/astronomy/moon-and-moon-phase/)
-- [Used Moon API](https://www.visualcrossing.com/)
+- [Moon API](https://www.visualcrossing.com/)
 
   
 ### Tasks
@@ -32,79 +31,42 @@ Displaying important information about
 - Moon
 
 ## Requirements
-Write here all intructions to build the environment and run your code.\
-**NOTE:** If we cannot run your code following these requirements we will not be able to evaluate it.
 
 ## How to Run
-Write here **DETAILED** intructions on how to run your code.\
-**NOTE:** If we cannot run your code following these instructions we will not be able to evaluate it.
+You have two options:
 
-As an example here are the instructions to run the Dummy Project:
-To run the Dummy project you have to:
+Click on this link:
+[Space-News](http://space-news.course-fwe-2023.isginf.ch/)
+
+Run the website locally:
 - clone the repository;
 - open a terminal instance and using the command ```cd``` move to the folder where the project has been downloaded;
-- then run:
-
-
-### Local Development
-
-Only change files inside the `src` directory.
-
-**Client side**
-
-All client side files are located in the `src/client` directory.
-
-**Server side**
-
-All server side files are located in the `src/server` directory.
-
-### Local Testing
-
-**run container for local testing**
-
-```bash
-docker build -t my-webapp .
-
-docker run -it --rm -p 5173:5173 my-webapp
-```
-Open a browser and connect to http://localhost:5173
-
-**run bash in interactive container**
-```bash
-docker build -t my-webapp src/.
-
-docker run -it --rm -p 5173:5173 my-webapp bash
-```
-
+- run: git clone https://github.com/Gnkgo/space-news.git
+- run npm i 
+- run docker build -t space-news .
+- run docker run -it --rm -p 5173:5173 space-news
+- Open a browser and connect to http://localhost:5173
 
 ## Milestones
 Document here the major milestones of your code and future planned steps.\
-- [ ] Moon
+- [X] Moon
   - [X] Show current moon
   - [X] Show countdown
-    - [ ] Fancy countdown   
+    - [X] Fancy countdown   
   - [X] make button to choose a date in the future
   - [X] make a back button
   - [X] use location
       
-- [ ] Mars
+- [X] Mars
   - [X] display weather
   - [X] have a paragraph that describes it
   - [X] have a nice layout
   - [X] make temperature graph
-    - [ ] make better ticks
+    - [X] make better ticks
   - [X] make mars picture button
      
-- [ ] Earth
-- [ ] Backend
-
-Create a list subtask.\
-Open an issue for each subtask. Once you create a subtask, link the corresponding issue.\
-Create a merge request (with corresponding branch) from each issue.\
-Finally accept the merge request once issue is resolved. Once you complete a task, link the corresponding merge commit.\
-Take a look at [Issues and Branches](https://www.youtube.com/watch?v=DSuSBuVYpys) for more details. 
-
-This will help you have a clearer overview of what you are currently doing, track your progress and organise your work among yourselves. Moreover it gives us more insights on your progress.  
+- [X] Earth
+- [X] Backend
 
 ## Weekly Summary 
 ### 16. November 2023 - 23. November 2023
@@ -147,7 +109,7 @@ This will help you have a clearer overview of what you are currently doing, trac
 ##### Struggles:
 - D3 and the temperature graph
 
-### 30. November 2023 - 7. December 2023
+### 7.Dezember 2023 - 15. Dezember 2023
 #### Gnkgo:
 ##### Mars:
 - Better temperature graph with lines
