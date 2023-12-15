@@ -27,6 +27,7 @@ div#moon-container {
   justify-content: center;
   align-items: center;
   grid-area: date-picker;
+  padding: 10px;
 }
 
 

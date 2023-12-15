@@ -8,6 +8,7 @@ import { createModal, openModal } from "../mars/modal";
 import { createImage } from '.././base';
 import marsModifiedUrl from '../../img/mars-modified.png';
 import marsModalUrl from '../../img/marsModal.jpg';
+import {check} from '../mars/brush'
 
 export let isCelsius = true;
 export let isSol = true;
@@ -20,6 +21,7 @@ Stay tuned for updates when planning outdoor activities or rover missions. Embra
 async function initMars(): Promise<void> {
   try {
     if (marsContainer) {
+      marsContainer.innerHTML = '';
       weatherData = await getWeatherData();
       currentDate = weatherData.soles[0]?.terrestrial_date || '';
       currentDateSol = weatherData.soles[0]?.sol || '';
@@ -102,7 +104,7 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
       toggleDateUnit();
     } else if (target.id === 'more-information') {
       createModal();
-      openModal(marsModalUrl, weatherData, false);
+      openModal(marsModalUrl, weatherData, false, false);
     }
   });
 
@@ -134,7 +136,7 @@ export function renderWeather(): void {
       });
     }
     todayWeather();
-    extractAndDisplayTemperature(temperatureData, isCelsius);
+    check(temperatureData, isCelsius)
   }
 }
 

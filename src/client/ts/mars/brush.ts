@@ -1,204 +1,392 @@
+
 import * as d3 from 'd3';
+import zoomIcon from '../../img/zoomIcon.svg';
 
 export interface TemperatureData {
-    terrestrial_date: string;
-    min_temp: string;
-    max_temp: string;
-    min_temp_fahrenheit: string;
-    max_temp_fahrenheit: string;
-    isCelcius: boolean;
+	terrestrial_date: string;
+	min_temp: string;
+	max_temp: string;
+	min_temp_fahrenheit: string;
+	max_temp_fahrenheit: string;
+	isCelcius: boolean;
 }
 
-export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius: boolean): void {
-
-    // Extract relevant information
-    const dates: Date[] = [];
-    const averagesCelsius: number[] = [];
-    const averagesFahrenheit: number[] = [];
 
 
+const dimensions = {
+	width: 600,
+	height: 170,
+	marginTop: 25,
+	marginBottom: 50,
+	marginLeft: 60,
+	marginRight: 10
+}
 
-    // Inside the loop for extracting data
-    for (const entry of data) {
-        const date = new Date(entry.terrestrial_date);
-        dates.push(date);
-
-        // Parsing with error checking
-        const parseTemp = (tempString: string) => {
-            const temp = parseFloat(tempString);
-            return isNaN(temp) ? null : temp;
-        };
-
-        const min = parseTemp(entry.min_temp);
-        const max = parseTemp(entry.max_temp);
-        const minFahrenheit = parseTemp(entry.min_temp_fahrenheit);
-        const maxFahrenheit = parseTemp(entry.max_temp_fahrenheit);
-
-        if (min === null || max === null || minFahrenheit === null || maxFahrenheit === null) {
-            console.error(`Error parsing temperature data for date ${entry.terrestrial_date}`);
-            // Handle or skip this entry as needed
-            continue;
-        }
-
-        averagesFahrenheit.push((minFahrenheit + maxFahrenheit) / 2);
-        averagesCelsius.push((min + max) / 2);
-    }
-
-    const averages = isCelcius ? averagesCelsius : averagesFahrenheit;
-    //const text = isCelcius ? '°C' : '°F';
+export function check(data: TemperatureData[], isCelcius: boolean): void {
 
 
+	const xAccessor = (d: TemperatureData) => new Date(d.terrestrial_date);
+	let yAccessor: (d: TemperatureData) => number;
+	if (isCelcius) {
+		yAccessor = (d: TemperatureData) => (parseInt(d.min_temp) + parseInt(d.max_temp)) / 2;
+	} else {
+		yAccessor = (d: TemperatureData) => (parseInt(d.min_temp_fahrenheit) + parseInt(d.max_temp_fahrenheit)) / 2;
+	}
 
-    const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-    const width = 600 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
-
-    const svg = d3.select('#mars-container').select('main').append('svg')
-        .attr('class', 'grey-box')
-        .attr('width', width)
-        .attr('height', height + 40 - margin.top - margin.bottom + 35)
-        .append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`);
-
-    const xScale = d3.scaleTime()
-        .domain(d3.extent(dates) as [Date, Date])
-        .range([0, width - margin.left - margin.right])
-
-    const yScale = d3.scaleLinear()
-        .domain([Math.min(...averages), Math.max(...averages)])
-        .range([height - margin.top - margin.bottom, 0])
+	const text = isCelcius ? '°C' : '°F';
 
 
-    const xAxis = d3.axisBottom(xScale);
-    const yAxis = d3.axisLeft(yScale);
+	const formatDate = d3.timeFormat('%d %B %Y')
 
-    svg.append("g").attr("class", "x-axis").attr("transform", "translate(0," + (height - margin.top - margin.bottom) + ")").call(xAxis);
-    svg.append("g").attr("class", "y-axis").call(yAxis);
+	const getText = (d: any) => {
+		const date = xAccessor(d)
+		const temperature = yAccessor(d)
+		return `${formatDate(date)}, ${Math.round(temperature)}${text}`
+	}
 
-    const brush = d3.brushX()
-        .extent([[0, 0], [width - margin.left - margin.right - 100, height - margin.top - margin.bottom]])
-        .on("brush", brushed)
-        .on("end", () => {
-            // Call your update function here
-            updateTemperature(data);
-        });
+	const draw = (data: any) => {
+		const wrapper = d3.select('#mars-container')
 
 
-    const validAverages = averages.filter((value) => !isNaN(value));
+		const svg = wrapper
+			.select('main')
+			.append('svg')
+			.attr('id', 'temperature-graph')
+			.attr('class', 'grey-box')
+			.attr('width', dimensions.width)
+			.attr('height', dimensions.height)
+			.attr('viewBox', `${-dimensions.marginLeft} 0 ${dimensions.width} ${dimensions.height}`)
 
-    // Create line generator for valid average temperatures
-    const line = d3.line<any>()
-      //  .x((d: any, i: number) => xScale(dates[i]!))
-      //  .y((d: any) => yScale(d))
-      //  .curve(d3.curveBasis);
 
-    // Append the path using the valid averages
-    svg.append("path")
-        .datum(validAverages)
-        .attr("class", "line")
-        .attr("d", line)
-        .attr("fill", "none")
-        .attr("stroke", "white");
+		const chartWrapper = svg.append('g')
+			.attr('class', 'chart-wrapper')
+			.attr('transform', `translate(${(dimensions.width - dimensions.marginLeft - dimensions.marginRight) / 2}, ${dimensions.marginTop - 11})`);
 
-    brush.on("end", brushed);
+		const title = chartWrapper.append('text')
+			.attr('class', 'chart-title')
+			.attr('id', 'data-heading')
+			.attr('text-anchor', 'middle')
+			.attr('fill', 'white')
+			.attr('font-size', '0.6rem')
+			.text('Average Temperature on Mars');
 
-    svg.append("g").attr("class", "brush").call(brush);
 
-    function brushed(event: any) {
-        if (!event.selection) return;
-    
-        const [x0, x1] = event.selection.map(xScale.invert);
-    
-        // Filter data based on the brush selection
-        const filteredData = data.filter((entry) => {
-            const date = new Date(entry.terrestrial_date);
-            return date >= x0 && date <= x1;
-        });
-    
-        // Check if filteredData contains valid entries
-        if (filteredData.length === 0) {
-            console.warn('No valid data in the selected range');
-            return;
-        }
-    
-        // Update the x-axis scale based on the filtered data
-        xScale.domain(d3.extent(filteredData, d => new Date(d.terrestrial_date)) as [Date, Date]);
-    
-        // Update the y-axis scale based on the filtered data
-        yScale.domain([Math.min(...filteredData.map(d => (+d.min_temp + +d.max_temp) / 2)),
-                      Math.max(...filteredData.map(d => (+d.min_temp + +d.max_temp) / 2))]);
-    
-        // Update the displayed temperature for the filtered data
-        updateTemperature(filteredData);
-    }
-    
-    
-    // ...
+		const xDomain = d3.extent(data, xAccessor) as [Date, Date];
+		const yDomain = [d3.min(data, yAccessor), d3.max(data, yAccessor)] as [number, number];
 
-    // Add a zoom behavior
-    const zoom = d3.zoom().scaleExtent([1, Infinity]).translateExtent([[0, 0], [width, height]]).extent([[0, 0], [width, height]]).on("zoom", zoomed);
+		const xScale = d3.scaleTime()
+			.domain(xDomain)
+			.range([0, dimensions.width - dimensions.marginLeft - dimensions.marginRight]);
 
-    svg.call(zoom as any);
+		const yScale = d3.scaleLinear()
+			.domain(yDomain)
+			.range([dimensions.height - dimensions.marginBottom, dimensions.marginTop])
 
-    // ...
+		const xAxis = d3.axisBottom<Date>(xScale)
+			.tickFormat((date: Date) => d3.timeFormat('%b')(date))
+			.ticks(5);
 
-    // Redraw the line and axes on zoom
-    function zoomed(event: any) {
-        const newXScale = event.transform.rescaleX(xScale);
+		const yAxis = d3.axisLeft(yScale).ticks(5); // Adjust the number of ticks as needed
 
-        const newYScale = event.transform.rescaleY(yScale);
-        // Update the x-axis with the new scale
-        // Update x-axis ticks to display labels for the visible data points
-        (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
-            .attr('transform', `translate(0,${height - margin.top - margin.bottom})`)
-            .call(xAxis);
 
-        // Update the line with the new scale
-        line.x((d: any) => newXScale(dates[d]!))
-            .y((d: any) => newYScale(averages[d]!))
-            .curve(d3.curveBasis);
+		// Append x and y axes to the SVG
+		svg.append('g')
+			.attr('class', 'x-axis')
+			.attr('transform', `translate(0,${dimensions.height - dimensions.marginBottom})`) // Adjust the y value
+			.call((xAxis));
 
-        // Update average temperature line
-        svg.select('.line')
-            .data([d3.range(dates.length)])
-            .attr('d', line);
-    }
+		svg.select('.x-axis')
+			.selectAll('text')
+			.attr('transform', 'rotate(-45)') // Adjust the rotation angle as needed
+			.style('text-anchor', 'end'); // Align the rotated text appropriately
 
-    // ...
+		svg.append('g')
+			.attr('class', 'y-axis')
+			.call(yAxis);
 
-    function updateTemperature(filteredData: TemperatureData[]) {
-        // Update xScale and width based on the number of visible data points
-        xScale.range([0, width - margin.left - margin.right - 100])
-            .domain(d3.extent(filteredData, d => new Date(d.terrestrial_date)) as [Date, Date]);
-    
-        // Update yScale based on the filtered data
-        yScale.domain([Math.min(...filteredData.map(d => (+d.min_temp + +d.max_temp) / 2)),
-                      Math.max(...filteredData.map(d => (+d.min_temp + +d.max_temp) / 2))]);
-    
-        // Update x-axis ticks to display labels for the visible data points
-        (svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
-            .attr('transform', `translate(0,${height - margin.top - margin.bottom})`)
-            .call(xAxis);
-    
-        svg.select('.x-axis')
-            .selectAll('text')
-            .attr('transform', 'rotate(-45)')
-            .style('text-anchor', 'end');
-    
-        // Create a new line generator for valid average temperatures
-        //const line = d3.line<any>()
-        //    .x((d: any, i: number) => xScale(new Date(filteredData[i].terrestrial_date)))
-        //    .y((d: any, i: number) => yScale((+filteredData[i].min_temp + +filteredData[i].max_temp) / 2))
-        //    .curve(d3.curveBasis);
-    //
-        // Update average temperature line
-        svg.select('.line')
-            .datum(d3.range(filteredData.length))
-            .attr('d', line);
-    }
-    
+
+		/* Line */
+		const lineGenerator = d3.line<TemperatureData>()
+			.x((d) => xScale(xAccessor(d)))
+			.y((d) => yScale(yAccessor(d)))
+			.curve(d3.curveBumpX)
+
+		// Create a clipPath element
+		const clipPath = svg.append('clipPath')
+			.attr('id', 'clip-path')
+			.append('rect')
+			.attr('width', dimensions.width - dimensions.marginLeft - dimensions.marginRight)
+			.attr('height', dimensions.height - dimensions.marginBottom);
+
+		// Apply the clipPath to the line
+		const line = svg
+			.append('path')
+			.datum(data)
+			.attr('class', 'line')
+			.attr('d', lineGenerator)
+			.attr('stroke', 'white')
+			.attr('stroke-linejoin', 'round')
+			.attr('fill', 'none')
+			.attr('clip-path', 'url(#clip-path)'); // Apply the clipPath
+
+
+		svg.append('text')
+			.attr('transform', `translate(${(dimensions.width - dimensions.marginLeft) / 2},${dimensions.height - dimensions.marginBottom + 45})`) // Center X-axis title
+			.style('text-anchor', 'middle')
+			.style('fill', 'white')
+			.style('font-size', '0.6rem')
+			.text('Date');
+
+		svg.append('text')
+			.attr('transform', 'rotate(-90)')
+			.attr('y', 0 - dimensions.marginLeft / 2 - 30) // Adjust Y-axis title position
+			.attr('x', 0 - (dimensions.height - dimensions.marginTop) / 2)
+			.attr('dy', '0.7em')
+			.style('text-anchor', 'middle')
+			.style('fill', 'white')
+			.style('font-size', '0.6rem')
+			.text(`Temperature ${text}`);
+
+
+		/* Markers */
+		const markerLine = svg
+			.append('line')
+			.attr('x1', 0)
+			.attr('x2', 0)
+			.attr('y1', dimensions.marginTop)
+			.attr('y2', dimensions.height - dimensions.marginBottom)
+			.attr('stroke-width', 2)
+			.attr('stroke', 'white')
+			.attr('opacity', 0)
+			.attr('clip-path', 'url(#clip-path)'); // Apply the clipPath
+
+
+		const markerHorizontalLine = svg
+			.append('line')
+			.attr('x1', 0)
+			.attr('x2', dimensions.width)
+			.attr('y1', 0)
+			.attr('y2', 0)
+			.attr('stroke-width', 2)
+			.attr('stroke', 'white')
+			.attr('opacity', 0)
+			.attr('clip-path', 'url(#clip-path)'); // Apply the clipPath
+
+
+		const markerDot = svg
+			.append('circle')
+			.attr('cx', 0)
+			.attr('cy', 0)
+			.attr('r', 8)
+			.attr('fill', 'white')
+			.attr('opacity', 0)
+			.attr('clip-path', 'url(#clip-path)'); // Apply the clipPath
+
+
+		/* Bisector */
+		const bisect = d3.bisector(xAccessor)
+
+		// Define a zoom behavior
+		const zoom = d3.zoom()
+			.scaleExtent([1, 15])
+			.translateExtent([[0, 0], [dimensions.width - dimensions.marginLeft - dimensions.marginRight, 0]])
+			.on('zoom', zoomed);
 
 
 
+		// Apply zoom behavior to the SVG container
+		const zoomableSvg = svg.call(zoom as any);
 
+
+		/* Events */
+		zoomableSvg.on('mousemove', (e) => {
+
+			const [posX, posY] = d3.pointer(e);
+			const date = newXScale.invert(posX);
+
+
+			const index = bisect.center(data, date)
+			const d = data[index]
+
+			const x = newXScale(xAccessor(d))
+			const y = newYScale(yAccessor(d))
+
+			markerLine
+				.attr('x1', x)
+				.attr('x2', x)
+				.attr('opacity', 1)
+
+			markerDot
+				.attr('cx', x)
+				.attr('cy', y)
+				.attr('opacity', 1)
+
+			markerHorizontalLine
+				.attr('y1', y)
+				.attr('y2', y)
+				.attr('opacity', 1)
+
+
+			d3.select('#mars-container').select('#data-heading').text(getText(d))
+			d3.select('#mars-container').select('#data-total').text(yAccessor(d))
+		})
+
+		zoomableSvg.on('mouseleave', () => {
+			markerLine.attr('opacity', 0)
+			markerDot.attr('opacity', 0)
+			markerHorizontalLine.attr('opacity', 0)
+
+			const lastDatum = data[data.length - 1]
+
+
+
+			d3.select('#mars-container').select('#data-heading').text('Average Temperature on Mars')
+			d3.select('#mars-container').select('#data-total').text(yAccessor(lastDatum))
+		})
+
+
+
+
+		// Append a 'g' element to the SVG
+		const resetButtonGroup = svg.append('g')
+			.attr('class', 'reset-button-group')
+		//.attr('transform', `translate(${dimensions.marginLeft }, 0)`); // Adjust the position as needed
+		// Create the reset button and append it to the 'g' element
+		const resetButton = resetButtonGroup.append('image')
+			.attr('xlink:href', zoomIcon) // Replace 'path/to/your/image.svg' with the actual path to your SVG image
+			.attr('width', 50)
+			.attr('height', 20)
+			.attr('class', 'reset-button')
+			.attr('transform', `translate(${dimensions.width - dimensions.marginLeft - dimensions.marginRight - 33}, 0)`) // Adjust the position as needed
+
+			.style('cursor', 'pointer')
+			.on('click', reset);
+
+
+		// Add click event listener to the button
+		resetButton.select('button').on('click', reset);
+
+
+
+		function reset() {
+
+			markerLine.attr('opacity', 0)
+			markerDot.attr('opacity', 0)
+			markerHorizontalLine.attr('opacity', 0)
+
+			lineGenerator.x((d) => newXScale(xAccessor(d)))
+				.y((d) => newYScale(yAccessor(d)))
+				.curve(d3.curveBumpX)
+			// Update average temperature line
+
+			// Update the line path based on the new scales
+			svg.select('.line')
+				.data([d3.range(data.length)])
+				.attr('d', lineGenerator(data))
+				.attr('stroke', 'white') // Update stroke color if needed
+				.attr('stroke-linejoin', 'round')
+				.attr('fill', 'none');
+			//zoom out
+			d3.select(svg as any).transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+
+		}
+
+		// Create a rect to capture zoom events
+		zoomableSvg.append('rect')
+			.attr('x', 0)
+			.attr('y', dimensions.marginTop)
+			.attr('width', dimensions.width - dimensions.marginLeft - dimensions.marginRight)
+			.attr('height', dimensions.height - dimensions.marginBottom - dimensions.marginTop)
+			.style('fill', 'none')
+			.style('pointer-events', 'all');
+
+
+		let newXScale = xScale;
+		let newYScale = yScale;
+
+		function zoomed(event: d3.D3ZoomEvent<SVGElement, unknown>) {
+			// Update xScale and yScale based on the zoom event, clamping to the original domain
+			const newTransform = event.transform;
+			newXScale = newTransform.rescaleX(xScale);
+			newYScale = newTransform.rescaleY(yScale);
+
+			const zoomLevel = newTransform.k;
+
+			// Adjust tick format based on zoom level
+			if (zoomLevel <= 1) {
+				xAxis.tickFormat(d3.timeFormat('%b')); // Adjust to your desired format after zooming in
+			} else {
+
+				xAxis.tickFormat(d3.timeFormat('%b %d')); // Adjust to your desired format after zooming in
+			}
+
+
+			// Update x-axis ticks to display labels for the visible data points
+			(svg.select('.x-axis') as d3.Selection<SVGGElement, any, any, any>)
+				//.attr('transform', `translate(0,${dimensions.height - dimensions.marginBottom - dimensions.marginTop})`) // Adjust the y value
+				.call(xAxis.scale(newXScale))
+				.selectAll('text')
+				.attr('transform', 'rotate(-45)')
+				.style('text-anchor', 'end');
+
+
+
+			// Calculate the new visible data range based on the updated scales
+
+			const visibleData = data.filter((d: TemperatureData) => {
+				const x = xAccessor(d);
+
+				const xDomain = newXScale.domain();
+				if (xDomain && xDomain[0] && xDomain[1]) {
+					return x >= xDomain[0] && x <= xDomain[1];
+				} else {
+					// Handle the case when xDomain is undefined
+					return false; // Or whatever makes sense in your context
+				}
+			});
+
+			// Update the domain of the yScale based on the visible data range
+			const yDomain = [d3.min(visibleData, yAccessor) || 0, d3.max(visibleData, yAccessor) || 1];
+			newYScale.domain(yDomain);
+
+			(svg.select('.y-axis') as d3.Selection<SVGGElement, any, any, any>)
+			.call(yAxis.scale(newYScale));
+
+			/* Line */
+			lineGenerator.x((d) => newXScale(xAccessor(d)))
+				.y((d) => newYScale(yAccessor(d)))
+				.curve(d3.curveBumpX)
+			// Update average temperature line
+
+			// Update the line path based on the new scales
+			svg.select('.line')
+				.data([d3.range(data.length)])
+				.attr('d', lineGenerator(visibleData))
+				.attr('stroke', 'white') // Update stroke color if needed
+				.attr('stroke-linejoin', 'round')
+				.attr('fill', 'none');
+
+			// Inside the zoomed function
+			const [posX, posY] = d3.pointer(event, svg.node());
+			const date = newXScale.invert(posX);
+
+			// Find the corresponding data point in the visible data
+			const index = bisect.center(visibleData, date);
+			const d = visibleData[index];
+			const x = newXScale(xAccessor(d));
+			const y = newYScale(yAccessor(d));
+
+			// Update marker positions
+			markerLine.attr('x1', x).attr('x2', x).attr('opacity', 1);
+			markerDot.attr('cx', x).attr('cy', y).attr('opacity', 1);
+			markerHorizontalLine.attr('y1', y).attr('y2', y).attr('opacity', 1);
+
+
+			// Update tooltip text
+			d3.select('#mars-container').select('#data-heading').text(getText(d));
+			d3.select('#mars-container').select('#data-total').text(yAccessor(d));
+		}
+
+	}
+	draw(data);
 }

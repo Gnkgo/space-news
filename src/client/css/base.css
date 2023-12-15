@@ -29,7 +29,7 @@ footer {
 }
 
 .grey-box {
-  background-color: rgba(55, 55, 55, 0.6);
+  background-color: rgba(102, 102, 102, 0.6);;
   border-radius: 8px;
   text-align: left;
 
@@ -37,14 +37,14 @@ footer {
   color: white;
   margin: 10px;
   line-height: normal;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 
   align-items: baseline;
   height: fit-content;
 
   & h1 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     color: white;
   }
 
@@ -58,7 +58,7 @@ footer {
 
 .title-box {
   grid-area: title;
-  font-size: 2rem;
+  font-size: 1.6rem;
 
   justify-self: center;
   & .grey-box {
@@ -103,6 +103,17 @@ footer {
 
   & img {
     height: calc(85 * var(--unit));
+  }
+
+  & h1 {
+    justify-content: center;
+    margin: 20px;
+
+  }
+
+  & p {
+    justify-content: center;
+    margin: 20px;
   }
 
   .close {
@@ -158,6 +169,10 @@ footer {
 }
 
 @media screen and (max-width: 660px) {
+  & .image {
+    width:50vw;
+    height: 50vw;
+  }
   .image-container {
     font-size: 10pt;
 
@@ -188,8 +203,21 @@ footer {
   }
 
   & .grey-box {
+
+    & h1 {
+      font-size: 12pt;
+    }
+
     & h3 {
       font-size: 12pt;
     }
   }
+}
+
+.tooltip {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  opacity: 0;
 }

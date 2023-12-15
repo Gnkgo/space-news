@@ -2,6 +2,7 @@ import { HOME_COMPONENT_ID, getUserLocation, tryShowTutorial } from "./base";
 //import { createAndOpenTutoralModal } from "./mars/modal";
 import { initMoon } from "./backend_dependent/moon";
 import "@fortawesome/fontawesome-free/css/all.css";
+import { createModal, openModal } from "./mars/modal";
 
 //Display Tutorial for NEW user
 //if(!localStorage.getItem("notFirstTimeUser")) createAndOpenTutoralModal();
@@ -23,33 +24,49 @@ moon?.addEventListener('click', () => showPlanetInformation('moon'));
 
 //Add click-eventlistener for sun gimmick
 const sun = document.getElementById('sun') as HTMLImageElement;
-sun?.addEventListener('click', () => showSunEasterEgg(sun));
+let clickCount = 0;
 
+sun?.addEventListener('click', () => {
+    showSunEasterEgg(sun);
+    clickCount++;
 
+    if (clickCount === 3 || clickCount === 20 || clickCount === 30) {
+        sun.classList.add("explosion");
+
+        setTimeout(() => {
+            sun.classList.remove("explosion");
+
+        }, 2000);
+        setTimeout(() => {
+            createModal();
+            openModal("", null, false, true);
+        }, 2000);
+    }
+});
 
 async function showPlanetInformation(planet: string) {
-        const homeContainer = document.getElementById("home-container");
-        if(homeContainer){
-            homeContainer.style.display = 'none';
-        }
+    const homeContainer = document.getElementById("home-container");
+    if (homeContainer) {
+        homeContainer.style.display = 'none';
+    }
 
     switch (planet) {
         case 'mars':
             const marsContainer = document.getElementById('mars-container');
-            if(marsContainer){
+            if (marsContainer) {
                 marsContainer.style.display = 'grid';
             }
             break;
-    
+
         case 'neo':
             const neoContainer = document.getElementById('neo-container');
-            if(neoContainer){
+            if (neoContainer) {
                 neoContainer.style.display = 'grid';
             }
             break;
         case 'moon':
             const moonContainer = document.getElementById('moon-container');
-            if(moonContainer){
+            if (moonContainer) {
                 moonContainer.style.display = 'grid';
                 const location = await getUserLocation();
                 initMoon(location);
