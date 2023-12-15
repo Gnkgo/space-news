@@ -144,23 +144,37 @@ This will help you have a clearer overview of what you are currently doing, trac
 ##### Moon:
 - Better layout
 
-## Questions Meeting
-- Better ticks in the graph?
-- How to run it in Github -> How to deploy it?
-  - Displaying of pictures do not work
-  - public folder outside src?
-- Do we need to copy paste it to Gitlab? 
+##### Struggles:
+- D3 and the temperature graph
+
+### 30. November 2023 - 7. December 2023
+#### Gnkgo:
+##### Mars:
+- Better temperature graph with lines
+  - Displays the temperature and date when hover over it
+- Pictures from rovers with modals
+
+
+##### Moon:
+- Better images
+- Different Layout
+
+
 
 ## Versioning
-Create stable versions of your code each week by using gitlab tags.\
-Take a look at [Gitlab Tags](https://docs.gitlab.com/ee/topics/git/tags.html) for more details. 
 
-Then list here the weekly tags. \
-We will evaluate your code every week, based on the corresponding version.
+[20. November 2023, v0.0.0](https://github.com/Gnkgo/space-news/releases/tag/v0.0.0)
 
-Tags:
-- Moon
-- Mars
+[27. November 2023, v0.1.0](https://github.com/Gnkgo/space-news/releases/tag/v0.1.0)
+
+[4. November 2023, v0.2.0](https://github.com/Gnkgo/space-news/releases/tag/v0.2.0)
+
+[10. November 2023, v1.0.0](https://github.com/Gnkgo/space-news/releases/tag/v1.0.0)
+
+[15. Dezember 2023, v1.1.1](https://github.com/Gnkgo/space-news/releases/tag/v1.1.1)
+
+
+
 
 
 
