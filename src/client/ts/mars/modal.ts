@@ -18,7 +18,7 @@ export function openModal(photos: any, data : MarsData | null, isRover : boolean
     text.textContent = "THANK YOU FOR VISITING MILKYWAY!";
     const paragraph = document.createElement("p");
     paragraph.textContent = `We hope you enjoyed your stay. Please come back soon!
-    A huge thanks goes to the best team: VaBaal, Gnkgo, and Nick. Thanks for all the discussions, the meetings, and for pulling off this crazy website!
+    A huge thanks goes to the best team: DeValdi, Gnkgo, and Nick. Thanks for all the discussions, the meetings, and for pulling off this crazy website!
     A lot of work and time (and some tears because crappy CSS is still new to some of the team members), and we are ready to show the world our creation!
     Thanks to everyone outside the team who helped us achieve it!
     A special thanks goes to NoRelect who showed us important tips and tricks! It is always a pleasure to work with you!
