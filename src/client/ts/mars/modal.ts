@@ -105,14 +105,14 @@ export function createModal(title?: string, multiObjectModal?: boolean): void {
     leftArrow.id = "left-arrow";
     leftArrow.className = "switch-modal-object-button fa-solid fa-angle-left";
     leftArrow.addEventListener('click', () => showNextImage(-1));
-    leftArrow.addEventListener('keypress', (e: KeyboardEvent) => {if (e.key == "37"/*left arrow*/) showNextImage(-1);});
+    document.addEventListener('keydown', (e: KeyboardEvent) => {if (e.key == "ArrowLeft") showNextImage(-1);});
     modal.appendChild(leftArrow);
 
     const rightArrow = document.createElement("i");
     rightArrow.id = "right-arrow";
     rightArrow.className = "switch-modal-object-button fa-solid fa-angle-right";
     rightArrow.addEventListener('click', () => showNextImage(+1));
-    leftArrow.addEventListener('keypress', (e: KeyboardEvent) => {if (e.key == "39"/*right arrow*/) showNextImage(+1);});
+    document.addEventListener('keydown', (e: KeyboardEvent) => {if (e.key == "ArrowRight") showNextImage(+1);});
     modal.appendChild(rightArrow);
 
     //Add Object counter
@@ -133,5 +133,5 @@ function showNextImage(step: number){
 
   //adjust modal carousel counter
   const modalCarouselCounter = document.getElementById("modal-carousel-counter");
-  if(modalCarouselCounter) modalCarouselCounter.textContent = `${currentModalImageIndex + step}/${photoArrayLength}`;
+  if(modalCarouselCounter) modalCarouselCounter.textContent = `${currentModalImageIndex + 1}/${photoArrayLength}`;
 }
