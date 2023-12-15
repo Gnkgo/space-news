@@ -33,15 +33,11 @@ neo.id = 'neo';
 neo.src = earth;
 
 function displaySpinningEarth() {
-
-
     const spinningEarth = document.getElementById('spinning-earth-container');
     const neoContainer = document.getElementById('neo-container');
-
     console.log("SPIN TEST", spinningEarth?.style.display);
     if (neoContainer) {
         neoContainer.style.display = 'none';
-
     }
     if (spinningEarth) {
         spinningEarth.style.display = 'block';

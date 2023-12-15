@@ -1,5 +1,5 @@
 import { ComposedRTSMatrix } from "./affine-matrix";
-import { linAlg, mat4, vec4 } from "./global";
+import { linAlg, mat4, vec4 } from "./math";
 import { SPHERE_MODEL, Model, PIN_MODEL } from "./models";
 import { EARTH_TEXTURE, METEORITE_TEXTURE } from "./textures";
 

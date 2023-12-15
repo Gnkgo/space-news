@@ -1,5 +1,5 @@
 import { ComposedRTSMatrix } from "./affine-matrix";
-import { linAlg, mat4, vec4 } from "./global";
+import { linAlg, mat4, vec4 } from "./math";
 import { CROSSHAIR_MESH, INVERSE_TRIANGLE_MESH, Mesh, SPHERE_MESH, STAR_MESH, TRIANGLE_MESH } from "./meshes";
 
 export class Model {

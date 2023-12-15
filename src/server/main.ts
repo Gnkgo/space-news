@@ -172,7 +172,7 @@ const marsWeatherApi = regUrlApi<MarsWeatherReq, MarsWeatherRes>({
   },
   log: logCreate("mars_weather"),
 });
-cacheCreateDaily("mars_weather", marsWeatherApi, [{}]);
+cacheCreateDaily("mars_weather", marsWeatherApi, [() => { return {}; }]);
 
 // Mars Rover Photos API
 const marsRoverPhotosApi = regUrlApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({

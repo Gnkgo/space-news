@@ -1,4 +1,4 @@
-import { vec3, vec4, vec2, linAlg } from "./global";
+import { vec3, vec4, vec2, linAlg } from "./math";
 
 const meshes: Mesh[] = [];
 function addMesh(mesh: Mesh): Mesh {

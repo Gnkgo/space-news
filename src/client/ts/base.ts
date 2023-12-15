@@ -269,3 +269,51 @@ export function getUserLocation(): Promise<number[]> {
 export function modulo(n: number, m: number) {
     return ((n % m) + m) % m;
 }
+
+/**
+ * Closes a modal element by hiding it.
+ * @param modalId The HTML id of the modal element.
+ */
+export function closeModal(modalId: string): void {
+    const modal = document.getElementById(modalId) as HTMLElement;
+    modal.style.display = "none";
+}
+
+/**
+ * Creates and opens a modal tutorial for the given component.
+ * @param componentId The id of the componenst (limited to the range 0-15 or 0-31, dunno).
+ * @param dict An object providing different texts for different languages. If more specific language
+ * tags are added (like 'en-US' besides just 'en'), they need to be ordered BEFORE their less specific
+ * counterpart(s). The language tag 'en' is mandatory, as it is the default option.
+ */
+export function tryShowTutorial(componentId: number, dict: {"en" : string, [lang: string] : string}) {
+    const bit = 1 << componentId;
+    const getClosedTutorials = () => Number.parseInt(localStorage.getItem("closedTutorials") ?? "0");
+    if ((getClosedTutorials() & bit) > 0)
+        return;
+    const modal = document.createElement("div") as HTMLDivElement;
+    modal.id = `tutorial-modal-${componentId}`;
+    modal.className = "modal";
+    const listeners: { closeOnClick?: (e: MouseEvent) => void, closeOnEscape?: (e: KeyboardEvent) => void } = {};
+    const close = () => {
+        localStorage.setItem("closedTutorials", (getClosedTutorials() | bit).toString());
+        closeModal(modal.id);
+        document.removeEventListener("click", listeners.closeOnClick!);
+        document.removeEventListener("keyup", listeners.closeOnEscape!);
+    }
+    listeners.closeOnClick = (_e: MouseEvent) => close();
+    listeners.closeOnEscape = (e: KeyboardEvent) => { if (e.key == "Escape") close(); };
+    modal.addEventListener("click", listeners.closeOnClick);
+    document.addEventListener("keyup", listeners.closeOnEscape);  
+    const prompt = document.createElement("h2") as HTMLHeadingElement;
+    const language = navigator.language;
+    prompt.innerHTML = `${Object.entries(dict).find(([lang, _text]) => language.startsWith(lang))?.[1] ?? dict["en"]}`;
+    modal.appendChild(prompt);
+    document.body.appendChild(modal);
+    modal.style.display = "flex";
+}
+export const HOME_COMPONENT_ID = 0;
+export const MARS_COMPONENT_ID = 1;
+export const MOON_COMPONENT_ID = 2;
+export const NEO_COMPONENT_ID = 3;
+export const SPINNING_EARTH_COMPONENT_ID = 4;

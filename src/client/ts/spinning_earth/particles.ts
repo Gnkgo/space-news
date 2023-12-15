@@ -1,5 +1,5 @@
 import { Matrix4D } from "../../../common/linalg";
-import { linAlg, mat4, vec4 } from "./global";
+import { linAlg, mat4, vec4 } from "./math";
 import { Model, STAR_MODEL, TRIANGLE_MODEL } from "./models";
 
 export class Particle {

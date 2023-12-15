@@ -30,7 +30,7 @@ export type Cache<TReq, TRes> = {
      */
     readonly ttl: number,
     readonly api: ApiDef<TReq, TRes>
-    readonly autoFetched: TReq[]
+    readonly autoFetched: (() => TReq)[]
 }
 const cachesPerTtl: Map<number, Cache<any, any>[]> = new Map<number, Cache<any, any>[]>();
 function _cacheInit<TReq, TRes>(cache: Cache<TReq, TRes>): void {
@@ -45,9 +45,12 @@ function _cacheInit<TReq, TRes>(cache: Cache<TReq, TRes>): void {
     };
 }
 async function _cacheAutoFetch<TReq, TRes>(cache: Cache<TReq, TRes>): Promise<void> {
-    for (const req of cache.autoFetched)
+    let req: TReq;
+    for (const reqFunc of cache.autoFetched) {
+        req = reqFunc();
         if (_cacheGet(cache, req) == undefined)
             await apiFetchNew(cache.api, req).then((res) => _cacheSet(cache, req, res));
+    }      
 }
 function _cacheSetTimeout(ttl: number): void {
     const caches = cachesPerTtl.get(ttl);
@@ -71,7 +74,7 @@ function _cacheSetTimeout(ttl: number): void {
  * @param autoFetched The responses that should be auto-fetched when the cache is cleared.
  * @returns The cache.
  */
-export function cacheCreate<TReq, TRes>(name: string, ttl: number, api: ApiDef<TReq, TRes>, autoFetched: TReq[]): Cache<TReq, TRes> {
+export function cacheCreate<TReq, TRes>(name: string, ttl: number, api: ApiDef<TReq, TRes>, autoFetched: (() => TReq)[]): Cache<TReq, TRes> {
     const cache = {
         path: `./api_caches/${name}.json`,
         entries: new Map<string, TRes>(),
@@ -98,7 +101,7 @@ const minuteMillis = 60 * 1000;
  * @param autoFetched The responses that should be auto-fetched when the cache is cleared.
  * @returns The cache.
  */
-export function cacheCreateMinutely<TReq, TRes>(name: string, api: ApiDef<TReq, TRes>, autoFetched: TReq[] = []): Cache<TReq, TRes> {
+export function cacheCreateMinutely<TReq, TRes>(name: string, api: ApiDef<TReq, TRes>, autoFetched: (() => TReq)[] = []): Cache<TReq, TRes> {
     return cacheCreate(name, minuteMillis, api, autoFetched);
 }
 const dayMillis = 24 * 60 * minuteMillis;
@@ -109,7 +112,7 @@ const dayMillis = 24 * 60 * minuteMillis;
  * @param autoFetched The responses that should be auto-fetched when the cache is cleared.
  * @returns The cache.
  */
-export function cacheCreateDaily<TReq, TRes>(name: string, api: ApiDef<TReq, TRes>, autoFetched: TReq[] = []): Cache<TReq, TRes> {
+export function cacheCreateDaily<TReq, TRes>(name: string, api: ApiDef<TReq, TRes>, autoFetched: (() => TReq)[] = []): Cache<TReq, TRes> {
     return cacheCreate(name, dayMillis,api, autoFetched);
 }
 const weekMillis = 7 * dayMillis;
@@ -120,7 +123,7 @@ const weekMillis = 7 * dayMillis;
  * @param autoFetched The responses that should be auto-fetched when the cache is cleared.
  * @returns The cache.
  */
-export function cacheCreateWeekly<TReq, TRes>(name: string, api: ApiDef<TReq, TRes>, autoFetched: TReq[] = []): Cache<TReq, TRes> {
+export function cacheCreateWeekly<TReq, TRes>(name: string, api: ApiDef<TReq, TRes>, autoFetched: (() => TReq)[] = []): Cache<TReq, TRes> {
   return cacheCreate(name, weekMillis, api, autoFetched);
 }
 /**

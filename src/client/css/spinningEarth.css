@@ -1,10 +1,8 @@
 #spinning-earth-container {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
     display: none;
-    
-
-    & html, body {
-        overflow: hidden;
-        height: 100%;
-        margin: 0;
-    }
+    align-items: stretch;
+    justify-content: stretch;
 }
