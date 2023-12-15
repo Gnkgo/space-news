@@ -281,7 +281,7 @@ export function closeModal(modalId: string): void {
 
 /**
  * Creates and opens a modal tutorial for the given component.
- * @param componentId The id of the componenst (limited to the range 0-15 or 0-31, dunno).
+ * @param componentId The id of the component (limited to the range 0-15 or 0-31, dunno).
  * @param dict An object providing different texts for different languages. If more specific language
  * tags are added (like 'en-US' besides just 'en'), they need to be ordered BEFORE their less specific
  * counterpart(s). The language tag 'en' is mandatory, as it is the default option.
