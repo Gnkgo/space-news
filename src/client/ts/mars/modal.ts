@@ -104,29 +104,15 @@ export function createModal(title?: string, multiObjectModal?: boolean): void {
     const leftArrow = document.createElement("i");
     leftArrow.id = "left-arrow";
     leftArrow.className = "switch-modal-object-button fa-solid fa-angle-left";
-    leftArrow.addEventListener('click', () => {
-      const newModalImageIndex = modulo((currentModalImageIndex - 1), (photoArrayLength));
-      changeElemDisplay(`modal-image-${currentModalImageIndex}`, `modal-image-${newModalImageIndex}`);
-      currentModalImageIndex = newModalImageIndex;
-      
-      //adjust modal carousel counter
-      const modalCarouselCounter = document.getElementById("modal-carousel-counter");
-      if(modalCarouselCounter) modalCarouselCounter.textContent = `${currentModalImageIndex + 1}/${photoArrayLength}`;
-    });
+    leftArrow.addEventListener('click', () => showNextImage(-1));
+    leftArrow.addEventListener('keypress', (e: KeyboardEvent) => {if (e.key == "37"/*left arrow*/) showNextImage(-1);});
     modal.appendChild(leftArrow);
 
     const rightArrow = document.createElement("i");
     rightArrow.id = "right-arrow";
     rightArrow.className = "switch-modal-object-button fa-solid fa-angle-right";
-    rightArrow.addEventListener('click', () => {
-      const newModalImageIndex = modulo((currentModalImageIndex + 1), (photoArrayLength));
-      changeElemDisplay(`modal-image-${currentModalImageIndex}`, `modal-image-${newModalImageIndex}`);
-      currentModalImageIndex = newModalImageIndex;
-
-      //adjust modal carousel counter
-      const modalCarouselCounter = document.getElementById("modal-carousel-counter");
-      if(modalCarouselCounter) modalCarouselCounter.textContent = `${currentModalImageIndex + 1}/${photoArrayLength}`;
-    });
+    rightArrow.addEventListener('click', () => showNextImage(+1));
+    leftArrow.addEventListener('keypress', (e: KeyboardEvent) => {if (e.key == "39"/*right arrow*/) showNextImage(+1);});
     modal.appendChild(rightArrow);
 
     //Add Object counter
@@ -140,26 +126,12 @@ export function createModal(title?: string, multiObjectModal?: boolean): void {
   document.body.appendChild(modal);
 }
 
-export function createAndOpenTutoralModal(){
-  let modal = document.createElement("div") as HTMLDivElement;
-  modal.id = "tutorial-modal";
-  modal.className = "modal";
-  modal.addEventListener('click', () => {
-    localStorage.setItem("notFirstTimeUser", 'true');
-    closeModal("tutorial-modal")
-  });
-  document.addEventListener('keyup', (e) => {
-    if(e.key == "Escape") {
-      localStorage.setItem("notFirstTimeUser", 'true');
-      closeModal("tutorial-modal");
-    }
-  });
+function showNextImage(step: number){
+  const newModalImageIndex = modulo((currentModalImageIndex + step), (photoArrayLength));
+  changeElemDisplay(`modal-image-${currentModalImageIndex}`, `modal-image-${newModalImageIndex}`);
+  currentModalImageIndex = newModalImageIndex;
 
-  //Add tutorial text to modal
-  const prompt = document.createElement("h2") as HTMLHeadingElement;
-  prompt.innerHTML = "<i class=\"fa-solid fa-arrow-pointer\"></i> Click any celestial body to get more information.";
-  modal.appendChild(prompt);
-
-  document.body.appendChild(modal);
-  modal.style.display = "flex";
+  //adjust modal carousel counter
+  const modalCarouselCounter = document.getElementById("modal-carousel-counter");
+  if(modalCarouselCounter) modalCarouselCounter.textContent = `${currentModalImageIndex + step}/${photoArrayLength}`;
 }
