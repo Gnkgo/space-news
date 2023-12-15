@@ -12,8 +12,6 @@ export function openModal(photos: any, data : MarsData | null, isRover : boolean
   let modalWeatherBox = document.getElementById("modalText") as HTMLElement;
   console.log("modalOUT", modal);
 
-
-
   if (easteregg) {
     const text = document.createElement("h1");
     text.textContent = "THANK YOU FOR VISITING MILKYWAY!";
@@ -70,9 +68,7 @@ export function openModal(photos: any, data : MarsData | null, isRover : boolean
   }
   modal.style.display = "flex";
 
-
 }
-  
   
 export function closeModal(modalId: string): void {
   const modal = document.getElementById(modalId) as HTMLElement;
@@ -82,7 +78,6 @@ export function closeModal(modalId: string): void {
   if(arrowKeylisteners.leftArrowKeyDown) document.removeEventListener('keydown', arrowKeylisteners.leftArrowKeyDown);
   if(arrowKeylisteners.rightArrowKeyDown) document.removeEventListener('keydown', arrowKeylisteners.rightArrowKeyDown);
 }
-  
   
 export function createModal(title?: string, multiObjectModal?: boolean): void {
   let modal = document.getElementById("myModal") as HTMLElement;
