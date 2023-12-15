@@ -4,6 +4,7 @@ import { createInnerWeatherBox } from "./todayWeatherBox";
 
 let currentModalImageIndex = 0;
 let photoArrayLength: number;
+const arrowKeylisteners: { rightArrowKeyDown?: (e: KeyboardEvent) => void, leftArrowKeyDown?: (e: KeyboardEvent) => void } = {};
 
 export function openModal(photos: any, data : MarsData | null, isRover : boolean, easteregg : boolean): void {
   let modal = document.getElementById("myModal") as HTMLElement;
@@ -76,6 +77,10 @@ export function openModal(photos: any, data : MarsData | null, isRover : boolean
 export function closeModal(modalId: string): void {
   const modal = document.getElementById(modalId) as HTMLElement;
   modal.style.display = "none";
+
+  //Remove keypress eventlistener from cyclable image carousel
+  if(arrowKeylisteners.leftArrowKeyDown) document.removeEventListener('keydown', arrowKeylisteners.leftArrowKeyDown);
+  if(arrowKeylisteners.rightArrowKeyDown) document.removeEventListener('keydown', arrowKeylisteners.rightArrowKeyDown);
 }
   
   
@@ -105,14 +110,16 @@ export function createModal(title?: string, multiObjectModal?: boolean): void {
     leftArrow.id = "left-arrow";
     leftArrow.className = "switch-modal-object-button fa-solid fa-angle-left";
     leftArrow.addEventListener('click', () => showNextImage(-1));
-    document.addEventListener('keydown', (e: KeyboardEvent) => {if (e.key == "ArrowLeft") showNextImage(-1);});
+    arrowKeylisteners.leftArrowKeyDown = (e: KeyboardEvent) => {if (e.key == "ArrowLeft") showNextImage(-1);};
+    document.addEventListener('keydown', arrowKeylisteners.leftArrowKeyDown);
     modal.appendChild(leftArrow);
 
     const rightArrow = document.createElement("i");
     rightArrow.id = "right-arrow";
     rightArrow.className = "switch-modal-object-button fa-solid fa-angle-right";
     rightArrow.addEventListener('click', () => showNextImage(+1));
-    document.addEventListener('keydown', (e: KeyboardEvent) => {if (e.key == "ArrowRight") showNextImage(+1);});
+    arrowKeylisteners.rightArrowKeyDown = (e: KeyboardEvent) => {if (e.key == "ArrowRight") showNextImage(+1);}
+    document.addEventListener('keydown', arrowKeylisteners.rightArrowKeyDown);
     modal.appendChild(rightArrow);
 
     //Add Object counter
