@@ -1,10 +1,15 @@
-import { getUserLocation } from "./base";
-import { createAndOpenTutoralModal } from "./mars/modal";
+import { HOME_COMPONENT_ID, getUserLocation, tryShowTutorial } from "./base";
+//import { createAndOpenTutoralModal } from "./mars/modal";
 import { initMoon } from "./backend_dependent/moon";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 //Display Tutorial for NEW user
-if(!localStorage.getItem("notFirstTimeUser")) createAndOpenTutoralModal();
+//if(!localStorage.getItem("notFirstTimeUser")) createAndOpenTutoralModal();
+localStorage.clear();
+tryShowTutorial(HOME_COMPONENT_ID, {
+    "en": "<i class=\"fa-solid fa-arrow-pointer\"></i> Click any celestial body to get more information.",
+    "de": "<i class=\"fa-solid fa-arrow-pointer\"></i> Klicken Sie auf einen Himmelskörper, um zusätzliche Informationen zu erhalten."
+})
 
 //Add click-eventlistener to planets
 const mars = document.getElementById('mars');

@@ -1,5 +1,5 @@
-import { ComposedMTMatrix } from "./affine-matrix";
-import { mat4 } from "./global";
+import { ComposedMTMatrix } from "./camera";
+import { mat4 } from "./math";
 import { Particle, StarParticle } from "./particles";
 import { getRandomVec4 } from "./util";
 

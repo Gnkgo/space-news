@@ -1,4 +1,4 @@
-import { vec4 } from "./global";
+import { vec4 } from "./math";
 
 function initShader(gl: WebGL2RenderingContext, vsSource: string, fsSource: string): WebGLProgram {
     const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource)!;
@@ -83,7 +83,7 @@ const vsSourceEntity = /*glsl*/ `#version 300 es
         
         // the intensity is proportional to the angle between the surface and the light direction
         float diffuseIntensity = dot(normal, vecToLight);
-        diffuseIntensity = 0.8 * clamp(diffuseIntensity, 0.0, 1.0);
+        diffuseIntensity = 0.6 * clamp(diffuseIntensity, 0.0, 1.0);
         
         return diffuseIntensity;
     }
@@ -93,7 +93,7 @@ const vsSourceEntity = /*glsl*/ `#version 300 es
         gl_Position = uPerspectiveMatrix * aVertexPosition;
 
         // === very simplistic lighting model ===
-        float ambientIntensity = 0.2; // controls how much ambient light there is in the scene, some value between 0.0 and 1.0
+        float ambientIntensity = 0.4; // controls how much ambient light there is in the scene, some value between 0.0 and 1.0
         float diffuseIntensity = computeDiffuseIntens(aVertexPosition, aVertexNormal, uLightPos); // accounts for direct light
         light = diffuseIntensity + ambientIntensity;
         vColor = aVertexColor;

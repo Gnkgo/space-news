@@ -28,7 +28,7 @@ class Stack<T> {
         this._arr = initial;
     }
 
-    public using<R>(supplier: () => T, consumer: (value: T) => R): R {
+    /*public using<R>(supplier: () => T, consumer: (value: T) => R): R {
         let value: T
         if (this._index < this._arr.length)
             value = this._arr[this._index++]!;
@@ -37,6 +37,18 @@ class Stack<T> {
         const res = consumer(value);
         --this._index;
         return res;
+    }*/
+
+    public push(value: T): void {
+        this._arr[--this._index] = value;
+    }
+
+    public pop(supplier: () => T): T {
+        if (this._index < this._arr.length)
+            return this._arr[this._index++]!;
+        const value = supplier();
+        this._index = this._arr.push(value);
+        return value;
     }
 
     public size(): number {
@@ -85,6 +97,10 @@ export interface IMatrixIterator {
      * Jump back to the start of the current column. Returns the iterator.
      */
     resetCol(): IMatrixIterator;
+    /**
+     * Gets the layout of matrices this iterator can loop over.
+     */
+    layout(): MatrixDataLayout;
 }
 class _RowMajorIterator implements IMatrixIterator {
     private n: number = 0;
@@ -116,6 +132,9 @@ class _RowMajorIterator implements IMatrixIterator {
         this.index = this.col - this.n;
         return this;
     }
+    layout(): MatrixDataLayout {
+        return MatrixDataLayout.ROW_MAJOR;
+    }
 }
 class _ColMajorIterator implements IMatrixIterator {
     private m: number = 0;
@@ -146,6 +165,9 @@ class _ColMajorIterator implements IMatrixIterator {
     }
     resetCol() {
         return this.jumpRows(-(this.row + 1));
+    }
+    layout(): MatrixDataLayout {
+        return MatrixDataLayout.COL_MAJOR;
     }
 }
 
@@ -461,14 +483,12 @@ export class _Affine<T> {
      * @returns The modified translation matrix.
      */
     translate<N extends number, NMinusOne extends N | _Subtract<N, 1>>(mat: IMatrix<N, N, T>, vec: Vector<NMinusOne, T>): IMatrix<N, N, T> {
-        this.linAlg.usingMatIt(mat, (aIt) => {
-            aIt.jumpCols(mat.n);
-            this.linAlg.usingMatIt(vec, (bIt) => {
-                bIt.jumpCols();
-                for (let i = 0; i < mat.m - 1; ++i)
-                    mat.data[aIt.jumpRows().current()] = vec.data[bIt.jumpRows().current()]!;
-            });
-        });
+        const aIt = this.linAlg.popMatIt(mat).jumpCols(mat.n);
+        const bIt = this.linAlg.popMatIt(vec).jumpCols();
+        for (let i = 0; i < mat.m - 1; ++i)
+            mat.data[aIt.jumpRows().current()] = vec.data[bIt.jumpRows().current()]!;
+        this.linAlg.pushIt(bIt);
+        this.linAlg.pushIt(aIt);
         return mat;
     }
 };
@@ -556,41 +576,46 @@ export class LinAlg<T> {
             this.layout = layout;
         }
         get(i: number, j: number): T {
-            return this.data[this.linAlg.usingMatIt(this, (it) => it.at(i, j))]!;
+            const it = this.linAlg.popMatIt(this);
+            const value = this.data[it.at(i, j)]!;
+            this.linAlg.pushIt(it);
+            return value;
         }
         set(i: number, j: number, v: T): T {
-            return this.data[this.linAlg.usingMatIt(this, (it) => it.at(i, j))] = v;
+            const it = this.linAlg.popMatIt(this);
+            this.data[it.at(i, j)] = v;
+            this.linAlg.pushIt(it);
+            return v;
         }
         forEach(op: (data: SizedArray<_Multiply<M, N>, T>, i: number, j: number, ij: number) => void): IMatrix<M, N, T> {
-            this.linAlg.usingMatIt(this, (it) => {
-                for (let i = 0; i < this.m; ++i) {
-                    it.jumpRows().resetRow();
-                    for (let j = 0; j < this.n; ++j)
-                        op(this.data, i, j, it.jumpCols().current());
-                }
-            });
+            const it = this.linAlg.popMatIt(this);
+            for (let i = 0; i < this.m; ++i) {
+                it.jumpRows().resetRow();
+                for (let j = 0; j < this.n; ++j)
+                    op(this.data, i, j, it.jumpCols().current());
+            }
+            this.linAlg.pushIt(it);
             return this;
         }
         zip<P extends number, Q extends number>(p: P, q: Q, op: (selfData: SizedArray<_Multiply<M, N>, T>, otherData: SizedArray<_Multiply<P, Q>, T>, i: number, j: number, ijSelf: number, ijOther: number) => T, otherData: SizedArray<_Multiply<P, Q>, T>, otherLayout: MatrixDataLayout, target: IMatrix<M, N, T>): void {
-            //console.log("storing\r\n" + otherData + "to\r\n" + target + "\r\n");
-            this.linAlg.usingMatIt(this, (aIt) => {
-                this.linAlg.usingRawIt(p, q, (bIt) => {
-                    this.linAlg.usingMatIt(target, (cIt) => {
-                        const m = Math.min(this.m, p);
-                        const n = Math.min(this.n, q);
-                        for (let i = 0; i < m; ++i) {
-                            aIt.jumpRows().resetRow();
-                            bIt.jumpRows().resetRow();
-                            cIt.jumpRows().resetRow();
-                            for (let j = 0; j < n; ++j) {
-                                target.data[cIt.jumpCols().current()] = op(this.data, otherData, i, j, aIt.jumpCols().current(), bIt.jumpCols().current())
-                                //console.log(`i=${i} j=${j}: ${aIt.current()} ${bIt.current()} ${cIt.current()}\r\n`);
-                            }
-                        }
-                        //console.log("done:\r\n" + target + "\r\n")
-                    });
-                }, otherLayout);
-            });
+            const aIt = this.linAlg.popMatIt(this);
+            const bIt = this.linAlg.popRawIt(p, q, otherLayout);
+            const cIt = this.linAlg.popMatIt(target);
+            const m = Math.min(this.m, p);
+            const n = Math.min(this.n, q);
+            for (let i = 0; i < m; ++i) {
+                aIt.jumpRows().resetRow();
+                bIt.jumpRows().resetRow();
+                cIt.jumpRows().resetRow();
+                for (let j = 0; j < n; ++j) {
+                    target.data[cIt.jumpCols().current()] = op(this.data, otherData, i, j, aIt.jumpCols().current(), bIt.jumpCols().current())
+                    //console.log(`i=${i} j=${j}: ${aIt.current()} ${bIt.current()} ${cIt.current()}\r\n`);
+                }
+            }
+            //console.log("done:\r\n" + target + "\r\n")
+            this.linAlg.pushIt(cIt);
+            this.linAlg.pushIt(bIt);
+            this.linAlg.pushIt(aIt);
         }
         load<P extends number, Q extends number>(p: P, q: Q, data: SizedArray<_Multiply<P, Q>, T>, layout: MatrixDataLayout = this.linAlg.defaultLayout) {
             this.zip<P, Q>(p, q, (_selfData, otherData, _i, _j, _ijSelf, ijOther) => otherData[ijOther]!, data, layout, this);
@@ -648,39 +673,38 @@ export class LinAlg<T> {
         dot(other: IMatrix<M, N, T>): T {
             const ops = this.linAlg._ops;
             let sum = ops.addId();
-            this.linAlg.usingMatIt(this, (aIt) => {
-                this.linAlg.usingMatIt(other, (bIt) => {
-                    for (let i = 0; i < this.m; ++i) {
-                        aIt.jumpRows().resetRow();
-                        bIt.jumpRows().resetRow();
-                        for (let j = 0; j < this.n; ++j) {
-                            sum = ops.add(sum, ops.dot(this.data[aIt.jumpCols().current()]!, other.data[bIt.jumpCols().current()]!));
-                        }
-                    }
-                });
-            });
+            const aIt = this.linAlg.popMatIt(this);
+            const bIt = this.linAlg.popMatIt(other);
+            for (let i = 0; i < this.m; ++i) {
+                aIt.jumpRows().resetRow();
+                bIt.jumpRows().resetRow();
+                for (let j = 0; j < this.n; ++j) {
+                    sum = ops.add(sum, ops.dot(this.data[aIt.jumpCols().current()]!, other.data[bIt.jumpCols().current()]!));
+                }
+            }
+            this.linAlg.pushIt(bIt);
+            this.linAlg.pushIt(aIt);
             return sum;
         }
         norm(): number {
             return this.linAlg._ops.norm(this.dot(this));
         }
         transposed(target: IMatrix<N, M, T> = this.linAlg.createZeroMatrix(this.n, this.m)): IMatrix<N, M, T> {
-            this.linAlg.usingMatIt(this, (aIt) => {
-                //aIt.jumpRows();
-                this.linAlg.usingRawIt(this.n, this.m, (bIt) => {
-                    this.linAlg.usingBuffer(this.n, this.m, (buf) => {
-                        for (let i = 0; i < target.m; ++i) {
-                            aIt.jumpCols().resetCol();
-                            bIt.jumpRows().resetRow();
-                            for (let j = 0; j < target.n; ++j) {
-                                buf[bIt.jumpCols().current()] = this.data[aIt.jumpRows().current()]!;
-                                //console.log(`i=${i} j=${j}: a=${aIt.current()} b=${bIt.current()}\r\n`);
-                            }
-                        }
-                        target.load(this.n, this.m, buf);
-                    });
-                });
-            });
+            const aIt = this.linAlg.popMatIt(this);
+            const bIt = this.linAlg.popRawIt(this.n, this.m);
+            const buf = this.linAlg.popBuffer(this.n, this.m);
+            for (let i = 0; i < target.m; ++i) {
+                aIt.jumpCols().resetCol();
+                bIt.jumpRows().resetRow();
+                for (let j = 0; j < target.n; ++j) {
+                    buf[bIt.jumpCols().current()] = this.data[aIt.jumpRows().current()]!;
+                    //console.log(`i=${i} j=${j}: a=${aIt.current()} b=${bIt.current()}\r\n`);
+                }
+            }
+            target.load(this.n, this.m, buf);
+            this.linAlg.pushBuffer(buf);
+            this.linAlg.pushIt(bIt);
+            this.linAlg.pushIt(aIt);
             return target;
         }
         scale(s: T): IMatrix<M, N, T> {
@@ -690,41 +714,39 @@ export class LinAlg<T> {
             });
         }
         scaleRows(s: Vector<M, T>): IMatrix<M, N, T> {
-            this.linAlg.usingMatIt(this, (aIt) => {
-                this.linAlg.usingMatIt(s, (bIt) => {
-                    bIt.jumpCols();
-                    const ops = this.linAlg._ops;
-                    let f: T;
-                    let e: T;
-                    for (let i = 0; i < this.m; ++i) {
-                        aIt.jumpRows().resetRow();
-                        f = s.data[bIt.jumpRows().current()]!;
-                        for (let j = 0; j < this.n; ++j) {
-                            e = this.data[aIt.jumpCols().current()]!;
-                            this.data[aIt.current()] = ops.mul(f, e);
-                        }
-                    }
-                });
-            });
+            const aIt = this.linAlg.popMatIt(this);
+            const bIt = this.linAlg.popMatIt(s).jumpCols();
+            const ops = this.linAlg._ops;
+            let f: T;
+            let e: T;
+            for (let i = 0; i < this.m; ++i) {
+                aIt.jumpRows().resetRow();
+                f = s.data[bIt.jumpRows().current()]!;
+                for (let j = 0; j < this.n; ++j) {
+                    e = this.data[aIt.jumpCols().current()]!;
+                    this.data[aIt.current()] = ops.mul(f, e);
+                }
+            }
+            this.linAlg.pushIt(bIt);
+            this.linAlg.pushIt(aIt);
             return this;
         }
         scaleCols(s: Vector<N, T>): IMatrix<M, N, T> {
-            this.linAlg.usingMatIt(this, (aIt) => {
-                this.linAlg.usingMatIt(s, (bIt) => {
-                    bIt.jumpCols();
-                    const ops = this.linAlg._ops;
-                    let f: T;
-                    let e: T;
-                    for (let j = 0; j < this.n; ++j) {
-                        aIt.jumpCols().resetCol();
-                        f = s.data[bIt.jumpRows().current()]!;
-                        for (let i = 0; i < this.m; ++i) {
-                            e = this.data[aIt.jumpRows().current()]!;
-                            this.data[aIt.current()] = ops.mul(f, e);
-                        }
-                    }
-                });
-            });
+            const aIt = this.linAlg.popMatIt(this);
+            const bIt = this.linAlg.popMatIt(s).jumpCols();
+            const ops = this.linAlg._ops;
+            let f: T;
+            let e: T;
+            for (let j = 0; j < this.n; ++j) {
+                aIt.jumpCols().resetCol();
+                f = s.data[bIt.jumpRows().current()]!;
+                for (let i = 0; i < this.m; ++i) {
+                    e = this.data[aIt.jumpRows().current()]!;
+                    this.data[aIt.current()] = ops.mul(f, e);
+                }
+            }
+            this.linAlg.pushIt(bIt);
+            this.linAlg.pushIt(aIt);
             return this;
         }
         normalized(target: IMatrix<M, N, T> = this.linAlg.createZeroMatrix(this.m, this.n)): IMatrix<M, N, T> {
@@ -742,14 +764,14 @@ export class LinAlg<T> {
         }
         toString(): string {
             let str = "";
-            this.linAlg.usingMatIt(this, (it) => {
-                for (let i = 0; i < this.m; ++i) {
-                    it.jumpRows().resetRow();
-                    for (let j = 0; j < this.n; ++j)
-                        str += this.data[it.jumpCols().current()] + ", ";
-                    str += "\r\n";
-                }
-            });
+            const it = this.linAlg.popMatIt(this);
+            for (let i = 0; i < this.m; ++i) {
+                it.jumpRows().resetRow();
+                for (let j = 0; j < this.n; ++j)
+                    str += this.data[it.jumpCols().current()] + ", ";
+                str += "\r\n";
+            }
+            this.linAlg.pushIt(it);
             return str;         
         }
     }
@@ -780,30 +802,35 @@ export class LinAlg<T> {
         return data as SizedArray<_Multiply<M, N>, T>;
     }
     /**
-     * Fetch and use a raw (data) iterator in the provided consumer function.
-     * @param m The row count of the iterated data.
-     * @param n The column count of the iterated data.
-     * @param consumer The consumer function.
-     * @param layout The data layout of the iterated data (the LinAlg's by default).
-     * @returns The result returned by the consumer function.
+     * Pop an iterator to raw matrix data from the stack. Remember to push it again using {@link pushIt}!
+     * @param m The row count of the matrix data.
+     * @param n The column count of the matrix data.
+     * @param layout The layout of the matrix data.
+     * @returns The iterator (already size-loaded).
      */
-    public usingRawIt<R>(m: number, n: number, consumer: (it: IMatrixIterator) => R, layout: MatrixDataLayout = this.defaultLayout): R {
+    public popRawIt(m: number, n: number, layout: MatrixDataLayout = this.defaultLayout): IMatrixIterator {
         let stack = this._iterators.get(layout);
         if (stack == undefined)
             this._iterators.set(layout, stack = new Stack());
-        return stack.using(() => { console.log("This should not happen"); return layout == MatrixDataLayout.ROW_MAJOR ? new _RowMajorIterator() : new _ColMajorIterator(); }, (it) => {
-            it.load(m, n);
-            return consumer(it);
-        });
+        const supplier = layout == MatrixDataLayout.ROW_MAJOR ? () => new _RowMajorIterator() : () => new _ColMajorIterator();
+        const it = stack.pop(() => { console.log("This should not happen"); return supplier(); });
+        it.load(m, n);
+        return it;
     }
     /**
-     * Fetch and use a matrix iterator in the provided consumer function.
-     * @param mat The iterated matrix.
-     * @param consumer The consumer function.
-     * @returns The result returned by the consumer function.
+     * Pop an iterator to a matrix from the stack. Remember to push it again using {@link pushIt}!
+     * @param mat The matrix.
+     * @returns The iterator (already size-loaded).
      */
-    public usingMatIt<R>(mat: IMatrixBase, consumer: (it: IMatrixIterator) => R): R {
-        return this.usingRawIt(mat.m, mat.n, consumer, mat.layout);
+    public popMatIt(mat: IMatrixBase): IMatrixIterator {
+        return this.popRawIt(mat.m, mat.n, mat.layout);
+    }
+    /**
+     * Push an iterator back to the stack. Used for both types of iterators after popping.
+     * @param it The iterator.
+     */
+    public pushIt(it: IMatrixIterator) {
+        this._iterators.get(it.layout())!.push(it);
     }
     /**
      * Create a new M x N matrix with the given data (can be given as an M x N two-dimensional array).
@@ -847,13 +874,13 @@ export class LinAlg<T> {
      */
     public createOnesMatrix<M extends number, N extends number>(m: M, n: N, layout: MatrixDataLayout = this.defaultLayout): IMatrix<M, N, T> {
         const mat = this.createZeroMatrix<M, N>(m, n, layout);
-        this.usingMatIt(mat, (it) => {
-            for (let i = 0; i < m; ++i) {
-                it.jumpRows().resetRow();
-                for (let j = 0; j < n; ++j)
-                    mat.data[it.jumpCols().current()] = this._ops.mulId();;
-            }
-        });
+        const it = this.popMatIt(mat);
+        for (let i = 0; i < m; ++i) {
+            it.jumpRows().resetRow();
+            for (let j = 0; j < n; ++j)
+                mat.data[it.jumpCols().current()] = this._ops.mulId();
+        }
+        this.pushIt(it);
         return mat;
     }
     /**
@@ -873,27 +900,33 @@ export class LinAlg<T> {
     public createIdentityMatrix<N extends number>(n: N, layout: MatrixDataLayout = this.defaultLayout): IMatrix<N, N, T> {
         const mat = this.createZeroMatrix<N, N>(n, n, layout);
         //console.log(mat + "\r\n");
-        this.usingMatIt(mat, (it) => {
-            for (let i = 0; i < n; ++i) {
-                mat.data[it.jumpRows().jumpCols().current()] = this._ops.mulId();
-                //console.log(it.current());
-            }
-        });
+        const it = this.popMatIt(mat);
+        for (let i = 0; i < n; ++i) {
+            mat.data[it.jumpRows().jumpCols().current()] = this._ops.mulId();
+            //console.log(it.current());
+        }
+        this.pushIt(it);
         return mat;
     }
     /**
-     * Fetch and use a buffer in the provided consumer function.
+     * Pop a buffer from the stack. Remember to push it again using {@link pushBuffer}!
      * @param m The row count of the buffer.
      * @param n The column count of the buffer.
-     * @param consumer The consumer function.
-     * @returns The result returned by the consumer function.
+     * @returns The buffer.
      */
-    public usingBuffer<M extends number, N extends number, R>(m: M, n: N, consumer: (buf: SizedArray<_Multiply<M, N>, T>) => R): R  {
+    public popBuffer<M extends number, N extends number>(m: M, n: N): SizedArray<_Multiply<M, N>, T>  {
         const length = m * n;
         let stack = this._buffers.get(length);
         if (stack == undefined)
             this._buffers.set(length, stack = new Stack());
-        return stack.using(() => { console.log("This should not happen"); return this._createMatrixData(m, n); }, (value) => consumer(value as SizedArray<_Multiply<M, N>, T>));
+        return stack.pop(() => { console.log("This should not happen"); return this._createMatrixData(m, n); }) as SizedArray<_Multiply<M, N>, T>;
+    }
+    /**
+     * Push a buffer back to the stack. 
+     * @param buf The buffer.
+     */
+    public pushBuffer<MN extends number>(buf: SizedArray<MN, T>) {
+        this._buffers.get(buf.length)!.push(buf);
     }
     /**
      * Multiply two matrices and store the result in the buffer.
@@ -907,30 +940,30 @@ export class LinAlg<T> {
         let p = b.n;
         let ops = this._ops;
         let acc: T;
-        this.usingMatIt(a, (aIt) => {
-            this.usingMatIt(b, (bIt) => {
-                this.usingRawIt(a.m, b.n, (cIt) => {
-                    for (let i = 0; i < m; ++i) {
-                        aIt.jumpRows();
-                        bIt.resetRow();
-                        cIt.jumpRows().resetRow();
-                        //console.log(`start of i=${i}: b=${bIt.current()} c=${cIt.current()}`);
-                        for (let j = 0; j < p; ++j) {
-                            acc = ops.addId();
-                            aIt.resetRow();
-                            bIt.jumpCols().resetCol();
-                            cIt.jumpCols();
-                            //console.log(`start of j=${j}: b=${bIt.current()} c=${cIt.current()}`);
-                            for (let k = 0; k < n; ++k) {
-                                acc = ops.add(acc, ops.mul(a.data[aIt.jumpCols().current()]!, b.data[bIt.jumpRows().current()]!));
-                                //console.log(`i=${i} j=${j} k=${k}: a=${aIt.current()} b=${bIt.current()} c=${cIt.current()}\r\n`);
-                            }
-                            buf[cIt.current()] = acc;
-                        }
-                    }
-                });
-            });
-        });
+        const aIt = this.popMatIt(a);
+        const bIt = this.popMatIt(b);
+        const cIt = this.popRawIt(a.m, b.n);
+        for (let i = 0; i < m; ++i) {
+            aIt.jumpRows();
+            bIt.resetRow();
+            cIt.jumpRows().resetRow();
+            //console.log(`start of i=${i}: b=${bIt.current()} c=${cIt.current()}`);
+            for (let j = 0; j < p; ++j) {
+                acc = ops.addId();
+                aIt.resetRow();
+                bIt.jumpCols().resetCol();
+                cIt.jumpCols();
+                //console.log(`start of j=${j}: b=${bIt.current()} c=${cIt.current()}`);
+                for (let k = 0; k < n; ++k) {
+                    acc = ops.add(acc, ops.mul(a.data[aIt.jumpCols().current()]!, b.data[bIt.jumpRows().current()]!));
+                    //console.log(`i=${i} j=${j} k=${k}: a=${aIt.current()} b=${bIt.current()} c=${cIt.current()}\r\n`);
+                }
+                buf[cIt.current()] = acc;
+            }
+        }
+        this.pushIt(cIt);
+        this.pushIt(bIt);
+        this.pushIt(aIt);
     }
     /**
      * Multiply two matrices and store the result in the third matrix.
@@ -940,10 +973,10 @@ export class LinAlg<T> {
      * @returns The third matrix (which has the result stored).
      */
     public mmul<M extends number, N extends number, P extends number>(a: IMatrix<M, N, T>, b: IMatrix<N, P, T>, c: IMatrix<M, P, T> = this.createZeroMatrix(a.m, b.n)): IMatrix<M, P, T> {
-        this.usingBuffer(a.m, b.n, (buf) => {
-            this.mmulBuf<M, N, P>(a, b, buf);
-            c.load(c.m, c.n, buf);
-        });
+        const buf = this.popBuffer(a.m, b.n);
+        this.mmulBuf<M, N, P>(a, b, buf);
+        c.load(c.m, c.n, buf);
+        this.pushBuffer(buf);
         return c;
     }
     /**
@@ -982,18 +1015,14 @@ export class LinAlg<T> {
          * @returns The cross product.
          */
         public cross(a: Vector<2, T>, b: Vector<2, T>): T {
-            return this.linAlg.usingMatIt(a, (aIt) => {
-                aIt.jumpCols();
-                return this.linAlg.usingMatIt(b, (bIt) => {
-                    bIt.jumpCols();
-                    const ops = this.linAlg._ops;
-                    const a00 = a.data[aIt.jumpRows().current()]!;
-                    const a10 = a.data[aIt.jumpRows().current()]!;
-                    const b00 = b.data[bIt.jumpRows().current()]!;
-                    const b10 = b.data[bIt.jumpRows().current()]!;
-                    return ops.sub(ops.mul(a00, b10), ops.mul(a10, b00));
-                });
-            })            
+            const aIt = this.linAlg.popMatIt(a).jumpCols();
+            const bIt = this.linAlg.popMatIt(b).jumpCols();
+            const ops = this.linAlg._ops;
+            const a00 = a.data[aIt.jumpRows().current()]!;
+            const a10 = a.data[aIt.jumpRows().current()]!;
+            const b00 = b.data[bIt.jumpRows().current()]!;
+            const b10 = b.data[bIt.jumpRows().current()]!;
+            return ops.sub(ops.mul(a00, b10), ops.mul(a10, b00));
         }
         /**
          * Create a 2D rotation matrix.
@@ -1005,11 +1034,11 @@ export class LinAlg<T> {
             const ops = this.linAlg._ops;
             const sin = ops.sin(angle);
             const cos = ops.cos(angle);
-            this.linAlg.usingBuffer(2, 2, (buf) => {
-                buf[0] = cos; buf[1] = ops.sub(ops.addId(), sin);
-                buf[2] = sin; buf[3] = cos;
-                mat.load(2, 2, buf, MatrixDataLayout.ROW_MAJOR);
-            });
+            const buf = this.linAlg.popBuffer(2, 2);
+            buf[0] = cos; buf[1] = ops.sub(ops.addId(), sin);
+            buf[2] = sin; buf[3] = cos;
+            mat.load(2, 2, buf, MatrixDataLayout.ROW_MAJOR);
+            this.linAlg.pushBuffer(buf);
             return mat;
         }
         /**
@@ -1022,11 +1051,11 @@ export class LinAlg<T> {
             const ops = this.linAlg._ops;
             const sin = ops.sin(angle);
             const cos = ops.cos(angle);
-            this.linAlg.usingBuffer(2, 2, (buf) => {
-                buf[0] = cos; buf[1] = ops.sub(ops.addId(), sin);
-                buf[2] = sin; buf[3] = cos;
-                mat.load(2, 2, buf, MatrixDataLayout.ROW_MAJOR);
-            });
+            const buf = this.linAlg.popBuffer(2, 2);
+            buf[0] = cos; buf[1] = ops.sub(ops.addId(), sin);
+            buf[2] = sin; buf[3] = cos;
+            mat.load(2, 2, buf, MatrixDataLayout.ROW_MAJOR);
+            this.linAlg.pushBuffer(buf);
             return mat;
         }
     }(this);
@@ -1050,22 +1079,20 @@ export class LinAlg<T> {
          */
         public cross(a: Vector<3, T>, b: Vector<3, T>, c: Vector<3, T> = this.linAlg.createZeroMatrix(3, 1)): Vector<3, T> {
             const ops = this.linAlg._ops;
-            this.linAlg.usingMatIt(a, (aIt) => {
-                aIt.jumpCols();
-                this.linAlg.usingMatIt(b, (bIt) => {
-                    bIt.jumpCols();
-                    const a00 = a.data[aIt.jumpRows().current()]!;
-                    const a10 = a.data[aIt.jumpRows().current()]!;
-                    const a20 = a.data[aIt.jumpRows().current()]!;
-                    const b00 = b.data[bIt.jumpRows().current()]!;
-                    const b10 = b.data[bIt.jumpRows().current()]!;
-                    const b20 = b.data[bIt.jumpRows().current()]!;
-                    const x = ops.sub(ops.mul(a10, b20), ops.mul(a20, b10));
-                    const y = ops.sub(ops.mul(a20, b00), ops.mul(a00, b20));
-                    const z = ops.sub(ops.mul(a00, b10), ops.mul(a10, b00));
-                    c.load(3, 1, [x, y, z]);
-                });
-            });
+            const aIt = this.linAlg.popMatIt(a).jumpCols();
+            const bIt = this.linAlg.popMatIt(b).jumpCols();
+            const a00 = a.data[aIt.jumpRows().current()]!;
+            const a10 = a.data[aIt.jumpRows().current()]!;
+            const a20 = a.data[aIt.jumpRows().current()]!;
+            const b00 = b.data[bIt.jumpRows().current()]!;
+            const b10 = b.data[bIt.jumpRows().current()]!;
+            const b20 = b.data[bIt.jumpRows().current()]!;
+            const x = ops.sub(ops.mul(a10, b20), ops.mul(a20, b10));
+            const y = ops.sub(ops.mul(a20, b00), ops.mul(a00, b20));
+            const z = ops.sub(ops.mul(a00, b10), ops.mul(a10, b00));
+            c.load(3, 1, [x, y, z]);
+            this.linAlg.pushIt(bIt);
+            this.linAlg.pushIt(aIt);
             return c;
         }
         private _withRotation<TMat extends IMatrix<3, 3, T> | IMatrix<4, 4, T>>(angle: number, builder: (zero: T, one: T, sin: T, minusSin: T, cos: T, buf: SizedArray<9, T>) => void, mat: TMat): TMat {
@@ -1075,10 +1102,10 @@ export class LinAlg<T> {
             const sin = ops.sin(angle);
             const minusSin = ops.sub(ops.addId(), sin);
             const cos = ops.cos(angle);
-            this.linAlg.usingBuffer(3, 3, (buf) => {
-                builder(zero, one, sin, minusSin, cos, buf);
-                mat.load(3, 3, buf, MatrixDataLayout.ROW_MAJOR);
-            });     
+            const buf = this.linAlg.popBuffer(3, 3);
+            builder(zero, one, sin, minusSin, cos, buf);
+            mat.load(3, 3, buf, MatrixDataLayout.ROW_MAJOR);
+            this.linAlg.pushBuffer(buf);
             return mat;       
         }
         private _buildXRotation<T>(zero: T, one: T, sin: T, minusSin: T, cos: T, buf: SizedArray<9, T>): void {

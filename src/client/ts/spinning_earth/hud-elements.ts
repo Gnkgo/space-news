@@ -1,4 +1,4 @@
-import { mat4, linAlg, vec2, vec4 } from "./global";
+import { mat4, linAlg, vec2, vec4 } from "./math";
 import { Model } from "./models";
 import { orthographicDimensions } from "./util";
 

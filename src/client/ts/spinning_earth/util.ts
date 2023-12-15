@@ -1,5 +1,5 @@
 import { SizedArray, MatrixDataLayout, Vector } from "../../../common/linalg";
-import { mat4, linAlg, vec4 } from "./global";
+import { mat4, linAlg, vec4 } from "./math";
 
 const fieldOfView = 45. * Math.PI / 180.;
 const zNear = 0.1;
@@ -151,6 +151,8 @@ export function latLongToVec4(inc: number, azi: number, r: number = 1): vec4 {
 
 export function solveQuad(a: number, b: number, c: number): [number, number] {
     if (a == 0) {
+        if (b == 0)
+            return c == 0 ? [0, 0] : [Number.NaN, Number.NaN];
         const lin = -c / b;
         return [lin, lin];
     }
@@ -181,3 +183,14 @@ export function checkSphereCollision<N extends number>(pos: Vector<N, number>, d
     const sols = solveQuad(a, b, c);
     return !Number.isNaN(sols[0]);
 }
+
+export function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement): boolean {
+    const displayWidth  = canvas.clientWidth;
+    const displayHeight = canvas.clientHeight;
+    if (canvas.width != displayWidth || canvas.height != displayHeight) {
+      canvas.width  = displayWidth;
+      canvas.height = displayHeight;
+      return true;
+    }
+    return false;
+  }
