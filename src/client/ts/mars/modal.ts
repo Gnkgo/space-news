@@ -14,7 +14,7 @@ export function openModal(photos: any, data : MarsData | null, isRover : boolean
 
   if (easteregg) {
     const text = document.createElement("h1");
-    text.textContent = "THANK YOU FOR VISITING MILKYWAY!";
+    text.textContent = "THANK YOU FOR VISITING SPACE NEWS!";
     const paragraph = document.createElement("p");
     paragraph.textContent = `We hope you enjoyed your stay. Please come back soon!
     A huge thanks goes to the best team: DeValdi, Gnkgo, and Nick. Thanks for all the discussions, the meetings, and for pulling off this crazy website!
