@@ -80,7 +80,7 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
 
     const image = document.createElement('img');
     image.className = 'image';
-    image.id = `${container}-image`;
+    image.id = `${container.id}-image`;
     image.src = imagePath;
 
     const imageContainer = document.createElement('div');
