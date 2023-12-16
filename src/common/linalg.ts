@@ -890,7 +890,7 @@ export class LinAlg<T> {
      * @returns The created vector.
      */
     public createOnesVector<N extends number>(n: N, layout: MatrixDataLayout = this.defaultLayout): IMatrix<N, 1, T> {
-        return this.createOnesVector(n, layout);
+        return this.createOnesMatrix(n, 1, layout);
     }
     /**
      * Create a new N x N matrix where the diagonal entries are initialized to 1.

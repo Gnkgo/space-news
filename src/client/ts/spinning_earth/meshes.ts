@@ -6,8 +6,9 @@ function addMesh(mesh: Mesh): Mesh {
     return mesh;
 }
 
-export function initMeshes(gl: WebGL2RenderingContext, shader: WebGLProgram) {
-    meshes.forEach((m) => m.init(gl, shader));
+export function initMeshes(gl: WebGL2RenderingContext, ...shaders: WebGLProgram[]) {
+    for (const m of meshes)
+        m.init(gl, shaders);
 }
 
 export class Mesh {
@@ -16,7 +17,7 @@ export class Mesh {
     private readonly _vertexNormals: Float32Array;
     private readonly _vertexColors: Float32Array;
     private readonly _texCoords: Float32Array | undefined;
-    private _vao: WebGLVertexArrayObject | null = null;
+    private readonly _vaos: Map<WebGLProgram, WebGLVertexArrayObject | null>;
 
     public constructor(indices: vec3[], vertices: vec3[], vertexColors: vec4[], texCoords?: vec2[]) {
         this._indices = new Uint16Array(indices.flatMap(i => i.data));
@@ -24,6 +25,7 @@ export class Mesh {
         this._vertexNormals = new Float32Array(this._calcVertexNormals(indices, vertices));
         this._vertexColors = new Float32Array(vertexColors.flatMap(c => c.data));
         this._texCoords = texCoords == undefined ? undefined : new Float32Array(texCoords.flatMap(t => t.data));
+        this._vaos = new Map();
     }
 
     private _calcVertexNormals(indices: vec3[], vertices: vec3[]): number[] {
@@ -44,57 +46,67 @@ export class Mesh {
         return vertexNormals.flatMap(n => n.normalize().data)
     }
 
-    public init(gl: WebGL2RenderingContext, shader: WebGLProgram): void {
-        const vao = gl.createVertexArray();
-        let buffer: WebGLBuffer | null;
-        let location: number;
-        gl.bindVertexArray(vao);
-        
-        // Vertices
-        buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.STATIC_DRAW);
-        location = gl.getAttribLocation(shader, "aVertexPosition");
-        gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(location);
+    public init(gl: WebGL2RenderingContext, shaders: WebGLProgram[]): void {
+        for (const shader of shaders) {
+            const vao = gl.createVertexArray();
+            gl.bindVertexArray(vao);
+            let location: number;
+            let buffer: WebGLBuffer | null;
 
-        // Vertex Normals
-        buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this._vertexNormals, gl.STATIC_DRAW);
-        location = gl.getAttribLocation(shader, "aVertexNormal");
-        gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(location);
+            // Vertices
+            location = gl.getAttribLocation(shader, "aVertexPosition");
+            if (location != -1) {
+                buffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.STATIC_DRAW);
+                gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
+                gl.enableVertexAttribArray(location);
+            }            
 
-        // Vertex Colors
-        buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this._vertexColors, gl.STATIC_DRAW);
-        location = gl.getAttribLocation(shader, "aVertexColor");
-        gl.vertexAttribPointer(location, 4, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(location);
+            // Vertex Normals
+            location = gl.getAttribLocation(shader, "aVertexNormal");
+            if (location != -1) {
+                buffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                gl.bufferData(gl.ARRAY_BUFFER, this._vertexNormals, gl.STATIC_DRAW);
+                gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
+                gl.enableVertexAttribArray(location);
+            }
 
-        // Texture
-        if (this._texCoords != undefined) {
+            // Vertex Colors
+            location = gl.getAttribLocation(shader, "aVertexColor");
+            if (location != -1) {
+                buffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                gl.bufferData(gl.ARRAY_BUFFER, this._vertexColors, gl.STATIC_DRAW);
+                gl.vertexAttribPointer(location, 4, gl.FLOAT, false, 0, 0);
+                gl.enableVertexAttribArray(location);
+            }
+
+            // Texture
+            if (this._texCoords != undefined) {
+                location = gl.getAttribLocation(shader, "aTextureCoord");
+                if (location != -1) {
+                    buffer = gl.createBuffer();
+                    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, this._texCoords, gl.STATIC_DRAW);
+                    gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
+                    gl.enableVertexAttribArray(location)
+                }
+            }
+
+            // Faces (i.e, vertex indices for forming the triangles)
             buffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-            gl.bufferData(gl.ARRAY_BUFFER, this._texCoords, gl.STATIC_DRAW);
-            location = gl.getAttribLocation(shader, "aTextureCoord");
-            gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(location)
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
+
+            gl.bindVertexArray(null);
+            this._vaos.set(shader, vao);
         }
-
-        // Faces (i.e, vertex indices for forming the triangles)
-        buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
-
-        gl.bindVertexArray(null);
-        this._vao = vao;
     }
 
-    public render(gl: WebGL2RenderingContext): void {
-        gl.bindVertexArray(this._vao);
+    public render(gl: WebGL2RenderingContext, shader: WebGLProgram): void {
+        gl.bindVertexArray(this._vaos.get(shader) ?? null);
         gl.drawElements(gl.TRIANGLES, this._indices.length, gl.UNSIGNED_SHORT, 0);
         gl.bindVertexArray(null);
     }
@@ -195,6 +207,32 @@ export const STAR_MESH = addMesh(new Mesh(
         linAlg.createVector(4, [1, 1, 1, 1]),
         linAlg.createVector(4, [1, 1, 1, 1]),
         linAlg.createVector(4, [1, 1, 1, 1])
+    ]
+));
+
+const sqrt2Over4 = Math.sqrt(2) / 4;
+export const SQUARE_MESH = addMesh(new Mesh(
+    [
+        linAlg.createVector(3, [0, 1, 2]),
+        linAlg.createVector(3, [2, 3, 0])
+    ],
+    [
+        linAlg.createVector(3, [sqrt2Over4, sqrt2Over4, 0]),
+        linAlg.createVector(3, [-sqrt2Over4, sqrt2Over4, 0]),
+        linAlg.createVector(3, [-sqrt2Over4, -sqrt2Over4, 0]),
+        linAlg.createVector(3, [sqrt2Over4, -sqrt2Over4, 0])
+    ],
+    [
+        linAlg.createVector(4, [1, 1, 1, 1]),
+        linAlg.createVector(4, [1, 1, 1, 1]),
+        linAlg.createVector(4, [1, 1, 1, 1]),
+        linAlg.createVector(4, [1, 1, 1, 1]),
+    ],
+    [
+        linAlg.createVector(2, [1, 0]),
+        linAlg.createVector(2, [0, 0]),
+        linAlg.createVector(2, [0, 1]),
+        linAlg.createVector(2, [1, 1])
     ]
 ));
 
@@ -366,4 +404,4 @@ export class Icosahedron extends Mesh {
         }
     }
 }
-export const SPHERE_MESH = addMesh(Icosahedron.create(5, 3));
+export const SPHERE_MESH = addMesh(Icosahedron.create(1, 3));

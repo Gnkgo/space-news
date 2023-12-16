@@ -1,5 +1,6 @@
 import { SizedArray, MatrixDataLayout, Vector } from "../../../common/linalg";
 import { mat4, linAlg, vec4 } from "./math";
+import { earth } from "./world";
 
 const fieldOfView = 45. * Math.PI / 180.;
 const zNear = 0.1;
@@ -66,16 +67,16 @@ export function orthographicDimensions(O: mat4): vec4 {
     const width = 2 / O.data[0];
     const height = 2 / O.data[5];
     const nf = 2 / O.data[10];
-    const near = nf * (1 + (O.data[14] - 1)/2);
-    return linAlg.createVector(4, [width/2, height/2, near, 1]);
+    const near = nf * (1 + (O.data[14] - 1) / 2);
+    return linAlg.createVector(4, [width / 2, height / 2, near, 1]);
 }
 
 export function getOrthographicNO(clientWidth: number, clientHeight: number): mat4 {
     const aspect = clientWidth / clientHeight;
-    const h = Math.tan(fieldOfView / 2) * 2*zNear;
+    const h = Math.tan(fieldOfView / 2) * 2 * zNear;
     const w = aspect * h;
     console.log(w + ", " + h + "\r\n");
-    const O = createOrthographicNO(-w/2, w/2, -h/2, h/2, zNear, zFar);
+    const O = createOrthographicNO(-w / 2, w / 2, -h / 2, h / 2, zNear, zFar);
     console.log(O + "\r\n");
     return O;
 }
@@ -131,8 +132,8 @@ export function initTexture(gl: WebGL2RenderingContext, url: string): WebGLTextu
 }
 
 export function getRandomVec4(r: number): vec4 {
-    const inc = Math.acos(2*Math.random() - 1);
-    const azi = Math.random() * 2*Math.PI;
+    const inc = Math.acos(2 * Math.random() - 1);
+    const azi = Math.random() * 2 * Math.PI;
     return latLongToVec4(inc, azi, r);
 }
 
@@ -145,7 +146,7 @@ export function latLongToVec4(inc: number, azi: number, r: number = 1): vec4 {
         r * sinInc * sinAzi,
         r * cosInc,
         r * sinInc * cosAzi,
-        1 
+        1
     ]);
 }
 
@@ -176,21 +177,41 @@ export function solveQuad(a: number, b: number, c: number): [number, number] {
         return [x2, x1];
 }
 
-export function checkSphereCollision<N extends number>(pos: Vector<N, number>, dir: Vector<N, number>, r: number): boolean {
+export function checkSphereCollision<N extends number>(pos: Vector<N, number>, dir: Vector<N, number>, r: number): number {
     const a = dir.dot(dir);
     const b = 2 * dir.dot(pos);
-    const c = pos.dot(pos) - r*r;
+    const c = pos.dot(pos) - r * r;
     const sols = solveQuad(a, b, c);
-    return !Number.isNaN(sols[0]);
+    return sols[0];
 }
 
 export function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement): boolean {
-    const displayWidth  = canvas.clientWidth;
+    const displayWidth = canvas.clientWidth;
     const displayHeight = canvas.clientHeight;
     if (canvas.width != displayWidth || canvas.height != displayHeight) {
-      canvas.width  = displayWidth;
-      canvas.height = displayHeight;
-      return true;
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+        return true;
     }
     return false;
-  }
+}
+
+export function createOrbit(dir: vec4, pos: vec4): [mat4, number] {
+    const zDir = linAlg.createZeroVector(3).loadMatrix(dir);
+    console.log(zDir + "\r\n");
+    const xDir = linAlg.createZeroMatrix(3, 1).loadMatrix(earth()!.orientation.t.subR(pos.copy()));
+    const radius = xDir.norm();
+    xDir.normalize();
+    console.log(xDir + ", " + radius + "\r\n");
+    const yDir = linAlg.ThreeD.cross(zDir, xDir).normalize();
+    console.log(yDir + "\r\n");
+    linAlg.ThreeD.cross(xDir, yDir, zDir).normalize();
+    console.log(zDir + "\r\n");
+    const orbit = linAlg.createMatrix(4, 4, [
+        xDir.data[0]!, xDir.data[1]!, xDir.data[2]!, 0,
+        yDir.data[0]!, yDir.data[1]!, yDir.data[2]!, 0,
+        zDir.data[0]!, zDir.data[1]!, zDir.data[2]!, 0,
+        0, 0, 0, 1
+    ]);
+    return [orbit, radius];
+}

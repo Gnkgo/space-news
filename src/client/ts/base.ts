@@ -284,7 +284,7 @@ export function closeModal(modalId: string): void {
  * @param componentId The id of the componenst (limited to the range 0-15 or 0-31, dunno).
  * @param dict An object providing different texts for different languages. If more specific language
  * tags are added (like 'en-US' besides just 'en'), they need to be ordered BEFORE their less specific
- * counterpart(s). The language tag 'en' is mandatory, as it is the default option.
+ * counterpart(s). The language tag 'en' is mandatory, as it is the fallback option.
  */
 export function tryShowTutorial(componentId: number, dict: {"en" : string, [lang: string] : string}) {
     const bit = 1 << componentId;
