@@ -38,7 +38,7 @@
     align-self: center;
 
     & p {
-      font-size: 0.75rem;
+      font-size: max(12px, calc(2 * var(--unit)));
     }
   }
 
@@ -75,6 +75,7 @@
     line-height: 10pt;
 
     & p {
+      font-size: max(12px, calc(2 * var(--unit)));
       margin-top: 5px;
       margin-bottom: 5px;
     }
@@ -84,6 +85,7 @@
 button {
   background-color: black;
   color: white;
+  font-size: max(12px, calc(2 * var(--unit)));
 }
 
 .chart-info {
