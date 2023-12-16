@@ -54,6 +54,10 @@ footer {
     color: white;
   }
 
+  & p {
+    font-size: max(12px, calc(2 * var(--unit)));
+  }
+
 }
 
 .title-box {

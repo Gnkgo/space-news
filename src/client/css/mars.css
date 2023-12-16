@@ -8,8 +8,8 @@
     "weather-boxes weather-boxes weather-boxes"
     "footer footer footer";
 
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: auto auto auto 40px;
+  grid-template-columns: 1fr 1fr 1fr; 
+  grid-template-rows: 50px auto auto 40px;
   min-height: 100vh;
 
   & .image {
@@ -75,7 +75,6 @@
     line-height: 10pt;
 
     & p {
-      font-size: max(12px, calc(2 * var(--unit)));
       margin-top: 5px;
       margin-bottom: 5px;
     }

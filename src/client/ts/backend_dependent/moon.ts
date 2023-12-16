@@ -24,7 +24,7 @@ export async function initMoon(location: number[]): Promise<void> {
             currentMoonData = await getMoonData("next30days", locationSave);
             pickMoonData = await getMoonData(today, locationSave);
 
-            createTitle(moonContainer, "Different Moon Information", text, false, formatDate(currentMoonData.days[0]?.datetime), "");
+            createTitle(moonContainer, "Moon Phase", text, false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData, today);
             displayMoonEvents(currentMoonData);
         }

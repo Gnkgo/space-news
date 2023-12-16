@@ -2,6 +2,7 @@ import { MoonRes as MoonData } from '../../../common/api';
 import { moonContainer } from '../backend_dependent/moon';
 import { updateCountdown } from './countdown';
 import { getTimeUntilNextFullMoon } from './datePicker';
+import { formatDate } from '../base';
 
 export function displayMoonEvents(moonData: MoonData): void {
 
@@ -23,7 +24,7 @@ export function displayMoonEvents(moonData: MoonData): void {
     moonContent.className = "grey-box";
 
     const title = document.createElement("h1");
-    title.textContent = "Moon Events";
+    title.textContent = formatDate(moonData.days[0]?.datetime);
 
     moonContent.appendChild(title);
     moonContent.innerHTML += `
