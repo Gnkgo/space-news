@@ -27,8 +27,6 @@ export async function initMoon(location: number[]): Promise<void> {
             createTitle(moonContainer, "Different Moon Information", text, false, formatDate(currentMoonData.days[0]?.datetime), "");
             displayMoon(currentMoonData, today);
             displayMoonEvents(currentMoonData);
-
-            console.log("current moon data: ", currentMoonData, " - ", location);
         }
     } catch (error) {
         console.error("Error initializing weather app", error);
