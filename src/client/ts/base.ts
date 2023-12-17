@@ -40,7 +40,7 @@ export function createTitle(divContainer: HTMLDivElement, title: string, paragra
     if (titleBox) titleBox.remove();
 
     titleBox = document.createElement("div");
-    titleBox.id = "title-box";
+    titleBox.id = `title-box-${divContainer.id}`;
     titleBox.classList.add("title-box");
 
     const titleElement = document.createElement("h1");
@@ -59,7 +59,7 @@ export function createTitle(divContainer: HTMLDivElement, title: string, paragra
 
     const greyBox = document.createElement("div");
 
-    greyBox.id = "inner-title";
+    greyBox.id = `inner-title-${divContainer.id}`;
     greyBox.className = "grey-box";
 
     greyBox.appendChild(titleElement);
@@ -80,12 +80,12 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
 
     const image = document.createElement('img');
     image.className = 'image';
-    image.id = `${container}-image`;
+    image.id = `${container.id}-image`;
     image.src = imagePath;
 
     const imageContainer = document.createElement('div');
     imageContainer.className = 'image-container';
-    imageContainer.id = 'image-container';
+    imageContainer.id = `image-container-${container.id}`;
     imageContainer.appendChild(image);
     const descriptionTextNode = document.createTextNode(description);
 

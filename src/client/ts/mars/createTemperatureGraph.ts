@@ -15,7 +15,6 @@ export interface TemperatureData {
 
 
 export function extractAndDisplayTemperature(data: TemperatureData[], isCelcius: boolean): void {
-
     // Extract relevant information
     const dates: Date[] = [];
     const averagesCelsius: number[] = [];

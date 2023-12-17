@@ -44,14 +44,18 @@ footer {
 
   & h1 {
     margin: 0;
-    font-size: 1.6rem;
+    font-size: max(16px, calc(4 * var(--unit)));
     color: white;
   }
 
   & h2 {
     margin: 0;
-    font-size: 1rem;
+    font-size: max(14px, calc(3 * var(--unit)));
     color: white;
+  }
+
+  & p {
+    font-size: max(12px, calc(2 * var(--unit)));
   }
 
 }

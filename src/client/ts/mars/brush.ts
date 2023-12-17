@@ -11,15 +11,13 @@ export interface TemperatureData {
 	isCelcius: boolean;
 }
 
-
-
 const dimensions = {
-	width: window.innerWidth * 0.9,
-	height: 180,
-	marginTop: 25,
-	marginBottom: 50,
-	marginLeft: 60,
-	marginRight: 10
+	width: window.innerWidth,
+	height: Math.max(window.innerHeight * 0.4, 180),
+	marginTop: Math.max(window.innerHeight * 0.0454545, 25),
+	marginBottom: Math.max(window.innerHeight * 0.09, 50),
+	marginLeft: Math.max(window.innerWidth * 0.0468, 60),
+	marginRight: Math.max(window.innerWidth * 0.0078125, 10)
 }
 
 
@@ -27,7 +25,13 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 
 
 	function resize(): void {
-		dimensions.width = window.innerWidth * 0.9;
+		dimensions.width = window.innerWidth;
+		dimensions.height = Math.max(window.innerHeight * 0.4, 180);
+		dimensions.marginTop = Math.max(window.innerHeight * 0.0454545, 25);
+		dimensions.marginBottom= Math.max(window.innerHeight * 0.09, 50);
+		dimensions.marginLeft= Math.max(window.innerWidth * 0.0468, 60),
+		dimensions.marginRight= Math.max(window.innerWidth * 0.0078125, 10)
+
 
 		// Call the draw function to redraw the graph with updated dimensions
 		draw(data);
@@ -78,14 +82,14 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 
 		const chartWrapper = svg.append('g')
 			.attr('class', 'chart-wrapper')
-			.attr('transform', `translate(${(dimensions.width - dimensions.marginLeft - dimensions.marginRight) / 2}, ${dimensions.marginTop - 11})`);
+			.attr('transform', `translate(${(dimensions.width - dimensions.marginLeft - dimensions.marginRight) / 2}, ${dimensions.marginTop / 2})`);
 
-		const title = chartWrapper.append('text')
+		chartWrapper.append('text')
 			.attr('class', 'chart-title')
 			.attr('id', 'data-heading')
 			.attr('text-anchor', 'middle')
 			.attr('fill', 'white')
-			.attr('font-size', '0.9rem')
+			.attr('font-size', 'calc(3 * var(--unit))')
 			.text('Average Temperature on Mars');
 
 
@@ -116,11 +120,16 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 		svg.select('.x-axis')
 			.selectAll('text')
 			.attr('transform', 'rotate(-45)') // Adjust the rotation angle as needed
-			.style('text-anchor', 'end'); // Align the rotated text appropriately
+			.style('text-anchor', 'end') // Align the rotated text appropriately
+			.style('font-size', 'max(12px,calc(1.5 * var(--unit)))');
 
 		svg.append('g')
 			.attr('class', 'y-axis')
 			.call(yAxis);
+
+		svg.select('.y-axis')
+			.selectAll('text')
+			.style('font-size', 'max(12px,calc(1.5 * var(--unit)))');
 
 
 		/* Line */
@@ -130,14 +139,14 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.curve(d3.curveBumpX)
 
 		// Create a clipPath element
-		const clipPath = svg.append('clipPath')
+		svg.append('clipPath')
 			.attr('id', 'clip-path')
 			.append('rect')
 			.attr('width', dimensions.width - dimensions.marginLeft - dimensions.marginRight)
 			.attr('height', dimensions.height - dimensions.marginBottom);
 
 		// Apply the clipPath to the line
-		const line = svg
+		svg
 			.append('path')
 			.datum(data)
 			.attr('class', 'line')
@@ -149,20 +158,17 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 
 
 		svg.append('text')
-			.attr('transform', `translate(${(dimensions.width - dimensions.marginLeft) / 2},${dimensions.height - dimensions.marginBottom + 45})`) // Center X-axis title
+			.attr('transform', `translate(${(dimensions.width - dimensions.marginLeft) / 2},${dimensions.height})`) // Center X-axis title
 			.style('text-anchor', 'middle')
 			.style('fill', 'white')
-			.style('font-size', '0.9rem')
+			.style('font-size', 'max(16px,calc(2 * var(--unit)))')
 			.text('Date');
 
 		svg.append('text')
-			.attr('transform', 'rotate(-90)')
-			.attr('y', 0 - dimensions.marginLeft / 2 - 30) // Adjust Y-axis title position
-			.attr('x', 0 - (dimensions.height - dimensions.marginTop) / 2)
-			.attr('dy', '0.7em')
+			.attr('transform', `translate(${0 - dimensions.marginLeft/1.5}, ${dimensions.height / 2.25}) rotate(-90)`)
 			.style('text-anchor', 'middle')
 			.style('fill', 'white')
-			.style('font-size', '0.9rem')
+			.style('font-size', 'max(14px, calc(2 * var(--unit)))')
 			.text(`Temperature ${text}`);
 
 
@@ -219,7 +225,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 		/* Events */
 		zoomableSvg.on('mousemove', (e) => {
 
-			const [posX, posY] = d3.pointer(e);
+			const [posX, _posY] = d3.pointer(e);
 			const date = newXScale.invert(posX);
 
 
@@ -345,7 +351,8 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 				.call(xAxis.scale(newXScale))
 				.selectAll('text')
 				.attr('transform', 'rotate(-45)')
-				.style('text-anchor', 'end');
+				.style('text-anchor', 'end')
+				.style('font-size', 'max(12px,calc(1.5 * var(--unit)))');
 
 
 
@@ -368,7 +375,9 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			newYScale.domain(yDomain);
 
 			(svg.select('.y-axis') as d3.Selection<SVGGElement, any, any, any>)
-				.call(yAxis.scale(newYScale));
+				.call(yAxis.scale(newYScale))
+				.selectAll('text')
+				.style('font-size', 'max(12px,calc(1.5 * var(--unit)))');
 
 			/* Line */
 			lineGenerator.x((d) => newXScale(xAccessor(d)))
@@ -385,7 +394,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 				.attr('fill', 'none');
 
 			// Inside the zoomed function
-			const [posX, posY] = d3.pointer(event, svg.node());
+			const [posX, _posY] = d3.pointer(event, svg.node());
 			const date = newXScale.invert(posX);
 
 			// Find the corresponding data point in the visible data

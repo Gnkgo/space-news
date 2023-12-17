@@ -1,7 +1,8 @@
 div#moon-container {
   display: none;
+  align-items: center;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 40px auto 40px;
+  grid-template-rows: 50px auto 40px;
   /* Adjusted rows to include 1fr for the remaining space */
   grid-template-areas:
     ". sun ."
@@ -9,7 +10,6 @@ div#moon-container {
     "footer footer footer";
 
   min-height: 100vh;
-
 
 }
 
