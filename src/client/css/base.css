@@ -102,20 +102,26 @@ footer {
   color: white;
   background: rgba(0, 0, 0, 0.8);
 
+  & h1 {
+    justify-content: center;
+    margin: 20px;
+
+  }
+
   & h3#title {
     position: absolute;
     top: 3.25vh;
     margin: 0;
   }
 
-  & img {
-    height: calc(85 * var(--unit));
+  & h5#modal-carousel-counter {
+    position: absolute;
+    bottom: 3.25vh;
+    margin: 0;
   }
 
-  & h1 {
-    justify-content: center;
-    margin: 20px;
-
+  & img {
+    height: calc(85 * var(--unit));
   }
 
   & p {
@@ -148,11 +154,12 @@ footer {
   & i#right-arrow {
     right: 10vw;
   }
+}
 
-  & h5#modal-carousel-counter {
-    position: absolute;
-    bottom: 3.25vh;
-    margin: 0;
+div#tutorial-modal-0 {
+  h2 {
+    font-size: max(14px, calc(3 * var(--unit)));
+    text-align: center;
   }
 }
 
