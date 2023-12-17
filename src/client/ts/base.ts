@@ -72,7 +72,7 @@ export function createTitle(divContainer: HTMLDivElement, title: string, paragra
     divContainer.appendChild(titleBox);
 }
 export function createImage(container: HTMLElement, imagePath: string, description: string, dateContainer: HTMLDivElement | null): void {
-    const existingImage = container.querySelector('#image-container') as HTMLImageElement;
+    const existingImage = container.querySelector('#image-container-moon-container') as HTMLImageElement;
 
     if (existingImage) {
         existingImage.remove();
