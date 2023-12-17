@@ -63,8 +63,11 @@ footer {
 .title-box {
   grid-area: title;
   font-size: 1.6rem;
-
   justify-self: center;
+  align-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  
   & .grey-box {
     text-align: left;
     display: inline-block;
