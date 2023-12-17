@@ -67,7 +67,7 @@ export function isLightModifierPressed(): boolean {
 
 export enum MovementType {
     LOCKED,
-    ROTATING,
+    DETACHED,
     FREE,
     TRACKING
 }

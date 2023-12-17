@@ -35,7 +35,7 @@ export async function initializeEverythin() {
         + "\r\n"
         + "You can change the way you move around the scene by pressing 'X'. The movement types are:\r\n:"
         + "Locked:   Movement and rotation is locked to the center of Earth.\r\n"
-        + "Rotating: Movement is locked to the center of Earth. Free rotation via the mouse.\r\n"
+        + "Detached: Movement is locked to the center of Earth. Free rotation via the mouse.\r\n"
         + "Free:     Free movement and rotation in the scene.\r\n"
         + "Tracking: Movement follows the selected Near Earth Object, if present. Free rotation."
   }, () => initKeys(drawCanvas));
@@ -79,7 +79,7 @@ export async function initializeEverythin() {
           const moveType = movementType();
           if (moveType == MovementType.FREE) {
             camMat.t.addL(linAlg.mmulR(camMat.orbit, linAlg.mmulR(camMat.M, offset)));
-          } else if (moveType == MovementType.LOCKED || moveType == MovementType.ROTATING) {
+          } else if (moveType == MovementType.LOCKED || moveType == MovementType.DETACHED) {
             const earthPos = earth()?.orientation?.t;
             if (earthPos != undefined) {
               offset.scaleRows(offsetScale);
@@ -101,7 +101,7 @@ export async function initializeEverythin() {
             linAlg.mmulL(camMat.M, linAlg.mmulL(linAlg.ThreeD.rotateAffineX(mouseY()), linAlg.mmulL(linAlg.ThreeD.rotateAffineY(mouseX()), linAlg.ThreeD.rotateAffineZ(roll))));
           else if (moveType == MovementType.LOCKED)
             camMat.M.resetToIdentity();
-          else if (moveType == MovementType.ROTATING)
+          else if (moveType == MovementType.DETACHED)
             linAlg.mmulL(camMat.M, linAlg.mmulL(linAlg.ThreeD.rotateAffineX(mouseY()), linAlg.ThreeD.rotateAffineY(mouseX())));            
         }
         resetMouse();

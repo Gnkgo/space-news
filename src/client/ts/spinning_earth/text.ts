@@ -55,7 +55,7 @@ export function renderText(d2: CanvasRenderingContext2D, deltaTime: number) {
             "  Velocity:              " + marked.vel
         ]),
         "Movement Type:",
-        "  " + ["Locked", "Rotating", "Free", "Tracking"][movementType()]
+        "  " + ["Locked", "Detached", "Free", "Tracking"][movementType()]
     ];
     for (let i = 0; i < text.length; i++)
         d2.fillText(text[i]!, 0, (i + 1) * lineHeight);
