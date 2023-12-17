@@ -36,7 +36,7 @@ export function renderText(d2: CanvasRenderingContext2D, deltaTime: number) {
         "movement type:",
         "  " + movementType()
     ];*/
-    const marked = Meteorite.marked();
+    const marked = Meteorite.marked() ?? Meteorite.tracked();
     let text = [
         "Controls:",
         "  Move:                 A D / W S / Space C",
