@@ -23,6 +23,7 @@ async function initMars(): Promise<void> {
     if (marsContainer) {
       marsContainer.innerHTML = '';
       weatherData = await getWeatherData();
+      console.log("WEATHER DATA", weatherData);
       currentDate = weatherData.soles[0]?.terrestrial_date || '';
       currentDateSol = weatherData.soles[0]?.sol || '';
       renderWeather();
@@ -123,7 +124,7 @@ export function renderWeather(): void {
   }
   let temperatureData: TemperatureData[] = [];
   if (marsMain && weatherData.soles.length > 0) {
-    for (let i = Math.min(weatherData.soles.length, 200); i > 0; i--) {
+    for (let i = Math.min(weatherData.soles.length, 365); i > 0; i--) {
       const sol = weatherData.soles[i];
       if (sol == undefined) continue;
       temperatureData.push({

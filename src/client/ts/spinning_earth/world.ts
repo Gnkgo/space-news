@@ -1,7 +1,7 @@
-import { CADRes } from "../../../common/api";
+import { CADRes, FireballRes } from "../../../common/api";
 import { getFormattedDate } from "../../../common/utils";
 import { camMat } from "./camera";
-import { Earth, Entity, Meteorite, Pin } from "./entities";
+import { Disk, Earth, Entity, Meteorite, Pin } from "./entities";
 import { HUDElement } from "./hud-elements";
 import { linAlg, mat4 } from "./math";
 import { initMeshes } from "./meshes";
@@ -10,12 +10,16 @@ import { Particle } from "./particles";
 import { ENTITY_SHADER, HUD_SHADER, PARTICLE_SHADER, SKYBOX_SHADER, initShaders, prepareShader } from "./shaders";
 import { EternalDarkness, Skybox } from "./skyboxes";
 import { initTextures } from "./textures";
-import { createOrbit, getRandomVec4, latLongToVec4 } from "./util";
+import { attachToEarth, createOrbit, getRandomVec4 } from "./util";
 
 const cadMinDate = getFormattedDate();
 const cadMaxDate = '30';
 const cadMinDistMax = 0.0026; //Distance to moon in unit 'au'
 const cadApiUrl = `/nasa-cad-api?date-min=${cadMinDate}&date-max=${cadMaxDate}&min-dist-max=${cadMinDistMax}`;
+
+const fireballMinDate = '2010-01-01';
+const fireballReqLocBool = true;
+const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=${fireballReqLocBool}`;
 
 export const lightDir = linAlg.createVector(3, [0, 0, -1]).normalize();
 export const lightRot = Math.PI / 2000;
@@ -35,13 +39,6 @@ export function earth(): Earth | undefined {
     return _earth;
 }
 
-const _meteorites: Meteorite[] = [];
-export function addMeteorite(m: Meteorite): Meteorite {
-    addEntity(m);
-    _meteorites.push(m);
-    return m;
-}
-
 let _particles: Particle[] = [];
 export function particleCount(): number {
     return _particles.length;
@@ -53,7 +50,6 @@ export function addParticle(p: Particle): Particle {
 
 let _skybox: Skybox;
 let _crosshair: HUDElement;
-let _pin: Pin | undefined;
 let _entityShader: WebGLProgram;
 let _particleShader: WebGLProgram;
 let _skyboxShader: WebGLProgram;
@@ -70,29 +66,10 @@ export async function initWorld(gl: WebGL2RenderingContext): Promise<void> {
     _skybox = new EternalDarkness(); //StarryNight.create(200);
     _crosshair = new HUDElement(CROSSHAIR_MODEL, linAlg.createVector(2, [0, 0]))
     navigator.geolocation.getCurrentPosition((geo) => {
-        const coords: [number, number] = [geo.coords.latitude * Math.PI / 180 - Math.PI / 60, geo.coords.longitude * Math.PI / 180 + Math.PI / 1.97];
-        coords[1] += earth()!.orientation.r.data[1];
-        console.log(coords + "\r\n");
-        const vec = latLongToVec4(coords[0], coords[1], 5.5);
-        const yDir = linAlg.createZeroMatrix(3, 1).loadMatrix(vec).normalize();
-        const pos = earth()!.orientation.t.addR(vec);
-        const zDir = linAlg.createZeroMatrix(3, 1).loadMatrix(camMat.t).subL(linAlg.createZeroMatrix(3, 1).loadMatrix(pos));
-        const xDir = linAlg.ThreeD.cross(yDir, zDir).normalize();
-        linAlg.ThreeD.cross(xDir, yDir, zDir).normalize();
-        _pin = new Pin(pos);
-        _pin.orientation.updateRMat((R) => {
-            R.load(4, 4, [
-                xDir.data[0], xDir.data[1], xDir.data[2], 0,
-                yDir.data[0], yDir.data[1], yDir.data[2], 0,
-                zDir.data[0], zDir.data[1], zDir.data[2], 0,
-                0, 0, 0, 1
-            ]);
-        });
-        addEntity(_pin);
+        addEntity(attachToEarth(geo.coords.latitude, geo.coords.longitude, () => new Pin()));
     });
 
-    const res = await fetch(cadApiUrl);
-    const cad = await res.json() as CADRes;
+    const cad = await fetch(cadApiUrl).then(data => data.json()) as CADRes;
     console.log(cad);
     console.log("\r\n");
     for (const d of cad.data) {
@@ -100,7 +77,20 @@ export async function initWorld(gl: WebGL2RenderingContext): Promise<void> {
         const dir = getRandomVec4(radius);
         const pos = getRandomVec4(radius);
         const [orbit, _radius] = createOrbit(dir, pos);
-        addMeteorite(new Meteorite(orbit, radius, pos, d));
+        addEntity(new Meteorite(orbit, radius, pos, d));
+    }
+
+    const fireball = await fetch(fireballApiUrl).then(data => data.json()) as FireballRes;
+    console.log(fireball);
+    console.log("\r\n");
+    for (const d of fireball.data) {
+        console.log(d);
+        const logKt = Math.log10(Number(d[2]!));
+        console.log("logKt: " + logKt + "\r\n");
+        const scale = Math.min(Math.max(0, logKt + 1) / 3.5, 1);
+        const color = linAlg.createVector(4, [1, 0, 0, 1]).scale(scale).addL(linAlg.createVector(4, [0, 1, 0, 1]).scale(1 - scale));
+        const disk = attachToEarth((d[4] == "N" ? 1 : -1) * Number(d[3]!), (d[6] == "E" ? 1 : -1) * Number(d[5]!), () => new Disk(scale, color));
+        addEntity(disk);
     }
 }
 

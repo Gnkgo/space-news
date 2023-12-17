@@ -1,6 +1,6 @@
 import { ComposedRTSMatrix } from "./affine-matrix";
 import { linAlg, mat4, vec4 } from "./math";
-import { CROSSHAIR_MESH, INVERSE_TRIANGLE_MESH, Mesh, SPHERE_MESH, SQUARE_MESH, STAR_MESH, TRIANGLE_MESH } from "./meshes";
+import { CROSSHAIR_MESH, DISK_MESH, INVERSE_TRIANGLE_MESH, Mesh, SPHERE_MESH, SQUARE_MESH, STAR_MESH, TRIANGLE_MESH } from "./meshes";
 
 export class Model {
     public readonly mesh: Mesh;
@@ -48,3 +48,4 @@ export const STAR_MODEL = new Model(STAR_MESH, linAlg.createZeroMatrix(4, 1), li
 export const PIN_MODEL = new Model(INVERSE_TRIANGLE_MESH, linAlg.createZeroMatrix(4, 1), linAlg.createVector(4, [0, 0, 0, 1]), linAlg.createVector(4, [0.5, 0.5, 0.5, 1]));
 export const SQUARE_MODEL = new Model(SQUARE_MESH, linAlg.createZeroMatrix(4, 1), linAlg.createVector(4, [0, 0, 0, 1]), linAlg.createVector(4, [5, 5, 5, 1]));
 export const BACKGROUND_MODEL = new Model(SPHERE_MESH);
+export const FIREBALL_MODEL = new Model(DISK_MESH);

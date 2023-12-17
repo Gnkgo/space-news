@@ -281,16 +281,18 @@ export function closeModal(modalId: string): void {
 
 /**
  * Creates and opens a modal tutorial for the given component.
- * @param componentId The id of the componenst (limited to the range 0-15 or 0-31, dunno).
+ * @param componentId The id of the component (limited to the range 0-15 or 0-31, dunno).
  * @param dict An object providing different texts for different languages. If more specific language
  * tags are added (like 'en-US' besides just 'en'), they need to be ordered BEFORE their less specific
  * counterpart(s). The language tag 'en' is mandatory, as it is the fallback option.
  */
-export function tryShowTutorial(componentId: number, dict: {"en" : string, [lang: string] : string}) {
+export function tryShowTutorial(componentId: number, dict: {"en" : string, [lang: string] : string}, onClose: () => void = () => {}): void {
     const bit = 1 << componentId;
     const getClosedTutorials = () => Number.parseInt(localStorage.getItem("closedTutorials") ?? "0");
-    if ((getClosedTutorials() & bit) > 0)
+    if ((getClosedTutorials() & bit) > 0) {
+        onClose();
         return;
+    }
     const modal = document.createElement("div") as HTMLDivElement;
     modal.id = `tutorial-modal-${componentId}`;
     modal.className = "modal";
@@ -300,6 +302,7 @@ export function tryShowTutorial(componentId: number, dict: {"en" : string, [lang
         closeModal(modal.id);
         document.removeEventListener("click", listeners.closeOnClick!);
         document.removeEventListener("keyup", listeners.closeOnEscape!);
+        onClose();
     }
     listeners.closeOnClick = (_e: MouseEvent) => close();
     listeners.closeOnEscape = (e: KeyboardEvent) => { if (e.key == "Escape") close(); };

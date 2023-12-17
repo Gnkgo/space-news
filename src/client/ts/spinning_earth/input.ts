@@ -2,7 +2,7 @@ import { camMat } from "./camera";
 import { Meteorite } from "./entities";
 import { linAlg, vec4 } from "./math";
 import { createOrbit } from "./util";
-import { addMeteorite, earth } from "./world";
+import { addEntity, earth } from "./world";
 
 const _pressed = new Map<string, boolean>();
 const _mouse: [number, number] = [0, 0];
@@ -26,7 +26,7 @@ export function initKeys(canvas: HTMLCanvasElement): void {
                 const dir = linAlg.createVector(4, [-camMat.C.data[8], -camMat.C.data[9], -camMat.C.data[10], 0]);
                 const pos = camMat.t;
                 const [orbit, radius] = createOrbit(dir, pos);
-                addMeteorite(new Meteorite(orbit, radius, camMat.t, ["", "", "", "2023-Dec-23 20:28", "", "0", "", "0"]));
+                addEntity(new Meteorite(orbit, radius, camMat.t, ["", "", "", "2023-Dec-23 20:28", "", "0", "", "0"]));
             }
         } else if (event.button == 2) {
             console.log("lol");

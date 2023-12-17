@@ -20,7 +20,10 @@ export async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
 
 export async function renderRoverPhotos(): Promise<void> {
     const photoData = await getRoverPhotos();
-    createModal(randomRover, photoData.photos.length > 1);
+    if (randomRover == undefined) randomRover = "Curiosity";
+
+
+    createModal(randomRover.charAt(0).toUpperCase() + randomRover.slice(1), photoData.photos.length > 1);
     openModal(photoData.photos, null, true, false);
 }
 

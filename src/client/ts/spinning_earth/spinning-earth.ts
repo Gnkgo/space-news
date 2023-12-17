@@ -5,6 +5,7 @@ import { MovementType, initKeys, isLightModifierPressed, keyOffset, keyRoll, mou
 import { earth, initWorld, renderWorld, updateWorld } from "./world";
 import { renderText } from "./text";
 import { Meteorite } from "./entities";
+import { SPINNING_EARTH_COMPONENT_ID, tryShowTutorial } from "../base";
 
 export async function initializeEverythin() {
   const offsetScale = linAlg.createVector(4, [0.02, 0.02, 1, 1]);
@@ -19,7 +20,25 @@ export async function initializeEverythin() {
   const d2 = textCanvas.getContext("2d")!;
 
   initWorld(gl);
-  initKeys(drawCanvas);
+  tryShowTutorial(SPINNING_EARTH_COMPONENT_ID, {
+    "en": "Here, you can check out our beautiful earth in all of its 3D glory!\r\n"
+        + "\r\n"
+        + "Your location is marked on the globe with a spinning arrow.\r\n"
+        + "\r\n"
+        + "The dots on our blue planet represent Fireball's, which are exceptionally bright\r\n"
+        + "meteors that were able to be observed over a wide area. The size and red-ness of\r\n"
+        + "a dot is proportial to the related Fireball's estimated kinetic energy."
+        + "\r\n"
+        + "The flying asteroid(s) are Near Earth Object's that are observed in the zone between\r\n"
+        + "Earth and the Moon. Hover over one of them and mark it to see some more details on\r\n"
+        + "the top left!\r\n"
+        + "\r\n"
+        + "You can change the way you move around the scene by pressing 'X'. The movement types are:\r\n:"
+        + "Locked:   Movement and rotation is locked to the center of Earth.\r\n"
+        + "Rotating: Movement is locked to the center of Earth. Free rotation via the mouse.\r\n"
+        + "Free:     Free movement and rotation in the scene.\r\n"
+        + "Tracking: Movement follows the selected Near Earth Object, if present. Free rotation."
+  }, () => initKeys(drawCanvas));
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
   gl.clearDepth(1.0);

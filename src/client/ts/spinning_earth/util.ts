@@ -1,5 +1,6 @@
 import { SizedArray, MatrixDataLayout, Vector } from "../../../common/linalg";
-import { mat4, linAlg, vec4 } from "./math";
+import { Entity } from "./entities";
+import { mat4, linAlg, vec4, vec3 } from "./math";
 import { earth } from "./world";
 
 const fieldOfView = 45. * Math.PI / 180.;
@@ -214,4 +215,41 @@ export function createOrbit(dir: vec4, pos: vec4): [mat4, number] {
         0, 0, 0, 1
     ]);
     return [orbit, radius];
+}
+
+export function latLongDegToEarthRad(latitude: number, longitude: number): [number, number] {
+    return [(-latitude + 90)* Math.PI / 180, (longitude + 90) * Math.PI / 180];
+}
+
+export function normal(vec: vec3): vec3 {
+    const [x, y, z] = vec.data;
+    if (x == 0)
+        return linAlg.createVector(3, [1, 0, 0]);
+    else if (y == 0)
+        return linAlg.createVector(3, [0, 1, 0]);
+    else if (z == 0)
+        return linAlg.createVector(3, [0, 0, 1]);
+    return linAlg.createVector(3, [0, -z, y]).normalize();
+}
+
+export function attachToEarth<E extends Entity>(latitude: number, longitude: number, creator: () => E): E {
+    const coords: [number, number] = latLongDegToEarthRad(latitude, longitude);
+    coords[1] += earth()!.orientation.r.data[1];
+    console.log(coords + "\r\n");
+    const vec = latLongToVec4(coords[0], coords[1]);
+    const yDir = linAlg.createZeroMatrix(3, 1).loadMatrix(vec);
+    const zDir = normal(yDir);
+    const xDir = linAlg.ThreeD.cross(yDir, zDir).normalize();
+    const pos = earth()!.orientation.t.addR(vec);
+    const entity = creator();
+    entity.orientation.updateT((t) => t.loadMatrix(pos));
+    entity.orientation.updateRMat((R) => {
+        R.load(4, 4, [
+            xDir.data[0], xDir.data[1], xDir.data[2], 0,
+            yDir.data[0], yDir.data[1], yDir.data[2], 0,
+            zDir.data[0], zDir.data[1], zDir.data[2], 0,
+            0, 0, 0, 1
+        ]);
+    });
+    return entity;
 }

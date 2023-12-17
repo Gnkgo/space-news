@@ -14,15 +14,29 @@ export interface TemperatureData {
 
 
 const dimensions = {
-	width: 600,
-	height: 170,
+	width: window.innerWidth * 0.9,
+	height: 180,
 	marginTop: 25,
 	marginBottom: 50,
 	marginLeft: 60,
 	marginRight: 10
 }
 
+
 export function check(data: TemperatureData[], isCelcius: boolean): void {
+
+
+	function resize(): void {
+		dimensions.width = window.innerWidth * 0.9;
+
+		// Call the draw function to redraw the graph with updated dimensions
+		draw(data);
+	}
+
+	// Add an event listener for window resize
+	window.addEventListener('resize', resize);
+
+
 
 
 	const xAccessor = (d: TemperatureData) => new Date(d.terrestrial_date);
@@ -45,6 +59,10 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 	}
 
 	const draw = (data: any) => {
+		d3.select('#temperature-graph').remove();
+
+
+
 		const wrapper = d3.select('#mars-container')
 
 
@@ -67,7 +85,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.attr('id', 'data-heading')
 			.attr('text-anchor', 'middle')
 			.attr('fill', 'white')
-			.attr('font-size', '0.6rem')
+			.attr('font-size', '0.9rem')
 			.text('Average Temperature on Mars');
 
 
@@ -134,7 +152,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.attr('transform', `translate(${(dimensions.width - dimensions.marginLeft) / 2},${dimensions.height - dimensions.marginBottom + 45})`) // Center X-axis title
 			.style('text-anchor', 'middle')
 			.style('fill', 'white')
-			.style('font-size', '0.6rem')
+			.style('font-size', '0.9rem')
 			.text('Date');
 
 		svg.append('text')
@@ -144,7 +162,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.attr('dy', '0.7em')
 			.style('text-anchor', 'middle')
 			.style('fill', 'white')
-			.style('font-size', '0.6rem')
+			.style('font-size', '0.9rem')
 			.text(`Temperature ${text}`);
 
 
@@ -350,7 +368,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			newYScale.domain(yDomain);
 
 			(svg.select('.y-axis') as d3.Selection<SVGGElement, any, any, any>)
-			.call(yAxis.scale(newYScale));
+				.call(yAxis.scale(newYScale));
 
 			/* Line */
 			lineGenerator.x((d) => newXScale(xAccessor(d)))

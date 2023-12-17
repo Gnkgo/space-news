@@ -47,7 +47,7 @@ export function renderText(d2: CanvasRenderingContext2D, deltaTime: number) {
         "  Switch Movement Type: X",
         "FPS:",
         "  " + (1000/deltaTime).toFixed(0),
-        "Close Approach Object:",
+        "Selected Near Earth Object:",
         ...(marked == undefined ? ["  none"] : [
             "  Name:                  " + marked.name,
             "  Closest Approach Date: " + marked.date,

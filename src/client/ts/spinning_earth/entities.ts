@@ -1,11 +1,11 @@
 import { ComposedRTSMatrix } from "./affine-matrix";
 import { camMat } from "./camera";
 import { linAlg, mat4, vec4 } from "./math";
-import { EARTH_MODEL, METEORITE_MODEL, Model, PIN_MODEL } from "./models";
+import { FIREBALL_MODEL, EARTH_MODEL, METEORITE_MODEL, Model, PIN_MODEL } from "./models";
 import { FireParticle } from "./particles";
 import { EARTH_TEXTURE, METEORITE_TEXTURE } from "./textures";
 import { checkSphereCollision } from "./util";
-import { addParticle, earth } from "./world";
+import { addParticle, earth, earthRot } from "./world";
 
 export class Entity {
     private readonly _model: Model;
@@ -157,25 +157,47 @@ export class Meteorite extends Entity {
 }
 
 export class Pin extends Entity {
+    public static readonly HEIGHT = 0.5;
     private static readonly _r = linAlg.createVector(4, [0, 0, 0, 0]);
+    private static readonly _t = linAlg.createVector(4, [0, 0, 0, 1]);
     private static readonly _s = linAlg.createVector(4, [1, 1, 1, 1]);
 
     public hover: number = 0;
 
-    public constructor(t: vec4) {
-        super(PIN_MODEL, Pin._r, t, Pin._s);
+    public constructor() {
+        super(PIN_MODEL, Pin._r, Pin._t, Pin._s);
     }
 
     public override update(): void {
-        this.orientation.updateRMat((R) => linAlg.mmulR(linAlg.ThreeD.rotateAffineY(Math.PI / 1000), R));
+        this.orientation.updateRMat((R) => linAlg.mmulR(linAlg.ThreeD.rotateAffineY(earthRot.data[1]), R));
         this.hover += 0.1;
         this.orientation.updateT((t) => {
             const R = this.orientation.R;
             const up = linAlg.createVector(4, [R.data[4], R.data[5], R.data[6], 0]);
-            t.loadMatrix(earth()!.orientation.t.addR(up.scale(5.5 + (Math.sin(this.hover) + 1) / 2)));
+            t.loadMatrix(earth()!.orientation.t.addR(up.scale(5 + Pin.HEIGHT + (Math.sin(this.hover) + 1) / 2)));
         });
         this.orientation.updateRMat((R) => {
             linAlg.mmulL(R, linAlg.ThreeD.rotateAffineY(0.1));
         })
+    }
+}
+
+export class Disk extends Entity {
+    public static readonly HEIGHT = 0.1;
+    private static readonly _r = linAlg.createVector(4, [0, 0, 0, 0]);
+    private static readonly _t = linAlg.createVector(4, [0, 0, 0, 1]);
+
+    public constructor(s: number, color: vec4) {
+        super(FIREBALL_MODEL, Disk._r, Disk._t, linAlg.createVector(4, [s, s, s, 1]));
+        this.colorModifier.loadMatrix(color);
+    }
+
+    public override update(): void {
+        this.orientation.updateRMat((R) => linAlg.mmulR(linAlg.ThreeD.rotateAffineY(earthRot.data[1]), R));
+        this.orientation.updateT((t) => {
+            const R = this.orientation.R;
+            const up = linAlg.createVector(4, [R.data[4], R.data[5], R.data[6], 0]);
+            t.loadMatrix(earth()!.orientation.t.addR(up.scale(5 + Disk.HEIGHT)));
+        });
     }
 }

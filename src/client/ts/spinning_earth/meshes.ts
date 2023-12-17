@@ -236,6 +236,21 @@ export const SQUARE_MESH = addMesh(new Mesh(
     ]
 ));
 
+const _diskResolution = 20;
+const _diskIndices = new Array<vec3>(_diskResolution);
+const _diskVertices = new Array<vec3>(_diskResolution + 1);
+const _diskAngle = 2*Math.PI / _diskResolution;
+for (let i = 0; i < _diskResolution; ++i) {
+    _diskIndices[i] = linAlg.createVector(3, [_diskResolution, i, (i + 1) % _diskResolution]);
+    _diskVertices[i] = linAlg.createVector(3, [Math.cos(i * _diskAngle), 0, Math.sin(i * _diskAngle)]);
+}
+_diskVertices[_diskResolution] = linAlg.createZeroVector(3);
+export const DISK_MESH = addMesh(new Mesh(
+    _diskIndices,
+    _diskVertices,
+    _diskVertices.map(_v => linAlg.createVector(4, [1, 1, 1, 1]))
+));
+
 export class Icosahedron extends Mesh {
     private constructor(indices: vec3[], vertices: vec3[], vertexColors: vec4[], texCoords: vec2[]) {
         super(indices, vertices, vertexColors, texCoords);
