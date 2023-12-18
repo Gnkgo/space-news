@@ -4,7 +4,6 @@ import { createSunBackButton, removeAllSpaces, getRandomInt } from '../base';
 import asteroid_selected from '../../img/asteroid_selected.png';
 import earth from '../../img/earth.png';
 import asteroid from '../../img/asteroid.png';
-import { initializeEverythin } from '../spinning_earth/spinning-earth';
 
 //Close approach parameters
 const cadMinDate = getFormattedDate();
@@ -31,34 +30,6 @@ fireballContainer.id = 'fireball-container';
 const neo = document.createElement('img');
 neo.id = 'neo';
 neo.src = earth;
-
-function displaySpinningEarth() {
-    const spinningEarth = document.getElementById('spinning-earth-container');
-    const neoContainer = document.getElementById('neo-container');
-    console.log("SPIN TEST", spinningEarth?.style.display);
-    if (neoContainer) {
-        neoContainer.style.display = 'none';
-    }
-    if (spinningEarth) {
-        spinningEarth.style.display = 'block';
-        initializeEverythin();
-    }
-}
-
-if (neoContainer) {
-    neoContainer.appendChild(cadContainer);
-    neoContainer.appendChild(neo);
-    neoContainer.appendChild(fireballContainer);
-    getCloseApproachData(cadApiUrl);
-    getFireballData(fireballApiUrl);
-
-    // Add back to the home page button
-    createSunBackButton(neoContainer);
-}
-
-neo.addEventListener('click', () => displaySpinningEarth());
-
-
 
 async function getCloseApproachData(cadApiUrl: string) {
     try {

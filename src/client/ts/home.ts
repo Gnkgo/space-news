@@ -3,6 +3,7 @@ import { HOME_COMPONENT_ID, getUserLocation, tryShowTutorial } from "./base";
 import { initMoon } from "./backend_dependent/moon";
 import "@fortawesome/fontawesome-free/css/all.css";
 import { createModal, openModal } from "./mars/modal";
+import { displaySpinningEarth } from "./spinning_earth/spinning-earth";
 
 //Display Tutorial for NEW user
 //if(!localStorage.getItem("notFirstTimeUser")) createAndOpenTutoralModal();
@@ -59,10 +60,7 @@ async function showPlanetInformation(planet: string) {
             break;
 
         case 'neo':
-            const neoContainer = document.getElementById('neo-container');
-            if (neoContainer) {
-                neoContainer.style.display = 'grid';
-            }
+            displaySpinningEarth();
             break;
         case 'moon':
             const moonContainer = document.getElementById('moon-container');

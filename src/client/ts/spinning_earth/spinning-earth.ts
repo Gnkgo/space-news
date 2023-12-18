@@ -7,7 +7,16 @@ import { renderText } from "./text";
 import { Meteorite } from "./entities";
 import { SPINNING_EARTH_COMPONENT_ID, tryShowTutorial } from "../base";
 
-export async function initializeEverythin() {
+export function displaySpinningEarth() {
+  const spinningEarth = document.getElementById('spinning-earth-container');
+  console.log("SPIN TEST", spinningEarth?.style.display);
+  if (spinningEarth) {
+      spinningEarth.style.display = 'block';
+      initializeEverything();
+  }
+}
+
+export async function initializeEverything() {
   const offsetScale = linAlg.createVector(4, [0.02, 0.02, 1, 1]);
   const rollScale = 0.02;
 
