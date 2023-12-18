@@ -11,7 +11,7 @@ export interface TemperatureData {
 	isCelcius: boolean;
 }
 
-const dimensions = {
+let dimensions = {
 	width: window.innerWidth,
 	height: Math.max(window.innerHeight * 0.4, 180),
 	marginTop: Math.max(window.innerHeight * 0.0454545, 25),
@@ -20,25 +20,50 @@ const dimensions = {
 	marginRight: Math.max(window.innerWidth * 0.0078125, 10)
 }
 
+const dimensionsSmall = {
+	width: window.innerWidth * 0.85,
+	height: Math.max(window.innerHeight * 0.35, 150),
+	marginTop: Math.max(window.innerHeight * 0.0454545, 25),
+	marginBottom: Math.max(window.innerHeight * 0.09, 50),
+	marginLeft: Math.max(window.innerWidth * 0.0468, 60),
+	marginRight: Math.max(window.innerWidth * 0.0078125, 10)
+
+}
+
 
 export function check(data: TemperatureData[], isCelcius: boolean): void {
 
 
 	function resize(): void {
-		dimensions.width = window.innerWidth;
-		dimensions.height = Math.max(window.innerHeight * 0.4, 180);
+		console.log("CHECK", window.innerWidth);
+
+		if (window.innerWidth < 660) {
+			dimensions.width = window.innerWidth * 0.85;
+			dimensions.height = Math.max(window.innerHeight * 0.35, 150);
+
+		} else {
+			dimensions.width = window.innerWidth;
+			dimensions.height = Math.max(window.innerHeight * 0.4, 180);
+
+		}
 		dimensions.marginTop = Math.max(window.innerHeight * 0.0454545, 25);
-		dimensions.marginBottom= Math.max(window.innerHeight * 0.09, 50);
-		dimensions.marginLeft= Math.max(window.innerWidth * 0.0468, 60),
-		dimensions.marginRight= Math.max(window.innerWidth * 0.0078125, 10)
+		dimensions.marginBottom = Math.max(window.innerHeight * 0.09, 50);
+		dimensions.marginLeft = Math.max(window.innerWidth * 0.0468, 60);
+		dimensions.marginRight = Math.max(window.innerWidth * 0.0078125, 10);
 
 
 		// Call the draw function to redraw the graph with updated dimensions
 		draw(data);
 	}
 
+
+
 	// Add an event listener for window resize
 	window.addEventListener('resize', resize);
+
+	if (window.innerWidth < 660) {
+		dimensions = dimensionsSmall;
+	}
 
 
 
@@ -165,7 +190,7 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 			.text('Date');
 
 		svg.append('text')
-			.attr('transform', `translate(${0 - dimensions.marginLeft/1.5}, ${dimensions.height / 2.25}) rotate(-90)`)
+			.attr('transform', `translate(${0 - dimensions.marginLeft / 1.5}, ${dimensions.height / 2.25}) rotate(-90)`)
 			.style('text-anchor', 'middle')
 			.style('fill', 'white')
 			.style('font-size', 'max(14px, calc(2 * var(--unit)))')

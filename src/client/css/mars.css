@@ -105,14 +105,7 @@ button {
       "weather-boxes"
       "footer";
 
-
-
-
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto auto auto 40px;
-
-    & .today-weather-box {
-      display: none;
-    }
   }
 }
