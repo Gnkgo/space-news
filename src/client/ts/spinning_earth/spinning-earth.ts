@@ -1,9 +1,9 @@
 import { linAlg, mat4 } from "./math";
 import { getOrthographicNO, getPerspectiveNO, resizeCanvasToDisplaySize } from "./util";
 import { camMat } from "./camera";
-import { MovementType, initKeys, isLightModifierPressed, keyOffset, keyRoll, mouseX, mouseY, movementType, resetMouse } from "./input";
+import { MovementType, initKeys, keyOffset, keyRoll, mouseX, mouseY, movementType, resetMouse } from "./input";
 import { earth, initWorld, renderWorld, updateWorld } from "./world";
-import { renderText } from "./text";
+import { renderFPSText, renderMovementType, renderCADInfo } from "./text";
 import { Meteorite } from "./entities";
 import { SPINNING_EARTH_COMPONENT_ID, tryShowTutorial } from "../base";
 
@@ -11,7 +11,7 @@ export function displaySpinningEarth() {
   const spinningEarth = document.getElementById('spinning-earth-container');
   console.log("SPIN TEST", spinningEarth?.style.display);
   if (spinningEarth) {
-      spinningEarth.style.display = 'block';
+      spinningEarth.style.display = 'grid';
       initializeEverything();
   }
 }
@@ -24,9 +24,11 @@ export async function initializeEverything() {
   resizeCanvasToDisplaySize(drawCanvas);
   const gl = drawCanvas.getContext('webgl2')!;
 
-  const textCanvas = document.getElementById("text") as HTMLCanvasElement;
-  resizeCanvasToDisplaySize(textCanvas);
-  const d2 = textCanvas.getContext("2d")!;
+  const fpsDisplay = document.getElementById("fps-display") as HTMLDivElement;
+
+  //Add Eventlistener to Control box
+  const controlBox = document.getElementById("control-box-toggle");
+  controlBox?.addEventListener('click', toggleControlBox);
 
   initWorld(gl);
   tryShowTutorial(SPINNING_EARTH_COMPONENT_ID, {
@@ -63,7 +65,7 @@ export async function initializeEverything() {
   let P: mat4 | undefined, O: mat4 | undefined;
   main();
   function main() {
-    if (drawCanvas == null || textCanvas == null) {
+    if (drawCanvas == null) {
       alert("Cannot instantiate canvas. Consider using vscode-preview-server.");
       return;
     }
@@ -74,14 +76,7 @@ export async function initializeEverything() {
     function render() {
       if (controlsEnabled) {
         const offset = keyOffset();
-        if (isLightModifierPressed()) {
-          /*lightDir.addL(linAlg.createZeroVector(3).loadMatrix(offset));
-          if (lightDir.norm() == 0)
-            lightDir.load(3, 1, [0, 0, -1]);
-          else
-            lightDir.normalize();*/
-        }
-        else if (camMat != undefined) {
+        if (camMat != undefined) {
           const roll = rollScale * keyRoll();
           const moveType = movementType();
           if (moveType == MovementType.FREE) {
@@ -128,10 +123,26 @@ export async function initializeEverything() {
       updateWorld();
       deltaTime = new Date().getTime() - deltaTime;
 
-      resizeCanvasToDisplaySize(textCanvas);
-      renderText(d2, deltaTime);
+      renderFPSText(fpsDisplay, deltaTime);
+      renderMovementType();
+      renderCADInfo();
       requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
+  }
+}
+
+function toggleControlBox(){
+  const icon = document.getElementById("control-box-toggle");
+  const controlBoxContent = document.getElementById("control-box-content");
+  if(controlBoxContent && icon){
+    const currentDisp = controlBoxContent.style.display;
+    if(currentDisp == "none"){
+      controlBoxContent.style.display = "block";
+      icon.style.rotate = "0deg";
+    } else {
+      controlBoxContent.style.display = "none";
+      icon.style.rotate = "180deg";
+    }
   }
 }

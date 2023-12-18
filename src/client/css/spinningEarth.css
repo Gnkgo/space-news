@@ -5,4 +5,61 @@
     display: none;
     align-items: stretch;
     justify-content: stretch;
+
+    & div#fps-display {
+        z-index: 1;
+        width: fit-content;
+        height: fit-content;
+        
+        & h2 {
+            font-size: max(14px, calc(3 * var(--unit)));
+            font-style: bold;
+            color: white;
+            margin-top: calc(1 * var(--unit));
+            margin-left: calc(1 * var(--unit));
+        }
+    }
+
+    & div#cad-elem-info {
+        z-index: 1;
+        width: fit-content;
+        padding-right: 5vh;
+
+        & h2 {
+            font-size: max(14px, calc(3 * var(--unit)));
+        }
+        
+        & pre {
+            font-size: max(12px, calc(2 * var(--unit)));
+            margin-top: 1vh;
+            margin-bottom: 0;
+        }
+    }
+
+    & div#spinning-earth-control-box {
+        align-self: end;
+        justify-self: end;
+        z-index: 1;
+        position: absolute;
+
+        & h1 {
+            display: flex;
+            justify-content: space-between;
+
+            & i {
+                font-size: smaller;
+                align-self: center;
+            }
+
+            & i:hover {
+                cursor: pointer;
+            }
+        }
+
+        & pre {
+            font-size: max(12px, calc(2 * var(--unit)));
+            margin-top: 1vh;
+            margin-bottom: 0;
+        }
+    }
 }
