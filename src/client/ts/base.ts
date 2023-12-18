@@ -155,9 +155,37 @@ export function createText(divContainer: HTMLDivElement, text: string) {
 
 export function createFooter(divContainer: HTMLDivElement) {
     const footer = document.createElement("footer");
-    footer.textContent = "© 2023 by DeValdi - Gnkgo - Nick";
+
+    // Create a list of names
+    const names = ["DeValdi", "Gnkgo", "Nick20500"];
+    
+    const footerText = document.createTextNode("© 2023 by ");
+    footer.appendChild(footerText);
+    // Create an anchor element for each name and append it to the footer
+    names.forEach(name => {
+        const anchor = document.createElement("a");
+        anchor.className = "github-link";
+        anchor.href = `https://github.com/${name}`;
+        if (name == "Nick20500") {
+            anchor.textContent = "Nick";
+        } else {
+            anchor.textContent = name;
+        }
+        anchor.target = "_blank"; // Open link in a new tab
+        footer.appendChild(anchor);
+
+        // Add a separator (comma) between names, except for the last one
+        if (name !== names[names.length - 1]) {
+            const separator = document.createElement("span");
+            separator.textContent = " - ";
+            footer.appendChild(separator);
+        }
+    });
+
+    // Add the footer to the container
     divContainer.appendChild(footer);
 }
+
 
 export function celsiusToFahrenheit(celsius: number): number {
     return (celsius * 9 / 5) + 32;

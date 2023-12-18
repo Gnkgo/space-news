@@ -17,6 +17,12 @@ footer {
 
 }
 
+.github-link {
+  color: white;        /* Set the text color to white */
+  text-decoration: none; /* Remove the underline */
+}
+
+
 .sun-button {
   grid-area: sun;
   margin: 5px;
