@@ -44,14 +44,18 @@ footer {
 
   & h1 {
     margin: 0;
-    font-size: 1.6rem;
+    font-size: max(16px, calc(4 * var(--unit)));
     color: white;
   }
 
   & h2 {
     margin: 0;
-    font-size: 1rem;
+    font-size: max(14px, calc(3 * var(--unit)));
     color: white;
+  }
+
+  & p {
+    font-size: max(12px, calc(2 * var(--unit)));
   }
 
 }
@@ -59,8 +63,11 @@ footer {
 .title-box {
   grid-area: title;
   font-size: 1.6rem;
-
   justify-self: center;
+  align-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  
   & .grey-box {
     text-align: left;
     display: inline-block;
@@ -95,20 +102,26 @@ footer {
   color: white;
   background: rgba(0, 0, 0, 0.8);
 
+  & h1 {
+    justify-content: center;
+    margin: 20px;
+
+  }
+
   & h3#title {
     position: absolute;
     top: 3.25vh;
     margin: 0;
   }
 
-  & img {
-    height: calc(85 * var(--unit));
+  & h5#modal-carousel-counter {
+    position: absolute;
+    bottom: 3.25vh;
+    margin: 0;
   }
 
-  & h1 {
-    justify-content: center;
-    margin: 20px;
-
+  & img {
+    height: calc(85 * var(--unit));
   }
 
   & p {
@@ -141,11 +154,12 @@ footer {
   & i#right-arrow {
     right: 10vw;
   }
+}
 
-  & h5#modal-carousel-counter {
-    position: absolute;
-    bottom: 3.25vh;
-    margin: 0;
+div#tutorial-modal-0 {
+  h2 {
+    font-size: max(14px, calc(3 * var(--unit)));
+    text-align: center;
   }
 }
 
