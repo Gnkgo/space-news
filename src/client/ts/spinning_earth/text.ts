@@ -46,7 +46,7 @@ export function renderText(d2: CanvasRenderingContext2D, deltaTime: number) {
     _deltaTimeFilter = _deltaTimeSum / 100;
     if (now - _lastFpsTime > 1000) {
         _lastFpsTime = now;
-        _lastFpsValue = (1000/_deltaTimeFilter).toFixed(0)
+        _lastFpsValue = (1000/_deltaTimeFilter).toFixed(0);
     }
     let text = [
         "Controls:",
