@@ -1,8 +1,7 @@
 import { camMat } from "./camera";
 import { Meteorite } from "./entities";
 import { linAlg, vec4 } from "./math";
-import { createOrbit } from "./util";
-import { addEntity, earth } from "./world";
+import { earth } from "./world";
 
 const _pressed = new Map<string, boolean>();
 const _mouse: [number, number] = [0, 0];
@@ -19,7 +18,7 @@ export function initKeys(canvas: HTMLCanvasElement): void {
         _mouse[1] = -event.movementY / canvas.height * 3 * Math.PI;
     });
     document.addEventListener("click", (event) => {
-        if (event.button == 0) {
+        /*if (event.button == 0) {
             if (!document.pointerLockElement) {
                 canvas.requestPointerLock();
             } else if (camMat.C != undefined) {
@@ -28,8 +27,7 @@ export function initKeys(canvas: HTMLCanvasElement): void {
                 const [orbit, radius] = createOrbit(dir, pos);
                 addEntity(new Meteorite(orbit, radius, camMat.t, ["", "", "", "2023-Dec-23 20:28", "", "0", "", "0"]));
             }
-        } else if (event.button == 2) {
-            console.log("lol");
+        } else */if (event.button == 0) {
             Meteorite.updateMarked();
         }
     });
