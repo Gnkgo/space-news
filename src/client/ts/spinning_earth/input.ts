@@ -28,7 +28,10 @@ export function initKeys(canvas: HTMLCanvasElement): void {
                 addEntity(new Meteorite(orbit, radius, camMat.t, ["", "", "", "2023-Dec-23 20:28", "", "0", "", "0"]));
             }
         } else */if (event.button == 0) {
-            Meteorite.updateMarked();
+            if (!document.pointerLockElement)
+                canvas.requestPointerLock();
+            else
+                Meteorite.updateMarked();
         }
     });
 }

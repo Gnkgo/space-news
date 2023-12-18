@@ -3,6 +3,8 @@ import { movementType } from "./input";
 
 let _lastFpsTime = 0;
 let _lastFpsValue = "";
+let _deltaTimeSum = 0;
+let _deltaTimeFilter = 0;
 export function renderText(d2: CanvasRenderingContext2D, deltaTime: number) {
     const width = d2.canvas.clientWidth;
     const height = d2.canvas.clientHeight;
@@ -40,9 +42,11 @@ export function renderText(d2: CanvasRenderingContext2D, deltaTime: number) {
     ];*/
     const marked = Meteorite.marked() ?? Meteorite.tracked();
     const now = new Date().getTime();
+    _deltaTimeSum += deltaTime - _deltaTimeFilter;
+    _deltaTimeFilter = _deltaTimeSum / 100;
     if (now - _lastFpsTime > 1000) {
         _lastFpsTime = now;
-        _lastFpsValue = (1000/deltaTime).toFixed(0);
+        _lastFpsValue = (1000/_deltaTimeFilter).toFixed(0)
     }
     let text = [
         "Controls:",
@@ -51,7 +55,7 @@ export function renderText(d2: CanvasRenderingContext2D, deltaTime: number) {
         "  Select Asteroid:      Hover",
         "  Mark Asteroid:        Left Click",
         "  Switch Movement Type: X",
-        "FPS:",
+        "Average FPS:",
         "  " + _lastFpsValue,
         "Selected Near Earth Object:",
         ...(marked == undefined ? ["  none"] : [
