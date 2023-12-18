@@ -165,7 +165,7 @@ const marsWeatherApi = regUrlApi<MarsWeatherReq, MarsWeatherRes>({
     const data = res as MarsWeatherRes;
     // Ensure that 'sols' property exists and is an array
     if (data.soles && Array.isArray(data.soles)) {
-      // Shorten the 'sols' array to only the first 300 elements
+      // Shorten the 'sols' array to only the first 400 elements
       data.soles = data.soles.length >= 400 ? data.soles.slice(0, 400) : data.soles;
     }
     return data;
@@ -201,11 +201,12 @@ cacheCreateDaily("moon", moonApi);
 const fireballApi = regUrlApi<FireballReq, FireballRes>({
   apiName: "Fireball Data",
   target: fireballTarget.raw(),
-  genReq: async (req) => `https://ssd-api.jpl.nasa.gov/fireball.api?date-min=${req["date-min"]}&req-loc=${req["req-loc"]}`,
+  genReq: async (req) =>
+  `https://ssd-api.jpl.nasa.gov/fireball.api?date-min=${req["date-min"]}&req-loc=${req["req-loc"]}`,
   genRes: async (res) => res as FireballRes,
   log: logCreate("fireball")
 });
-cacheCreateDaily("fireball", fireballApi)
+cacheCreateDaily("fireball", fireballApi);
 
 // Sever start. Do not change.
 ViteExpress.listen(app, 5173, () =>

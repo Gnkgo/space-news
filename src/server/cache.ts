@@ -29,7 +29,13 @@ export type Cache<TReq, TRes> = {
      * The invalidation interval in milliseconds.
      */
     readonly ttl: number,
-    readonly api: ApiDef<TReq, TRes>
+    /**
+     * The API this cache serves.
+     */
+    readonly api: ApiDef<TReq, TRes>,
+    /**
+     * The automatically fetched values.
+     */
     readonly autoFetched: (() => TReq)[]
 }
 const cachesPerTtl: Map<number, Cache<any, any>[]> = new Map<number, Cache<any, any>[]>();

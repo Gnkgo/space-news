@@ -3,14 +3,22 @@
  * 
  * Note: Indexing bounds are not checked (impossible in TS's type system).
  */
-export type SizedArray<N extends number, T> = { [index: number]: T, length: N } & _SizedArrayHelper<N, T>;
-type _SizedArrayHelper<N extends number, T, R extends T[] = []> = R extends { length: N } ? R : _SizedArrayHelper<N, T, [T, ...R]>;
-type _Canonical<N extends number, R extends any[] = []> = R extends { length: N } ? R : _Canonical<N, [any, ...R]>;
-type _Length<T extends any[]> = number & (T extends { length: infer L } ? L : never);
-type _Add<A extends number, B extends number> = _Length<[..._Canonical<A>, ..._Canonical<B>]>;
-type _Subtract<A extends number, B extends number> = number & (_Canonical<A> extends [..._Canonical<infer U>, ..._Canonical<B>] ? U : 0);
-type _MultiAdd<A extends number, B extends number, R extends number> = number & (A extends 0 ? R : _MultiAdd<_Subtract<A, 1>, B, _Add<R, B>>);
-type _Multiply<A extends number, B extends number> = _MultiAdd<A, B, 0>;
+export type SizedArray<N extends number, T>
+    = { [index: number]: T, length: N } & _SizedArrayHelper<N, T>;
+type _SizedArrayHelper<N extends number, T, R extends T[] = []>
+    = R extends { length: N } ? R : _SizedArrayHelper<N, T, [T, ...R]>;
+type _Canonical<N extends number, R extends any[] = []>
+    = R extends { length: N } ? R : _Canonical<N, [any, ...R]>;
+type _Length<T extends any[]>
+    = number & (T extends { length: infer L } ? L : never);
+type _Add<A extends number, B extends number>
+    = _Length<[..._Canonical<A>, ..._Canonical<B>]>;
+type _Subtract<A extends number, B extends number>
+    = number & (_Canonical<A> extends [..._Canonical<infer U>, ..._Canonical<B>] ? U : 0);
+type _MultiAdd<A extends number, B extends number, R extends number>
+    = number & (A extends 0 ? R : _MultiAdd<_Subtract<A, 1>, B, _Add<R, B>>);
+type _Multiply<A extends number, B extends number>
+    = _MultiAdd<A, B, 0>;
 
 /**
  * Represents the way a matrix should be laid out in memory as 1D array.
@@ -919,7 +927,7 @@ export class LinAlg<T> {
         let stack = this._buffers.get(length);
         if (stack == undefined)
             this._buffers.set(length, stack = new Stack());
-        return stack.pop(() => { console.log("This should not happen"); return this._createMatrixData(m, n); }) as SizedArray<_Multiply<M, N>, T>;
+        return stack.pop(() => this._createMatrixData(m, n)) as SizedArray<_Multiply<M, N>, T>;
     }
     /**
      * Push a buffer back to the stack. 
