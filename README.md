@@ -131,7 +131,7 @@ Document here the major milestones of your code and future planned steps.\
 
 [15. December 2023, v1.1.1](https://github.com/Gnkgo/space-news/releases/tag/v1.1.1)
 
-[19. December 2023, v2.0.0](https://github.com/Gnkgo/space-news/releases/tag/v2.0.0)
+[19. December 2023, v2.1.0](https://github.com/Gnkgo/space-news/releases/tag/v2.1.0)
 
 
 
