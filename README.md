@@ -1,6 +1,8 @@
 # Space News
 Here you can find the whole code for the project in the course Fundamentals of Webengineering 2023 from ETH.
 
+# READ ME from FoWE-TEAM Skeleton
+
 # Project Title
 Space-News
 ## Team Members
@@ -146,65 +148,3 @@ Document here the major milestones of your code and future planned steps.\
 
 
 
-
-
-
-
-## Project Description 
-The project is about wanting to create a website with three different components: Earth, Mars and Moon. Each component can be accessed to show more data about the associated celestial body. For the Earth, we want to show the current asteroids and comets and where they can be found. For Mars, a weather forecast will be shown. For the Moon, its current state (phase, special phenomena) will be displayed.
-
-
-### Project goals
-- Being able to retrieve data from an API
-- Serving external NASA/Moon data in an aesthetically pleasing interface and providing a great user experience
-  
-### Data Sources
-- [NASA API](https://api.nasa.gov/)
-- [Moon API](https://www.visualcrossing.com/)
-
-  
-### Tasks
-Displaying important information about
-- Earth
-- Near Earth object studies
-- Mars
-- Moon
-
-## Requirements
-
-## How to Run
-You have two options:
-
-Click on this link:
-[Space-News](http://space-news.course-fwe-2023.isginf.ch/)
-
-Run the website locally:
-- clone the repository;
-- open a terminal instance and using the command ```cd``` move to the folder where the project has been downloaded;
-- run: git clone https://github.com/Gnkgo/space-news.git
-- run npm i 
-- run docker build -t space-news .
-- run docker run -it --rm -p 5173:5173 space-news
-- Open a browser and connect to http://localhost:5173
-
-
-## Milestones
-Document here the major milestones of your code and future planned steps.\
-- [X] Moon
-  - [X] Show current moon
-  - [X] Show countdown
-    - [X] Fancy countdown   
-  - [X] make button to choose a date in the future
-  - [X] make a back button
-  - [X] use location
-      
-- [X] Mars
-  - [X] display weather
-  - [X] have a paragraph that describes it
-  - [X] have a nice layout
-  - [X] make temperature graph
-    - [X] make better ticks
-  - [X] make mars picture button
-     
-- [X] Earth
-- [X] Backend
