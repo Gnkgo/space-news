@@ -49,11 +49,11 @@ export function renderCADInfo() {
         cadElemInfo?.appendChild(objectDateText);
 
         const objectDistText = document.createElement("pre");
-        objectDistText.textContent = `Distance: ${meteorite.dist}`;
+        objectDistText.textContent = `Distance:              ${meteorite.dist}`;
         cadElemInfo?.appendChild(objectDistText);
 
         const objectVelText = document.createElement("pre");
-        objectVelText.textContent = `Velocity: ${meteorite.vel}`;
+        objectVelText.textContent = `Velocity:              ${meteorite.vel}`;
         cadElemInfo?.appendChild(objectVelText);
 
         const spinningEarthContainer = document.getElementById("spinning-earth-container");
