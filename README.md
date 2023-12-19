@@ -1,8 +1,6 @@
 # Space News
 Here you can find the whole code for the project in the course Fundamentals of Webengineering 2023 from ETH.
 
-# READ ME from FoWE-TEAM Skeleton
-
 # Project Title
 Space-News
 ## Team Members
@@ -11,8 +9,6 @@ Space-News
 3. Nick
 # Space News
 Here you can find the whole code for the project in the course Fundamentals of Webengineering 2023 from ETH.
-
-# READ ME from FoWE-TEAM Skeleton
 
 # Project Title
 Space-News
@@ -144,7 +140,9 @@ Document here the major milestones of your code and future planned steps.\
 
 [10. November 2023, v1.0.0](https://github.com/Gnkgo/space-news/releases/tag/v1.0.0)
 
-[15. Dezember 2023, v1.1.1](https://github.com/Gnkgo/space-news/releases/tag/v1.1.1)
+[15. December 2023, v1.1.1](https://github.com/Gnkgo/space-news/releases/tag/v1.1.1)
+
+[19. December 2023, v2.0.0](https://github.com/Gnkgo/space-news/releases/tag/v2.0.0)
 
 
 
