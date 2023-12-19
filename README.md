@@ -1,25 +1,14 @@
 # Space News
 Here you can find the whole code for the project in the course Fundamentals of Webengineering 2023 from ETH.
 
-# Project Title
-Space-News
 ## Team Members
 1. DeValdi
 2. Gnkgo
 3. Nick
-# Space News
-Here you can find the whole code for the project in the course Fundamentals of Webengineering 2023 from ETH.
 
-# Project Title
-Space-News
-## Team Members
-1. DeValdi
-2. Gnkgo
-3. Nick
 
 ## Project Description 
 The project is about wanting to create a website with three different components: Earth, Mars and Moon. Each component can be accessed to show more data about the associated celestial body. For the Earth, we want to show the current asteroids and comets and where they can be found. For Mars, a weather forecast will be shown. For the Moon, its current state (phase, special phenomena) will be displayed.
-
 
 ### Project goals
 - Being able to retrieve data from an API
