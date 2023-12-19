@@ -1,17 +1,23 @@
-import { ComposedRTSMatrix } from "./affine-matrix";
+import { ComposedRTSMatrix } from "./composed-matrices";
 import { camMat } from "./camera";
 import { linAlg, mat4, vec4 } from "./math";
 import { FIREBALL_MODEL, EARTH_MODEL, METEORITE_MODEL, Model, PIN_MODEL } from "./models";
 import { FireParticle } from "./particles";
 import { EARTH_TEXTURE, METEORITE_TEXTURE } from "./textures";
 import { checkSphereCollision } from "./util";
-import { addParticle, earth, earthRot } from "./world";
+import { addParticle, earth } from "./world";
 
 export class Entity {
+    private static readonly _id: mat4 = linAlg.createIdentityMatrix(4);
+
     private readonly _model: Model;
     private readonly _texture: WebGLTexture | undefined;
+    private readonly _children: Entity[] = [];
     public readonly orientation: ComposedRTSMatrix;
     public readonly colorModifier: vec4;
+
+    private readonly _O: mat4 = linAlg.createIdentityMatrix(4);
+    private readonly _On: mat4 = linAlg.createIdentityMatrix(4);
 
     public constructor(model: Model, r: vec4, t: vec4, s: vec4, texture?: WebGLTexture) {
         this._model = model;
@@ -21,6 +27,18 @@ export class Entity {
     }
 
     public render(gl: WebGL2RenderingContext, shader: WebGLProgram, P: mat4, V: mat4) {
+        this.renderChild(gl, shader, P, V, Entity._id, Entity._id);
+    }
+
+    private renderChild(gl: WebGL2RenderingContext, shader: WebGLProgram, P: mat4, V: mat4, parentO: mat4, parentOn: mat4) {
+        const orient = this.orientation;
+        const O = orient.composed(this._O);
+        linAlg.mmulR(parentO, O);
+        const On = orient.inverted(this._On);
+        On.transposed(On);
+        linAlg.mmulR(parentOn, On);
+        for (const child of this._children)
+            child.renderChild(gl, shader, P, V, O, On);
         const texture = this._texture;
         const uUseTexture = gl.getUniformLocation(shader, "uUseTexture");
         if (texture != undefined) {
@@ -33,14 +51,16 @@ export class Entity {
         gl.uniform1i(uSampler, 0);
         const uVertexColorModifier = gl.getUniformLocation(shader, "uColorModifier");
         gl.uniform4fv(uVertexColorModifier, new Float32Array(this.colorModifier.data));
-        const orient = this.orientation;
-        const O = orient.composed();
-        const On = orient.inverted();
-        On.transposed(On);
         this._model.render(gl, shader, P, V, O, On);
     }
 
+    public addChild(child: Entity): void {
+        this._children.push(child);
+    }
+
     public update(): void {
+        for (const child of this._children)
+            child.update();
     }
 }
 
@@ -137,10 +157,10 @@ export class Meteorite extends Entity {
         const newPos = earthPos.subR(linAlg.createVector(4, [orbit.data[0]!, orbit.data[1]!, orbit.data[2]!, 0]).scale(this.radius));
         const orient = this.orientation;
         orient.updateT((t) => t.loadMatrix(newPos));
-        linAlg.mmulL(orbit, linAlg.ThreeD.rotateAffineY(Math.PI / 2000));
+        linAlg.mmulL(orbit, linAlg.ThreeD.rotateAffineY(Math.PI / 4000));
         orient.updateRMat((R) => R.loadMatrix(linAlg.mmulR(orbit, linAlg.ThreeD.rotateAffineY(this.spin += Math.PI / 200))));
         if (this.nextFire <= 0) {
-            addParticle(new FireParticle(orient.t.addR(linAlg.mmulR(orbit, linAlg.createVector(4, [0.5 * Math.random() - 0.25, 0.5 * Math.random() - 0.25, -1, 0])))));
+            addParticle(new FireParticle(orient.t.addR(linAlg.mmulR(orbit, linAlg.createVector(4, [0.5 * Math.random() - 0.25, 0.5 * Math.random() - 0.25, -0.5, 0])))));
             this.nextFire = 2;
         } else
             --this.nextFire;
@@ -159,22 +179,19 @@ export class Meteorite extends Entity {
 export class Pin extends Entity {
     public static readonly HEIGHT = 0.5;
     private static readonly _r = linAlg.createVector(4, [0, 0, 0, 0]);
-    private static readonly _t = linAlg.createVector(4, [0, 0, 0, 1]);
     private static readonly _s = linAlg.createVector(4, [1, 1, 1, 1]);
 
+    private readonly _up: vec4;
     public hover: number = 0;
 
-    public constructor() {
-        super(PIN_MODEL, Pin._r, Pin._t, Pin._s);
+    public constructor(t: vec4) {
+        super(PIN_MODEL, Pin._r, t, Pin._s);
+        this._up = t.normalize();
     }
 
     public override update(): void {
-        this.orientation.updateRMat((R) => linAlg.mmulR(linAlg.ThreeD.rotateAffineY(earthRot.data[1]), R));
-        this.hover += 0.1;
         this.orientation.updateT((t) => {
-            const R = this.orientation.R;
-            const up = linAlg.createVector(4, [R.data[4], R.data[5], R.data[6], 0]);
-            t.loadMatrix(earth()!.orientation.t.addR(up.scale(5 + Pin.HEIGHT + (Math.sin(this.hover) + 1) / 2)));
+            t.loadMatrix(this._up).scale(5 + Pin.HEIGHT + (Math.sin(this.hover += 0.1) + 1) / 2);
         });
         this.orientation.updateRMat((R) => {
             linAlg.mmulL(R, linAlg.ThreeD.rotateAffineY(0.1));
@@ -185,19 +202,9 @@ export class Pin extends Entity {
 export class Disk extends Entity {
     public static readonly HEIGHT = 0.1;
     private static readonly _r = linAlg.createVector(4, [0, 0, 0, 0]);
-    private static readonly _t = linAlg.createVector(4, [0, 0, 0, 1]);
 
-    public constructor(s: number, color: vec4) {
-        super(FIREBALL_MODEL, Disk._r, Disk._t, linAlg.createVector(4, [s, s, s, 1]));
+    public constructor(t: vec4, s: number, color: vec4) {
+        super(FIREBALL_MODEL, Disk._r, t, linAlg.createVector(4, [s, s, s, 1]));
         this.colorModifier.loadMatrix(color);
-    }
-
-    public override update(): void {
-        this.orientation.updateRMat((R) => linAlg.mmulR(linAlg.ThreeD.rotateAffineY(earthRot.data[1]), R));
-        this.orientation.updateT((t) => {
-            const R = this.orientation.R;
-            const up = linAlg.createVector(4, [R.data[4], R.data[5], R.data[6], 0]);
-            t.loadMatrix(earth()!.orientation.t.addR(up.scale(5 + Disk.HEIGHT)));
-        });
     }
 }

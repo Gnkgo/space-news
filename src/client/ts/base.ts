@@ -214,6 +214,11 @@ export function goHome() {
     if (moonContainer) {
         moonContainer.style.display = 'none';
     }
+
+    const spinningEarthContainer = document.getElementById('spinning-earth-container');
+    if (spinningEarthContainer) {
+        spinningEarthContainer.style.display = 'none';
+    }
 }
 
 /**

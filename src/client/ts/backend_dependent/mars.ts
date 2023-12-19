@@ -23,7 +23,7 @@ async function initMars(): Promise<void> {
     if (marsContainer) {
       marsContainer.innerHTML = '';
       weatherData = await getWeatherData();
-      console.log("WEATHER DATA", weatherData);
+      //console.log("WEATHER DATA", weatherData);
       currentDate = weatherData.soles[0]?.terrestrial_date || '';
       currentDateSol = weatherData.soles[0]?.sol || '';
       renderWeather();
@@ -79,7 +79,7 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
   innerWeatherBox.appendChild(button);
 
   const test = document.getElementById('celsius-unit-min');
-  console.log("TEST CELSIUS UNTI", test);
+  //console.log("TEST CELSIUS UNTI", test);
 
   if (moreInfo) {
     innerWeatherBox.innerHTML += `

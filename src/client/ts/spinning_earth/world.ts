@@ -6,9 +6,9 @@ import { HUDElement } from "./hud-elements";
 import { linAlg, mat4 } from "./math";
 import { initMeshes } from "./meshes";
 import { CROSSHAIR_MODEL } from "./models";
-import { Particle } from "./particles";
+import { Particle, SunParticle } from "./particles";
 import { ENTITY_SHADER, HUD_SHADER, PARTICLE_SHADER, SKYBOX_SHADER, initShaders, prepareShader } from "./shaders";
-import { EternalDarkness, Skybox } from "./skyboxes";
+import { EternalDarkness } from "./skyboxes";
 import { initTextures } from "./textures";
 import { attachToEarth, createOrbit, getRandomVec4 } from "./util";
 
@@ -48,7 +48,11 @@ export function addParticle(p: Particle): Particle {
     return p;
 }
 
-let _skybox: Skybox;
+let _skybox: EternalDarkness;
+export function sun(): SunParticle {
+    return _skybox.sun;
+}
+
 let _crosshair: HUDElement;
 let _entityShader: WebGLProgram;
 let _particleShader: WebGLProgram;
@@ -66,12 +70,10 @@ export async function initWorld(gl: WebGL2RenderingContext): Promise<void> {
     _skybox = new EternalDarkness(); //StarryNight.create(200);
     _crosshair = new HUDElement(CROSSHAIR_MODEL, linAlg.createVector(2, [0, 0]))
     navigator.geolocation.getCurrentPosition((geo) => {
-        addEntity(attachToEarth(geo.coords.latitude, geo.coords.longitude, () => new Pin()));
+        _earth!.addChild(attachToEarth(geo.coords.latitude, geo.coords.longitude, 5 + Pin.HEIGHT, (pos) => new Pin(pos)));
     });
 
     const cad = await fetch(cadApiUrl).then(data => data.json()) as CADRes;
-    console.log(cad);
-    console.log("\r\n");
     for (const d of cad.data) {
         const radius = 10 * (1 + Number(d[5])/cadMinDistMax);
         const dir = getRandomVec4(radius);
@@ -81,16 +83,12 @@ export async function initWorld(gl: WebGL2RenderingContext): Promise<void> {
     }
 
     const fireball = await fetch(fireballApiUrl).then(data => data.json()) as FireballRes;
-    console.log(fireball);
-    console.log("\r\n");
     for (const d of fireball.data) {
-        console.log(d);
         const logKt = Math.log10(Number(d[2]!));
-        console.log("logKt: " + logKt + "\r\n");
         const scale = Math.min(Math.max(0, logKt + 1) / 3.5, 1);
         const color = linAlg.createVector(4, [1, 0, 0, 1]).scale(scale).addL(linAlg.createVector(4, [0, 1, 0, 1]).scale(1 - scale));
-        const disk = attachToEarth((d[4] == "N" ? 1 : -1) * Number(d[3]!), (d[6] == "E" ? 1 : -1) * Number(d[5]!), () => new Disk(scale, color));
-        addEntity(disk);
+        const disk = attachToEarth((d[4] == "N" ? 1 : -1) * Number(d[3]!), (d[6] == "E" ? 1 : -1) * Number(d[5]!), 5 + Disk.HEIGHT, (pos) => new Disk(pos, scale, color));
+        _earth.addChild(disk);
     }
 }
 
