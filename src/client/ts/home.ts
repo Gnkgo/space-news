@@ -7,7 +7,7 @@ import { displaySpinningEarth } from "./spinning_earth/spinning-earth";
 
 //Display Tutorial for NEW user
 //if(!localStorage.getItem("notFirstTimeUser")) createAndOpenTutoralModal();
-localStorage.clear();
+//localStorage.clear();
 tryShowTutorial(HOME_COMPONENT_ID, {
     "en": "<i class=\"fa-solid fa-arrow-pointer\"></i> Click any celestial body to get more information.",
     "de": "<i class=\"fa-solid fa-arrow-pointer\"></i> Klicken Sie auf einen Himmelskörper, um zusätzliche Informationen zu erhalten."

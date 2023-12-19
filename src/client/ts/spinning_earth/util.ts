@@ -76,9 +76,7 @@ export function getOrthographicNO(clientWidth: number, clientHeight: number): ma
     const aspect = clientWidth / clientHeight;
     const h = Math.tan(fieldOfView / 2) * 2 * zNear;
     const w = aspect * h;
-    console.log(w + ", " + h + "\r\n");
     const O = createOrthographicNO(-w / 2, w / 2, -h / 2, h / 2, zNear, zFar);
-    console.log(O + "\r\n");
     return O;
 }
 
@@ -199,15 +197,11 @@ export function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement): boolean {
 
 export function createOrbit(dir: vec4, pos: vec4): [mat4, number] {
     const zDir = linAlg.createZeroVector(3).loadMatrix(dir);
-    console.log(zDir + "\r\n");
     const xDir = linAlg.createZeroMatrix(3, 1).loadMatrix(earth()!.orientation.t.subR(pos.copy()));
     const radius = xDir.norm();
     xDir.normalize();
-    console.log(xDir + ", " + radius + "\r\n");
     const yDir = linAlg.ThreeD.cross(zDir, xDir).normalize();
-    console.log(yDir + "\r\n");
     linAlg.ThreeD.cross(xDir, yDir, zDir).normalize();
-    console.log(zDir + "\r\n");
     const orbit = linAlg.createMatrix(4, 4, [
         xDir.data[0]!, xDir.data[1]!, xDir.data[2]!, 0,
         yDir.data[0]!, yDir.data[1]!, yDir.data[2]!, 0,
@@ -232,17 +226,13 @@ export function normal(vec: vec3): vec3 {
     return linAlg.createVector(3, [0, -z, y]).normalize();
 }
 
-export function attachToEarth<E extends Entity>(latitude: number, longitude: number, creator: () => E): E {
+export function attachToEarth<E extends Entity>(latitude: number, longitude: number, radius: number, creator: (pos: vec4) => E): E {
     const coords: [number, number] = latLongDegToEarthRad(latitude, longitude);
-    coords[1] += earth()!.orientation.r.data[1];
-    console.log(coords + "\r\n");
-    const vec = latLongToVec4(coords[0], coords[1]);
-    const yDir = linAlg.createZeroMatrix(3, 1).loadMatrix(vec);
+    const pos = latLongToVec4(coords[0], coords[1], radius);
+    const yDir = linAlg.createZeroMatrix(3, 1).loadMatrix(pos).normalize();
     const zDir = normal(yDir);
     const xDir = linAlg.ThreeD.cross(yDir, zDir).normalize();
-    const pos = earth()!.orientation.t.addR(vec);
-    const entity = creator();
-    entity.orientation.updateT((t) => t.loadMatrix(pos));
+    const entity = creator(pos);
     entity.orientation.updateRMat((R) => {
         R.load(4, 4, [
             xDir.data[0], xDir.data[1], xDir.data[2], 0,

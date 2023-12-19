@@ -821,7 +821,7 @@ export class LinAlg<T> {
         if (stack == undefined)
             this._iterators.set(layout, stack = new Stack());
         const supplier = layout == MatrixDataLayout.ROW_MAJOR ? () => new _RowMajorIterator() : () => new _ColMajorIterator();
-        const it = stack.pop(() => { console.log("This should not happen"); return supplier(); });
+        const it = stack.pop(supplier);
         it.load(m, n);
         return it;
     }

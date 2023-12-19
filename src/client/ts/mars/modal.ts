@@ -10,7 +10,7 @@ export function openModal(photos: any, data : MarsData | null, isRover : boolean
   let modal = document.getElementById("myModal") as HTMLElement;
   let modalImages = document.getElementsByClassName("modal-image") as HTMLCollectionOf<HTMLImageElement>;
   let modalWeatherBox = document.getElementById("modalText") as HTMLElement;
-  console.log("modalOUT", modal);
+  //console.log("modalOUT", modal);
 
   if (easteregg) {
     const text = document.createElement("h1");
@@ -27,7 +27,7 @@ export function openModal(photos: any, data : MarsData | null, isRover : boolean
     modal.appendChild(text);
     modal.appendChild(paragraph);
     modal.className = "modal";
-    console.log("modalIN", modal);
+    //console.log("modalIN", modal);
     modal.style.display = "block";
 
     return;

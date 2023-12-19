@@ -7,7 +7,7 @@ import { BACKGROUND_TEXTURE } from "./textures";
 import { getRandomVec4 } from "./util";
 
 export class Skybox {
-    private readonly _particles: Particle[] = [];
+    protected readonly _particles: Particle[] = [];
 
     public constructor(particles: Particle[] = []) {
         this._particles = particles;
@@ -47,10 +47,13 @@ export class EternalDarkness extends Skybox {
     private readonly _model: Model;
     private readonly _texture: WebGLTexture;
 
+    public readonly sun: SunParticle;
+
     public constructor() {
         super([new SunParticle(linAlg.createVector(4, [0, 0, -30, 0]))]);
         this._model = BACKGROUND_MODEL;
         this._texture = BACKGROUND_TEXTURE()!;
+        this.sun = this._particles[0] as SunParticle;
     }
     
     public override render(gl: WebGL2RenderingContext, shader: WebGLProgram, P: Matrix4D, V: Matrix4D, camMat: ComposedMTMatrix): void {
