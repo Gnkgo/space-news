@@ -10,7 +10,7 @@
         z-index: 1;
         width: fit-content;
         height: fit-content;
-        
+
         & h2 {
             font-size: max(14px, calc(3 * var(--unit)));
             font-style: bold;
@@ -28,7 +28,7 @@
         & h2 {
             font-size: max(14px, calc(3 * var(--unit)));
         }
-        
+
         & pre {
             font-size: max(12px, calc(2 * var(--unit)));
             margin-top: 1vh;
@@ -36,9 +36,10 @@
         }
     }
 
-    & div#spinning-earth-control-box {
-        align-self: end;
-        justify-self: end;
+
+
+    & div#spinning-earth-control-box,
+    & div#spinning-earth-info-box {
         z-index: 1;
         position: absolute;
 
@@ -61,5 +62,15 @@
             margin-top: 1vh;
             margin-bottom: 0;
         }
+    }
+
+    & div#spinning-earth-control-box {
+        align-self: end;
+        justify-self: end;
+    }
+
+    & div#spinning-earth-info-box {
+        align-self: flex-start;
+        justify-self: flex-end;
     }
 }

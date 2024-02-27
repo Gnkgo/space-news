@@ -19,6 +19,7 @@ let drawCanvas: HTMLCanvasElement | undefined;
 let gl: WebGL2RenderingContext | undefined;
 let fpsDisplay: HTMLDivElement | undefined;
 let controlBox: HTMLElement;
+let infoBox: HTMLElement;
 
 export function displaySpinningEarth() {
   const spinningEarth = document.getElementById('spinning-earth-container');
@@ -110,23 +111,26 @@ export function initializeEverything(): void {
   gl = drawCanvas.getContext('webgl2')!;
   fpsDisplay = document.getElementById("fps-display") as HTMLDivElement;
   controlBox = document.getElementById("control-box-toggle") as HTMLElement;
-  controlBox.addEventListener('click', toggleControlBox);
+  controlBox.addEventListener('click', () => toggleControlBox("control"));
+  infoBox = document.getElementById("information-box-toggle") as HTMLElement;
+  infoBox.addEventListener('click', () => toggleControlBox("information"));
+  
 
   initWorld(gl);
   tryShowTutorial(SPINNING_EARTH_COMPONENT_ID, {
-    "en": "Here, you can check out our beautiful earth in all of its 3D glory!<br>"
+    "en": "Here, you can see our beautiful Earth in all of its 3D glory!<br>"
       + "<br>"
       + "Your location is marked on the globe with a spinning arrow.<br>"
       + "<br>"
-      + "The dots on our blue planet represent Fireball's, with size and red-ness<br>"
-      + "proportial to the estimated kinetic energy.<br>"
+      + "The dots on our blue planet represent \"fireballs\", with size and redness<br>"
+      + "proportional to the estimated kinetic energy.<br>"
       + "<br>"
-      + "The asteroids are Near Earth Object's observed in the zone between<br>"
-      + "Earth and the Moon. Hover over or select them to see some more details.<br>"
+      + "The asteroids are Near Earth Objects observed in the zone between<br>"
+      + "Earth and the Moon. Hover over them or select them to see some more details.<br>"
       + "<br>"
-      + "There are different ways to move around the scene.<br>"
+      + "There are several different ways to move around the scene.<br>"
       + "Locked: &nbsp&nbspMovement and rotation locked to the center of Earth.<br>"
-      + "Detached: Movement locked to the center of Earth. Free rotation via the mouse.<br>"
+      + "Detached: Movement locked to the centre of the Earth. Free rotation via the mouse.<br>"
       + "Free: &nbsp&nbsp&nbsp&nbspFree movement and rotation.<br>"
       + "Tracking: Movement follows the selected asteroid, if present. Free rotation."
   }, () => initInput(drawCanvas!));
@@ -142,9 +146,9 @@ export function initializeEverything(): void {
   initialized = true;
 }
 
-function toggleControlBox() {
-  const icon = document.getElementById("control-box-toggle");
-  const controlBoxContent = document.getElementById("control-box-content");
+function toggleControlBox(boxSelect : string) {
+  const icon = document.getElementById(boxSelect + "-box-toggle");
+  const controlBoxContent = document.getElementById(boxSelect + "-box-content");
   if (controlBoxContent && icon) {
     const currentDisp = controlBoxContent.style.display;
     if (currentDisp == "none") {

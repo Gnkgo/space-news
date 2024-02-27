@@ -13,7 +13,6 @@ export function displayMoonEvents(moonData: MoonData): void {
   moonEvents = document.createElement("div");
   moonEvents.id = "moon-events";
   moonEvents.classList.add("moon-events");
-  //console.log("moonData: ", moonData);
 
   if (moonData && (moonData.days[0] !== undefined)) {
     const moonrise = moonData.days[0].moonrise;

@@ -9,8 +9,14 @@ import { displaySpinningEarth } from "./spinning_earth/spinning-earth";
 //if(!localStorage.getItem("notFirstTimeUser")) createAndOpenTutoralModal();
 //localStorage.clear();
 tryShowTutorial(HOME_COMPONENT_ID, {
-    "en": "<i class=\"fa-solid fa-arrow-pointer\"></i> Click any celestial body to get more information.",
-    "de": "<i class=\"fa-solid fa-arrow-pointer\"></i> Klicken Sie auf einen Himmelskörper, um zusätzliche Informationen zu erhalten."
+    "en": "<i class=\"fa-solid fa-arrow-pointer\"></i> Click any celestial body to get more information.<br>"
+    + "<br>"
+    + "Mars: Get weather data, click on Mars to see an image of a random rover on Mars<br>"
+    + "<br>"
+    + "Moon: Get moon phase and the next full moon<br>"
+    + "<br>"
+    + "Earth: See current asteroids and passed fireballs<br>"
+    + "<br>",
 })
 
 //Add click-eventlistener to planets

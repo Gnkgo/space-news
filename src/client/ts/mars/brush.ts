@@ -35,8 +35,6 @@ export function check(data: TemperatureData[], isCelcius: boolean): void {
 
 
 	function resize(): void {
-		//console.log("CHECK", window.innerWidth);
-
 		if (window.innerWidth < 660) {
 			dimensions.width = window.innerWidth * 0.85;
 			dimensions.height = Math.max(window.innerHeight * 0.35, 150);
