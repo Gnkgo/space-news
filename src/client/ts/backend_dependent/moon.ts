@@ -1,10 +1,11 @@
 import { MoonRes as MoonData } from '../../../common/api';
 import { getFormattedDate } from '../../../common/utils';
-import { createTitle, createFooter, formatDate, createSunBackButton } from '.././base';
+import { createTitle, createFooter, formatDate, createSunBackButton, isSameDay } from '.././base';
 import { displayMoonEvents } from '../moon/moonEvents';
 import { displayMoon, getTimeUntilNextFullMoon } from '../moon/datePicker';
 import { getMoonData } from '../moon/moonDataCollection';
 import { updateCountdown } from '../moon/countdown';
+import { isSameDayBoolean} from '../moon/datePicker';
 
 export const moonContainer = document.getElementById('moon-container') as HTMLDivElement;
 let today = getFormattedDate();
@@ -23,10 +24,11 @@ export async function initMoon(location: number[]): Promise<void> {
 
             currentMoonData = await getMoonData("next30days", locationSave);
             pickMoonData = await getMoonData(today, locationSave);
-
-            createTitle(moonContainer, "Moon Phase", text, false, formatDate(currentMoonData.days[0]?.datetime), "");
-            displayMoon(currentMoonData, today);
-            displayMoonEvents(currentMoonData);
+            console.log("pickmoon", pickMoonData.days[0]?.datetime)
+            console.log("currnetmoon", currentMoonData)
+            createTitle(moonContainer, "Moon Phase", text, false, formatDate(pickMoonData.days[0]?.datetime), "");
+            displayMoon(pickMoonData, today);
+            displayMoonEvents(pickMoonData);
         }
     } catch (error) {
         console.error("Error initializing weather app", error);
@@ -38,6 +40,7 @@ export async function initMoon(location: number[]): Promise<void> {
 setInterval(() => {
     const countdown = document.getElementById("countdown");
     if (countdown) {
-        countdown.textContent = updateCountdown(getTimeUntilNextFullMoon(), true);
+        countdown.textContent = updateCountdown(getTimeUntilNextFullMoon(), isSameDayBoolean);
+
     }
 }, 1000);

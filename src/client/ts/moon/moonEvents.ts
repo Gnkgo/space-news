@@ -1,8 +1,8 @@
 import { MoonRes as MoonData } from '../../../common/api';
 import { moonContainer } from '../backend_dependent/moon';
 import { updateCountdown } from './countdown';
-import { getTimeUntilNextFullMoon } from './datePicker';
-import { formatDate } from '../base';
+import { getTimeUntilNextFullMoon, isSameDayBoolean } from './datePicker';
+import { formatDate, isSameDay } from '../base';
 
 export function displayMoonEvents(moonData: MoonData): void {
 
@@ -33,7 +33,8 @@ export function displayMoonEvents(moonData: MoonData): void {
 
     const countdown = document.createElement("p");
     countdown.id = "countdown";
-    countdown.textContent = updateCountdown(getTimeUntilNextFullMoon(), true);
+    console.log(new Date(moonData.days[0]?.datetime), new Date());
+    countdown.textContent = updateCountdown(getTimeUntilNextFullMoon(), isSameDayBoolean);
     moonContent.appendChild(countdown);
 
     moonEvents.appendChild(moonContent);

@@ -191,7 +191,7 @@ cacheCreateDaily("mars_rover_photos", marsRoverPhotosApi);
 const moonApi = regUrlApi<MoonReq, MoonRes>({
   apiName: "Moon Data",
   target: moonTarget.raw(),
-  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.lat}%2C%20${req.lon}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,
+  genReq: async (req) => `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${req.lat}%2C%20${req.lon}/${req.date}?unitGroup=metric&include=days&key=${moonApiKey}&contentType=json&elements=datetime,moonphase,sunrise,sunset,moonrise,moonset`,                  
   genRes: async (res) => res as MoonRes,
   log: logCreate("moon")
 });

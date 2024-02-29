@@ -1,5 +1,5 @@
 export function updateCountdown(differenceInMilliseconds: number, isCurrentDate: boolean) : string {
-
+    console.log(differenceInMilliseconds, isCurrentDate)
     if (!isCurrentDate) return "";
 
     if (differenceInMilliseconds > 0) {
