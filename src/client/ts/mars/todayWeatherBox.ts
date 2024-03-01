@@ -17,7 +17,7 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
   innerWeatherBox.innerHTML += `
       <p>Min.: ${sol.min_temp} <span id="celsius-unit-min" class="${isCelsius ? 'selected' : ''}">°C</span> | <span id="fahrenheit-unit-min" class="${!isCelsius ? 'selected' : ''}">°F</span></p>
       <p>Max.: ${sol.max_temp} <span id="celsius-unit-max" class="${isCelsius ? 'selected' : ''}">°C</span> | <span id="fahrenheit-unit-max" class="${!isCelsius ? 'selected' : ''}">°F</span></p>
-            <p>Weather: ${sol.atmo_opacity}</p>
+      <p>Weather: ${sol.atmo_opacity}</p>
       <p>UV: ${sol.local_uv_irradiance_index}</p>
     `;
 
@@ -85,14 +85,9 @@ export function todayWeather(): void {
 
 
 
-    // Append the new box to the body
     if (weatherData.soles[0] === undefined) return;
     outerWeatherBox.appendChild(createInnerWeatherBox(false, weatherData.soles[0]));
-    //outerWeatherBox.addEventListener("click", () => {
-    //  createModal();
-    //  openModal("src/client/img/marsModal.jpg", weatherData, false);
-    //}
-    //);
+
     marsContainer.appendChild(outerWeatherBox);
   }
 }

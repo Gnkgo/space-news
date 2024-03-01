@@ -2,13 +2,12 @@ import { createTitle, createFooter, formatDate, createSunBackButton } from '../.
 import { MarsWeatherRes as MarsData } from '../../../common/api';
 import * as d3 from 'd3';
 import { getWeatherData } from '../mars/weatherDataCollection';
-import { extractAndDisplayTemperature } from '../mars/createTemperatureGraph';
 import { TemperatureData } from '../mars/createTemperatureGraph';
 import { createModal, openModal } from "../mars/modal";
 import { createImage } from '.././base';
 import marsModifiedUrl from '../../img/mars-modified.png';
 import marsModalUrl from '../../img/marsModal.jpg';
-import {check} from '../mars/brush'
+import { check } from '../mars/brush'
 
 export let isCelsius = true;
 export let isSol = true;
@@ -40,7 +39,6 @@ async function initMars(): Promise<void> {
 
 
 
-
 async function toggleDateUnit() {
   isSol = !isSol;
   renderWeather();
@@ -53,6 +51,7 @@ async function toggleTemperatureUnit() {
   isCelsius = !isCelsius;
   renderWeather();
 }
+
 export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivElement {
   const innerWeatherBox = document.createElement('div');
   innerWeatherBox.classList.add('grey-box');
@@ -76,7 +75,7 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
   button.textContent = 'More Information';
   innerWeatherBox.appendChild(button);
 
-  if (moreInfo) {
+   if (moreInfo) {
     innerWeatherBox.innerHTML += `
     <p>Weather: ${sol.atmo_opacity}</p>
     <p>UV: ${sol.local_uv_irradiance_index}</p>
@@ -88,7 +87,7 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
         <p>Wind Direction: ${sol.wind_direction}°</p>
         
       `;
-  }
+  } 
 
   // Adding event listener directly to the created innerWeatherBox
   innerWeatherBox.addEventListener('click', (event) => {

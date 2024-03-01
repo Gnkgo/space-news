@@ -1,3 +1,4 @@
+
 #mars-container {
   margin: 0;
   padding-left: 3vw;
@@ -81,10 +82,21 @@
   }
 }
 
+button:hover {
+  background-color: #4a4a4a;
+}
+
 button {
-  background-color: black;
-  color: white;
+
   font-size: max(12px, calc(2 * var(--unit)));
+  display: block;
+  padding: 5px 10px;
+  background-color: #000000;
+  color: #ffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .chart-info {
@@ -95,6 +107,30 @@ button {
   color: white;
 }
 
+
+.rovers {
+  grid-area: image;
+  align-self: center;
+  display: none;
+}
+
+.rover-button {
+  grid-area: image;
+  display: block;
+  padding: 5px 10px;
+  background-color: #000000;
+  color: #ffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  gap: 10px;
+  margin: 10px;
+}
+
+.rover-button:hover {
+  background-color: #4a4a4a;
+}
 
 
 

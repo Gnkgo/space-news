@@ -1,6 +1,8 @@
-import { renderRoverPhotos } from "./mars/roverPhotos";
+import { displayRoverOptions, getRoverPhotos, renderRoverPhotos } from "./mars/roverPhotos";
 import sunUrl from '../img/sun.png';
 import blueMoon from '../img/blueMoon.png'
+
+export let chosenRover: string;
 
 export function formatDate(inputDate: string | undefined): string {
     if (inputDate === undefined) {
@@ -86,6 +88,7 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
     const imageContainer = document.createElement('div');
     imageContainer.className = 'image-container';
     imageContainer.id = `image-container-${container.id}`;
+    console.log(imageContainer.id);
     imageContainer.appendChild(image);
     const descriptionTextNode = document.createTextNode(description);
 
@@ -95,12 +98,66 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
     }
 
     if (container.id === 'mars-container') {
-        image.addEventListener('click', () => {
+        console.log("mars container")
+        const rovers = document.createElement('div');
+        rovers.id = "rovers";
+        rovers.className = "rovers";
+
+        const roverButtonCuriosity = document.createElement('button');
+        roverButtonCuriosity.id = "curiosity";
+        roverButtonCuriosity.className = "rover-button";
+        roverButtonCuriosity.textContent = "Curiosity";
+
+        roverButtonCuriosity.addEventListener('click', () => {
+            chosenRover = "curiosity";
+            getRoverPhotos();
+            renderRoverPhotos();
+            console.log("clicked curiosity");
+        });
+
+
+        const roverButtonOpportunity = document.createElement('button');
+        roverButtonOpportunity.id = "opportunity";
+        roverButtonOpportunity.className = "rover-button";
+        roverButtonOpportunity.textContent = "Opportunity";
+
+        roverButtonOpportunity.addEventListener('click', () => {
+            chosenRover = "opportunity";
+            console.log(chosenRover);
+            getRoverPhotos();
             renderRoverPhotos();
         });
+
+        const roverButtonSpirit = document.createElement('button');
+        roverButtonSpirit.id = "spirit";
+        roverButtonSpirit.className = "rover-button";
+        roverButtonSpirit.textContent = "Spirit";
+
+        roverButtonSpirit.addEventListener('click', () => {
+            chosenRover = "spirit";
+            console.log(chosenRover);
+
+            getRoverPhotos();
+            renderRoverPhotos();
+        });
+
+
+        rovers.appendChild(roverButtonCuriosity);
+        rovers.appendChild(roverButtonOpportunity);
+        rovers.appendChild(roverButtonSpirit);
+
+        imageContainer.appendChild(rovers);
+
+        image.addEventListener('click', () => {
+            console.log("hover");
+            displayRoverOptions();
+        })
+
+
+
     } else if (container.id === 'moon-container') {
         image.addEventListener('click', () => {
-            
+
             const catImage = document.createElement('img');
             catImage.className = 'image';
             catImage.src = blueMoon;
@@ -158,7 +215,7 @@ export function createFooter(divContainer: HTMLDivElement) {
 
     // Create a list of names
     const names = ["DeValdi", "Gnkgo", "Nick20500"];
-    
+
     const footerText = document.createTextNode("© 2023 by ");
     footer.appendChild(footerText);
     // Create an anchor element for each name and append it to the footer
@@ -319,7 +376,7 @@ export function closeModal(modalId: string): void {
  * tags are added (like 'en-US' besides just 'en'), they need to be ordered BEFORE their less specific
  * counterpart(s). The language tag 'en' is mandatory, as it is the fallback option.
  */
-export function tryShowTutorial(componentId: number, dict: {"en" : string, [lang: string] : string}, onClose: () => void = () => {}): void {
+export function tryShowTutorial(componentId: number, dict: { "en": string, [lang: string]: string }, onClose: () => void = () => { }): void {
     const bit = 1 << componentId;
     const getClosedTutorials = () => Number.parseInt(localStorage.getItem("closedTutorials") ?? "0");
     if ((getClosedTutorials() & bit) > 0) {
@@ -340,7 +397,7 @@ export function tryShowTutorial(componentId: number, dict: {"en" : string, [lang
     listeners.closeOnClick = (_e: MouseEvent) => close();
     listeners.closeOnEscape = (e: KeyboardEvent) => { if (e.key == "Escape") close(); };
     modal.addEventListener("click", listeners.closeOnClick);
-    document.addEventListener("keyup", listeners.closeOnEscape);  
+    document.addEventListener("keyup", listeners.closeOnEscape);
     const prompt = document.createElement("h2") as HTMLHeadingElement;
     const language = navigator.language;
     prompt.innerHTML = `${Object.entries(dict).find(([lang, _text]) => language.startsWith(lang))?.[1] ?? dict["en"]}`;

@@ -1,15 +1,11 @@
 import { createModal, openModal } from "./modal";
 import { marsRoverPhotosTarget } from '../../../common/api';
-import {  MarsRoverPhotosRes } from '../../../common/api';
-import { getRandomInt } from "../base";
-
-const rovers = ["curiosity", "opportunity", "spirit"];
-let randomRover = rovers[getRandomInt(0, rovers.length)];
+import { MarsRoverPhotosRes } from '../../../common/api';
+import { chosenRover } from "../base";
 
 export async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
     try {
-        if (randomRover == undefined) randomRover = "opportunity";
-        const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover }));
+        const response = await fetch(marsRoverPhotosTarget.resolve({ rover: chosenRover }));
         const data = await response.json();
         return data;
     } catch (error) {
@@ -18,12 +14,18 @@ export async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
     }
 }
 
+export function displayRoverOptions() {
+    const roversContainer = document.getElementById('rovers') as HTMLElement;
+    if (roversContainer.style.display === 'flex') {
+      roversContainer.style.display = 'none';
+    } else {
+      roversContainer.style.display = 'flex';
+    }
+  }
+
 export async function renderRoverPhotos(): Promise<void> {
     const photoData = await getRoverPhotos();
-    if (randomRover == undefined) randomRover = "Curiosity";
-
-
-    createModal(randomRover.charAt(0).toUpperCase() + randomRover.slice(1), photoData.photos.length > 1);
+    createModal(chosenRover.charAt(0).toUpperCase() + chosenRover.slice(1), photoData.photos.length > 1);
     openModal(photoData.photos, null, true, false);
 }
 
