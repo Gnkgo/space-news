@@ -4,6 +4,7 @@ import { celsiusToFahrenheit } from '.././base';
 export async function getWeatherData(): Promise<MarsData> {
     try {
       const response = await fetch(marsWeatherTarget.resolve({}));
+      console.log(response, "response mars");
       const data = await response.json() as MarsData;
       data.soles.forEach(sol => {
         if (sol.min_temp) {

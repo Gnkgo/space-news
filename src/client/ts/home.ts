@@ -66,7 +66,10 @@ async function showPlanetInformation(planet: string) {
             break;
 
         case 'neo':
-            displaySpinningEarth();
+            const neoContainer = document.getElementById('neo-container');
+            if(neoContainer){
+                neoContainer.style.display = 'grid';
+            }
             break;
         case 'moon':
             const moonContainer = document.getElementById('moon-container');

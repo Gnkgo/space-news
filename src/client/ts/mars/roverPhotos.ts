@@ -1,15 +1,14 @@
 import { createModal, openModal } from "./modal";
 import { marsRoverPhotosTarget } from '../../../common/api';
-import {  MarsRoverPhotosRes } from '../../../common/api';
+import { MarsRoverPhotosRes } from '../../../common/api';
 import { getRandomInt } from "../base";
 
 const rovers = ["curiosity", "opportunity", "spirit"];
-let randomRover = rovers[getRandomInt(0, rovers.length)];
 
-export async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
+// Fetch rover photos based on the rover name provided
+export async function getRoverPhotos(rover: string): Promise<MarsRoverPhotosRes> {
     try {
-        if (randomRover == undefined) randomRover = "opportunity";
-        const response = await fetch(marsRoverPhotosTarget.resolve({ rover: randomRover }));
+        const response = await fetch(marsRoverPhotosTarget.resolve({ rover }));
         const data = await response.json();
         return data;
     } catch (error) {
@@ -18,14 +17,34 @@ export async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
     }
 }
 
-export async function renderRoverPhotos(): Promise<void> {
-    const photoData = await getRoverPhotos();
-    if (randomRover == undefined) randomRover = "Curiosity";
+// Render rover buttons for user to choose from
+export function renderRoverButtons(): void {
+    const container = document.createElement("div");
 
+    // Create a button for each rover
+    rovers.forEach((rover) => {
+        const button = document.createElement("button");
+        button.textContent = rover.charAt(0).toUpperCase() + rover.slice(1);
+        button.addEventListener("click", async () => {
+            await renderRoverPhotos(rover);
+        });
+        container.appendChild(button);
+    });
 
-    createModal(randomRover.charAt(0).toUpperCase() + randomRover.slice(1), photoData.photos.length > 1);
+    // Attach the button container to the DOM
+    document.body.appendChild(container);
+}
+
+// Fetch and display photos for the selected rover
+export async function renderRoverPhotos(rover: string): Promise<void> {
+    const photoData = await getRoverPhotos(rover);
+
+    // Create and open modal with photos
+    createModal(rover.charAt(0).toUpperCase() + rover.slice(1), photoData.photos.length > 1);
     openModal(photoData.photos, null, true, false);
 }
 
-
-
+// Call this function when Mars is clicked to show the rover options
+export function onMarsClick(): void {
+    renderRoverButtons();
+}

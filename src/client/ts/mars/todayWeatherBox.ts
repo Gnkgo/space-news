@@ -14,15 +14,16 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
   title.textContent = isSol ? `Sol ${sol.sol}` : `${formatDate(sol.terrestrial_date)}`;
   innerWeatherBox.appendChild(title);
 
-  innerWeatherBox.innerHTML += `
-      <p>Min.: ${sol.min_temp} <span id="celsius-unit-min" class="${isCelsius ? 'selected' : ''}">°C</span> | <span id="fahrenheit-unit-min" class="${!isCelsius ? 'selected' : ''}">°F</span></p>
-      <p>Max.: ${sol.max_temp} <span id="celsius-unit-max" class="${isCelsius ? 'selected' : ''}">°C</span> | <span id="fahrenheit-unit-max" class="${!isCelsius ? 'selected' : ''}">°F</span></p>
-            <p>Weather: ${sol.atmo_opacity}</p>
-      <p>UV: ${sol.local_uv_irradiance_index}</p>
-    `;
+  const temperatureMin = isCelsius ? sol.min_temp : sol.min_temp_fahrenheit;
+  const temperatureMax = isCelsius ? sol.max_temp : sol.max_temp_fahrenheit;
+
+  const metric = isCelsius ? '°C' : '°F'
 
   if (moreInfo) {
     innerWeatherBox.innerHTML += `
+        <p>Min.: ${temperatureMin} ${metric}</p>
+        <p>Max.: ${temperatureMax} ${metric}</p>
+        <p>UV: ${sol.local_uv_irradiance_index}</p>
         <p>Pressure: ${sol.pressure} Pa</p>
         <p>Sunrise: ${sol.sunrise}</p>
         <p>Sunset: ${sol.sunset}</p>

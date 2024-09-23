@@ -1,28 +1,51 @@
-import { getFormattedDate } from '../../../common/utils';
+import { getFormattedDate, getDateMinusWeek } from '../../../common/utils';
 import { CADRes as CadJson, FireballRes as FireBallJson } from '../../../common/api';
-import { createSunBackButton, removeAllSpaces, getRandomInt } from '../base';
+import { createSunBackButton, removeAllSpaces, getRandomInt, formatDate } from '../base';
 import asteroid_selected from '../../img/asteroid_selected.png';
 import earth from '../../img/earth.png';
 import asteroid from '../../img/asteroid.png';
+import { cadTarget } from '../../../common/api';
+import { fireballTarget } from '../../../common/api';
 
 //Close approach parameters
-const cadMinDate = getFormattedDate();
-const cadMaxDate = '30';
-const cadMinDistMax = '0.0026'; //Distance to moon in unit 'au'
-const cadApiUrl = `/nasa-cad-api?date-min=${cadMinDate}&date-max=${cadMaxDate}&min-dist-max=${cadMinDistMax}`;
 
+//const cadApiUrl = `/nasa-cad-api?date-min=${cadMinDate}&date-max=${cadMaxDate}&min-dist-max=${cadMinDistMax}`;
+//console.log(cadApiUrl);
 //Fireball parameters
 const fireballMinDate = '2010-01-01';
 const fireballReqLocBool = true;
-const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=${fireballReqLocBool}`;
+//const fireballApiUrl = `/nasa-fireball-api?date-min=${fireballMinDate}&req-loc=${fireballReqLocBool}`;
 
 //Bool dictionary for permanent cad info display
 let cadInfoDict: { [key: string]: boolean } = {};
 let cadAsteroidSelected = false;
 
+async function getNeoData(): Promise<CadJson> {
+    try {
+        const response = await fetch(cadTarget.resolve({
+            'date-min': getDateMinusWeek(), 
+            'date-max': getFormattedDate(), 
+            'dist-max': "0.0026"
+        }));
+
+        console.log(response, "response, getNeoData");
+
+        // Log the full response body to inspect its structure
+        const data = await response.json();
+        console.log(data, "Full response data, getNeoData");
+
+        return data as CadJson;
+    } catch (error) {
+        console.error("Error fetching close approach data", error);
+        throw error;
+    }
+}
+
+
 
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
 
+console.log(neoContainer, "neoContainer");
 const cadContainer = document.createElement('div');
 cadContainer.id = 'cad-container';
 const fireballContainer = document.createElement('div');
@@ -31,20 +54,39 @@ const neo = document.createElement('img');
 neo.id = 'neo';
 neo.src = earth;
 
-async function getCloseApproachData(cadApiUrl: string) {
+
+// Append cadContainer to neoContainer or wherever you want it to be
+if (neoContainer) {
+    neoContainer.appendChild(cadContainer);
+    neoContainer.appendChild(neo);
+    neoContainer.appendChild(fireballContainer);
+    getCloseApproachData();
+    getFireballData();
+
+    // Add back to the home page button
+    createSunBackButton(neoContainer);
+}
+async function getCloseApproachData() {
     try {
-        const res = await fetch(cadApiUrl);
-        const cad = await res.json() as CadJson;
-        processCloseApproachData(cad);
+        //const res = await fetch(cadApiUrl);
+        let res = await getNeoData();
+        console.log(res, "res, getcloseapproachdata");
+        //const cad = await res.json();
+        //console.log(cad, "cad")
+        processCloseApproachData(res);
     } catch (error) {
         console.log("Error fetching close approach data: " + error)
     }
 }
 
+
+
+
+
 function processCloseApproachData(cadJson: CadJson) {
     const neoContainer = document.getElementById('neo-container');
     const cadContainer = document.getElementById('cad-container');
-
+    console.log(cadJson, "cadJson")
     for (const elem of cadJson.data) {
         const elemName = removeAllSpaces(elem[0]!);
         cadInfoDict[elemName] = false;
@@ -101,6 +143,7 @@ function processCloseApproachData(cadJson: CadJson) {
 
 function showCadInfo(elemName: string, switchCadInfo?: boolean) {
     const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
+    console.log(cadElemInfo, "cadElemInfo");
     if (cadElemInfo && (!cadAsteroidSelected || switchCadInfo)) {
         hideCadInfo();
         cadElemInfo.style.display = 'flex';
@@ -190,11 +233,14 @@ function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLIma
     elemSelected.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
 }
 
-async function getFireballData(fireballApiUrl: string) {
+
+async function getFireballData() {
     try {
-        const res = await fetch(fireballApiUrl);
+        const res = await fetch(fireballTarget.resolve({'date-min': getDateMinusWeek(), 'req-loc': true}));
+        console.log(res, "res, fireballapi");
+
         const fireballData = await res.json();
-        console.log(fireballData);
+        console.log(fireballData, "fireballData");
         processFireballData(fireballData);
     } catch (error) {
         console.log("Error fetching fireball data: " + error)

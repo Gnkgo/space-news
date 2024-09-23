@@ -76,20 +76,6 @@ export function createInnerWeatherBox(moreInfo: boolean, sol: any): HTMLDivEleme
   button.textContent = 'More Information';
   innerWeatherBox.appendChild(button);
 
-  if (moreInfo) {
-    innerWeatherBox.innerHTML += `
-    <p>Weather: ${sol.atmo_opacity}</p>
-    <p>UV: ${sol.local_uv_irradiance_index}</p>
-        <p>Pressure: ${sol.pressure} Pa</p>
-        <p>Sunrise: ${sol.sunrise}</p>
-        <p>Sunset: ${sol.sunset}</p>
-        <p>Season: ${sol.season}</p>
-        <p>Wind Speed: ${sol.wind_speed} m/s</p>
-        <p>Wind Direction: ${sol.wind_direction}°</p>
-        
-      `;
-  }
-
   // Adding event listener directly to the created innerWeatherBox
   innerWeatherBox.addEventListener('click', (event) => {
     const target = event.target as HTMLElement;

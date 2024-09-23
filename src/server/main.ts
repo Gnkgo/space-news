@@ -150,11 +150,12 @@ function regUrlApi<TReq, TRes>(api: ApiDef<TReq, TRes>): ApiDef<TReq, TRes> {
 const cadApi = regUrlApi<CADReq, CADRes>({
   apiName: "Close Approach Data",
   target: cadTarget.raw(),
-  genReq: async (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=%2B${req["date-max"]}&min-dist-max=${req["min-dist-max"]}`,
-  genRes: async (res) => res,
+  genReq: async (req) => `https://ssd-api.jpl.nasa.gov/cad.api?date-min=${req["date-min"]}&date-max=${req["date-max"]}&dist-max=${req["dist-max"]}`,
+  genRes: async (res) => res as CADRes,
   log: logCreate("cad")
 });
 cacheCreateMinutely("cad", cadApi);
+console.log("cadApi", cadApi);
 
 // Mars Weather API
 const marsWeatherApi = regUrlApi<MarsWeatherReq, MarsWeatherRes>({
@@ -209,8 +210,8 @@ const fireballApi = regUrlApi<FireballReq, FireballRes>({
 cacheCreateDaily("fireball", fireballApi);
 
 // Sever start. Do not change.
-ViteExpress.listen(app, 5173, () =>
-    console.log("Server is listening on http://localhost:5173"),
+ViteExpress.listen(app, 80, () =>
+    console.log("Server is listening on http://localhost:80"),
 );
 function onShutdown() {
   for (const api of _apis) {
