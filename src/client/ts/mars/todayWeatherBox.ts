@@ -86,14 +86,9 @@ export function todayWeather(): void {
 
 
 
-    // Append the new box to the body
     if (weatherData.soles[0] === undefined) return;
     outerWeatherBox.appendChild(createInnerWeatherBox(false, weatherData.soles[0]));
-    //outerWeatherBox.addEventListener("click", () => {
-    //  createModal();
-    //  openModal("src/client/img/marsModal.jpg", weatherData, false);
-    //}
-    //);
+
     marsContainer.appendChild(outerWeatherBox);
   }
 }

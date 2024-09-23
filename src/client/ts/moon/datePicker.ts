@@ -17,6 +17,7 @@ import  waningGibbous from "../../img/moon_images/waningGibbous.png";
 import  waxingCrescent from "../../img/moon_images/waxingCrescent.png";
 import  waxingGibbous from "../../img/moon_images/waxingGibbous.png";
 
+export let isSameDayBoolean = true;
 
 export function getTimeUntilNextFullMoon(): number {
     const currentDate = new Date();
@@ -33,8 +34,7 @@ export function getTimeUntilNextFullMoon(): number {
             if (nextFullMoonDate) {
                 if (isSameDay(new Date(nextFullMoonDate.datetime), datePick)) {
                     return 0;
-                }
-
+                } 
                 return new Date(nextFullMoonDate.datetime).getTime() - currentDate.getTime();
             }
         }
@@ -63,7 +63,8 @@ export function createDatePicker(selectedDate: string) {
         const pickedMoonData = await getMoonData(selectedDate, locationSave);
         displayMoon(pickedMoonData, selectedDate);
         displayMoonEvents(pickedMoonData);
-        createTitle(moonContainer, "Different Moon Information", text, false, formatDate(currentMoonData.days[0]?.datetime), "");
+        createTitle(moonContainer, "Moon Phase", text, false, formatDate(pickedMoonData.days[0]?.datetime), "");
+        isSameDayBoolean = pickedMoonData.days[0] ? isSameDay(new Date(pickedMoonData.days[0]?.datetime), new Date()) : true;
     }
     datePicker.addEventListener("input", handleInputEvent);
     dateContainer.appendChild(datePicker);

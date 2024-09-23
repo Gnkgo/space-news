@@ -4,6 +4,7 @@ export async function getMoonData(date: string, location: number[]): Promise<Moo
     try {
         const response = await fetch(moonTarget.resolve({date: date, lat: location[0]!, lon: location[1]!}));
         const data = await response.json() as MoonData;
+        console.log(data)
         return data;
     } catch (error) {
         console.error("Error fetching weather data", error);
