@@ -8,6 +8,7 @@
   <link rel="stylesheet" type="text/css" href="/src/client/css/home.css" />
   <link rel="stylesheet" type="text/css" href="/src/client/css/mars.css" />
   <link rel="stylesheet" type="text/css" href="/src/client/css/moon.css" />
+  <link rel="stylesheet" type="text/css" href="/src/client/css/neo.css" />
   <link rel="stylesheet" type="text/css" href="/src/client/css/spinningEarth.css" />
   <link rel="stylesheet" type="text/css" href="/src/client/css/explosion.css" />
 
@@ -16,6 +17,7 @@
   <script src="/src/client/ts/backend_dependent/mars.ts" type="module"></script>
   <script src="/src/client/ts/backend_dependent/moon.ts" type="module"></script>
   <script type="module" src="/src/client/ts/spinning_earth/spinning-earth.ts"></script>
+  <script src="/src/client/ts/backend_dependent/neo.ts" type="module"></script>
 
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -42,38 +44,8 @@
   </div>
   <div class="content" id="mars-container"></div>
   <div class="content" id="moon-container"></div>
-  <div id="spinning-earth-container">
-    <canvas id="canvas"
-      style="position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 0;"></canvas>
-    <div id="fps-display"></div>
-
-    <div class="grey-box" id="spinning-earth-info-box">
-      <h1>Information&nbsp;&nbsp;&nbsp;&nbsp;<i id="information-box-toggle" class="fa-regular fa-square-caret-down"></i>
-      </h1>
-      <div id="information-box-content">
-        <pre>Dots on Eart:     Fireballs, proportional to energy</pre>
-        <pre>Asteroids:        Observed between Earth and Moon</pre>
-        <pre>Spinning Arrow:   Your location</pre>
-        <pre>Locked:           Movement and rotation locked </pre>
-        <pre>Detached:         Movement locked, free rotation</pre>
-        <pre>Free:             Movement free, free rotation </pre>
-        <pre>Tracking:         Movement locked on asteroid, free rotation </pre>
-      </div>
-    </div>
-
-    <div class="grey-box" id="spinning-earth-control-box">
-      <h1>Controls&nbsp;&nbsp;&nbsp;&nbsp;<i id="control-box-toggle" class="fa-regular fa-square-caret-down"></i></h1>
-      <div id="control-box-content">
-        <pre>Move:                 A D / W S / SPACE C</pre>
-        <pre>Roll:                 Q E</pre>
-        <pre>Select Asteroid:      Hover</pre>
-        <pre>Mark Asteroid:        Left Click</pre>
-        <pre>Switch Movement Type: X</pre>
-      </div>
-      <pre id="current-movement-type">Movement Type:        LOCKED</pre>
-    </div>
-  </div>
-
+  <div class="content" id="neo-container"></div>
+  
 </html>
 </div>
 

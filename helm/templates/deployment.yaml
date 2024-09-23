@@ -21,7 +21,7 @@ spec:
         image: {{ .Values.image.name }}-webapp:{{ .Values.image.tag }}
         imagePullPolicy: Always
         ports:
-        - containerPort: 5173
+        - containerPort: 80
         resources:
           limits:
             cpu: "0.2"

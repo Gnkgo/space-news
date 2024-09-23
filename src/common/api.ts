@@ -13,7 +13,12 @@ export class TargetPattern<TReq extends {}> {
     const entries = Object.entries(req);
     if (entries.length == 0)
       return this._target;
-    return `${this._target}?${entries.map(entry => `${entry[0]}=${entry[1]}`).join('&')}`;
+    const result = `${this._target}?${entries
+      .map((entry) => `${entry[0]}=${entry[1]}`)
+      .join("&")}`;
+
+    console.log(result, "result");
+    return result;
   }
 }
 
@@ -26,7 +31,7 @@ export const fireballTarget = new TargetPattern<FireballReq>('/nasa-fireball-api
 export type CADReq = {
   'date-min': string,
   'date-max': string,
-  'min-dist-max': string,
+  'dist-max': string,
 }
 
 export type CADRes = {

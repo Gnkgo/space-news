@@ -40,8 +40,8 @@ Run the website locally:
 - run: git clone https://github.com/Gnkgo/space-news.git
 - run npm i 
 - run docker build -t space-news .
-- run docker run -it --rm -p 5173:5173 space-news
-- Open a browser and connect to http://localhost:5173
+- run docker run -it --rm -p 80:80 space-news
+- Open a browser and connect to http://localhost:80
 
 ## Milestones
 Document here the major milestones of your code and future planned steps.\
