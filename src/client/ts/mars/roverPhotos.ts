@@ -5,11 +5,13 @@ import { chosenRover } from "../base";
 
 
 // Fetch rover photos based on the rover name provided
-export async function getRoverPhotos(rover: string): Promise<MarsRoverPhotosRes> {
+export async function getRoverPhotos(): Promise<MarsRoverPhotosRes> {
     try {
         const response = await fetch(marsRoverPhotosTarget.resolve({ rover: chosenRover }));
-
+        console.log(response, "response mars");
+        console.log(chosenRover, "chosenRover");
         const data = await response.json();
+        console.log(data, "data");
         return data;
     } catch (error) {
         console.error("Error fetching rover photos", error);
@@ -29,11 +31,10 @@ export function displayRoverOptions() {
 export async function renderRoverPhotos(): Promise<void> {
     const photoData = await getRoverPhotos();
     createModal(chosenRover.charAt(0).toUpperCase() + chosenRover.slice(1), photoData.photos.length > 1);
-
     openModal(photoData.photos, null, true, false);
 }
 
 // Call this function when Mars is clicked to show the rover options
 export function onMarsClick(): void {
-    renderRoverButtons();
+    displayRoverOptions();
 }

@@ -136,7 +136,6 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
         roverButtonSpirit.addEventListener('click', () => {
             chosenRover = "spirit";
             console.log(chosenRover);
-
             getRoverPhotos();
             renderRoverPhotos();
         });

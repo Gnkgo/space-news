@@ -1,4 +1,4 @@
-import { getFormattedDate, getDateMinusWeek } from '../../../common/utils';
+import { getFormattedDate, getDateMinusMonth as getDateMinusMonth } from '../../../common/utils';
 import { CADRes as CadJson, FireballRes as FireBallJson } from '../../../common/api';
 import { createSunBackButton, removeAllSpaces, getRandomInt, formatDate } from '../base';
 import asteroid_selected from '../../img/asteroid_selected.png';
@@ -23,7 +23,7 @@ let cadAsteroidSelected = false;
 async function getNeoData(): Promise<CadJson> {
     try {
         const response = await fetch(cadTarget.resolve({
-            'date-min': getDateMinusWeek(), 
+            'date-min': getDateMinusMonth(), 
             'date-max': getFormattedDate(), 
             'dist-max': "0.0026"
         }));
@@ -236,7 +236,7 @@ function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLIma
 
 async function getFireballData() {
     try {
-        const res = await fetch(fireballTarget.resolve({'date-min': getDateMinusWeek(), 'req-loc': true}));
+        const res = await fetch(fireballTarget.resolve({'date-min': getDateMinusMonth(), 'req-loc': true}));
         console.log(res, "res, fireballapi");
 
         const fireballData = await res.json();

@@ -127,6 +127,7 @@ export function createModal(title?: string, multiObjectModal?: boolean): void {
 }
 
 function showNextImage(step: number){
+  console.log("showNextImage");
   const newModalImageIndex = modulo((currentModalImageIndex + step), (photoArrayLength));
   changeElemDisplay(`modal-image-${currentModalImageIndex}`, `modal-image-${newModalImageIndex}`);
   currentModalImageIndex = newModalImageIndex;
