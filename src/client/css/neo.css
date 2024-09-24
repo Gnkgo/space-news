@@ -1,14 +1,39 @@
-:root{
+:root {
     --rotate-start: 0deg;
     --rotate-end: calc(var(--rotate-start) + 360deg);
-    --orbit-radius: 40vh;
+    --orbit-radius: 10px;
 }
+
+/* Base CSS for all screen sizes */
+:root {
+    --distance-min: 36vh;
+    --distance-max: 48vh;
+}
+
+/* For small screens (like mobile devices) */
+@media screen and (max-width: 600px) {
+    :root {
+        --distance-min: 20vh;
+        --distance-max: 30vh;
+    }
+}
+
+/* For medium screens (like tablets) */
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+    :root {
+        --distance-min: 28vh;
+        --distance-max: 40vh;
+    }
+}
+
 
 div#neo-container {
     display: none;
     height: 100vh;
+    overflow: hidden;
+    /* Add this to prevent scrolling */
     grid-template-columns: 1fr 2fr 1fr;
-    grid-template-areas: '. neo fireball-container' ;
+    grid-template-areas: '. neo fireball-container';
     color: white;
 
     & img.cad-elem-img {
@@ -16,6 +41,7 @@ div#neo-container {
         justify-self: center;
         position: absolute;
         width: 10vh;
+        /* Default size for desktop */
         z-index: 1;
     }
 
@@ -40,16 +66,20 @@ div#neo-container {
         transform: translateX(-50%);
     }
 
-    & div#cad-container, div#fireball-container {
+    & div#cad-container,
+    div#fireball-container {
         display: flex;
         flex-direction: column;
         align-self: center;
         overflow-y: auto;
         height: inherit;
-        -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
-        scrollbar-width: none;  /* Hide scrollbar for Firefox */
+        -ms-overflow-style: none;
+        /* Hide scrollbar for IE and Edge */
+        scrollbar-width: none;
+        /* Hide scrollbar for Firefox */
 
-        & div.cad-elem-info, div#fireball-Elem-box {
+        & div.cad-elem-info,
+        div#fireball-Elem-box {
             display: flex;
             flex-direction: column;
             padding: 3px;
@@ -57,11 +87,11 @@ div#neo-container {
             background-color: rgba(102, 102, 102, 0.6);
             border-radius: 8px;
 
-            & h4{
+            & h4 {
                 font-size: 15pt;
                 margin: 8pt;
             }
-          
+
             & p {
                 margin-left: 8pt;
                 margin-right: 8pt;
@@ -86,13 +116,75 @@ div#neo-container {
 }
 
 @keyframes orbitAsteroid {
-    0% { 
-        transform: rotate(var(--rotate-start))  
-              translateY(var(--orbit-radius)) rotate(45deg); 
-    } 
+    0% {
+        transform: rotate(var(--rotate-start)) rotate(45deg);
+        /* Hardcode the value to test */
+    }
 
-    100% { 
-        transform: rotate(var(--rotate-end))  
-              translateY(var(--orbit-radius)) rotate(45deg); 
-    } 
+    100% {
+        transform: rotate(var(--rotate-end)) rotate(45deg);
+        /* Hardcode the value to test */
+    }
+}
+
+@media screen and (max-width: 530px) {
+    div#neo-container {
+        grid-template-areas: 'neo';
+
+        & div.cad-elem-info {
+            display: none;
+        }
+
+
+
+
+
+
+    }
+}
+
+
+@media screen and (max-width: 660px) {
+    div#neo-container {
+        grid-template-areas: '. neo .';
+
+        & img.cad-elem-img {
+            align-self: center;
+            justify-self: center;
+            position: absolute;
+            width: 5vh;
+            /* Default size for desktop */
+            z-index: 1;
+        }
+
+        & img.cad-elem-img-selected {
+            align-self: center;
+            justify-self: center;
+            position: absolute;
+            width: 5vh;
+            opacity: 0;
+            z-index: 0;
+        }
+
+
+
+
+        & img#neo {
+            align-self: center;
+            justify-self: center;
+            height: 35vh;
+            /* Reduce size for smaller screens */
+        }
+
+
+        & div#cad-container,
+        div#fireball-container {
+            overflow-y: hidden;
+            /* Disable scroll for smaller screens */
+        }
+
+        div#fireball-container {
+            display: none;
+        }
+    }
 }

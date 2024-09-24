@@ -10,7 +10,7 @@ import { fireballTarget } from '../../../common/api';
 //Close approach parameters
 
 //const cadApiUrl = `/nasa-cad-api?date-min=${cadMinDate}&date-max=${cadMaxDate}&min-dist-max=${cadMinDistMax}`;
-//console.log(cadApiUrl);
+////console.log(cadApiUrl);
 //Fireball parameters
 const fireballMinDate = '2010-01-01';
 const fireballReqLocBool = true;
@@ -23,16 +23,16 @@ let cadAsteroidSelected = false;
 async function getNeoData(): Promise<CadJson> {
     try {
         const response = await fetch(cadTarget.resolve({
-            'date-min': getDateMinusMonth(), 
-            'date-max': getFormattedDate(), 
+            'date-min': getDateMinusMonth(),
+            'date-max': getFormattedDate(),
             'dist-max': "0.0026"
         }));
 
-        console.log(response, "response, getNeoData");
+        //console.log(response, "response, getNeoData");
 
         // Log the full response body to inspect its structure
         const data = await response.json();
-        console.log(data, "Full response data, getNeoData");
+        //console.log(data, "Full response data, getNeoData");
 
         return data as CadJson;
     } catch (error) {
@@ -45,7 +45,7 @@ async function getNeoData(): Promise<CadJson> {
 
 const neoContainer = document.getElementById('neo-container') as HTMLDivElement;
 
-console.log(neoContainer, "neoContainer");
+//console.log(neoContainer, "neoContainer");
 const cadContainer = document.createElement('div');
 cadContainer.id = 'cad-container';
 const fireballContainer = document.createElement('div');
@@ -70,23 +70,24 @@ async function getCloseApproachData() {
     try {
         //const res = await fetch(cadApiUrl);
         let res = await getNeoData();
-        console.log(res, "res, getcloseapproachdata");
+        //console.log(res, "res, getcloseapproachdata");
         //const cad = await res.json();
-        //console.log(cad, "cad")
+        ////console.log(cad, "cad")
         processCloseApproachData(res);
     } catch (error) {
-        console.log("Error fetching close approach data: " + error)
+        //console.log("Error fetching close approach data: " + error)
     }
 }
 
 
-
+let auDistance = 0.0026;
+let velocity = 0.0003;
 
 
 function processCloseApproachData(cadJson: CadJson) {
     const neoContainer = document.getElementById('neo-container');
     const cadContainer = document.getElementById('cad-container');
-    console.log(cadJson, "cadJson")
+    //console.log(cadJson, "cadJson")
     for (const elem of cadJson.data) {
         const elemName = removeAllSpaces(elem[0]!);
         cadInfoDict[elemName] = false;
@@ -103,7 +104,12 @@ function processCloseApproachData(cadJson: CadJson) {
         cadElemImgSelected.id = `cad-elem-img-selected-${elemName}`;
         cadElemImgSelected.src = asteroid_selected;
 
-        addVariableOrbitAnimation(cadElemImg, cadElemImgSelected);
+        const auDistance = Number(elem[5]); // AU Distance for this asteroid
+        const velocity = Number(elem[7]);   // Velocity for this asteroid
+
+        // Pass auDistance and velocity as arguments to the function
+        addVariableOrbitAnimation(cadElemImg, cadElemImgSelected, auDistance, velocity);
+
 
         //add eventlistener to asteroid image
         cadElemImg.addEventListener('mouseover', () => showCadInfo(elemName));
@@ -132,9 +138,8 @@ function processCloseApproachData(cadJson: CadJson) {
         const objectDistText = document.createElement("p");
         objectDistText.textContent = `Distance: ${Number(elem[5]).toFixed(4)}au`;
         cadElemInfo?.appendChild(objectDistText);
-
         const objectVelText = document.createElement("p");
-        objectVelText.textContent = `Velocity: ${Number(elem[7]).toFixed(4)}km/s`;
+        objectVelText.textContent = `Velocity: ${Number(elem[7]).toFixed(3)}km/s`;
         cadElemInfo?.appendChild(objectVelText);
 
         cadContainer?.appendChild(cadElemInfo);
@@ -143,8 +148,8 @@ function processCloseApproachData(cadJson: CadJson) {
 
 function showCadInfo(elemName: string, switchCadInfo?: boolean) {
     const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
-    console.log(cadElemInfo, "cadElemInfo");
-    if (cadElemInfo && (!cadAsteroidSelected || switchCadInfo)) {
+    //console.log(cadElemInfo, "cadElemInfo");
+    if (cadElemInfo && (!cadAsteroidSelected || switchCadInfo) && screen.width > 660) {
         hideCadInfo();
         cadElemInfo.style.display = 'flex';
     } else if (!cadElemInfo) {
@@ -203,47 +208,115 @@ function hideCadInfo(elemName?: string) {
             }
         }
     } else if (!cadElemInfo) {
-        console.log('Error hiding the cad info box for: ' + elemName);
+        //console.log('Error hiding the cad info box for: ' + elemName);
     }
 }
 
-function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLImageElement) {
-    const duration = getRandomInt(60, 181);
-    const distance = getRandomInt(35, 50);
+function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLImageElement, auDistance: number, velocity: number): void {
+    const velocityMin = 5;
+    const velocityMax = 30;
+    const durationMin = 50;
+    const durationMax = 181;
+
+    const duration = durationMax + ((velocity - velocityMin) / (velocityMax - velocityMin)) * (durationMin - durationMax);
+
+    const auMin = 0.0003;
+    const auMax = 0.0026;
+
+    let distanceMin: number, distanceMax: number;
+
+    function calculateDistance(): number {
+        if (window.innerWidth < 660) {
+            distanceMin = 20;
+            distanceMax = 30;
+        } else {
+            distanceMin = 36;
+            distanceMax = 48;
+        }
+
+        const distance = distanceMin + ((auDistance - auMin) / (auMax - auMin)) * (distanceMax - distanceMin);
+        return distance;
+    }
+
+    let distance = calculateDistance();
     const startingAngle = getRandomInt(0, 360);
 
+    // Access the first stylesheet safely
     const styleSheet = document.styleSheets[0];
-    const keyframes = `
-        @keyframes orbitAsteroid-${elem.id} {
-            0% {
-                transform: rotate(${startingAngle}deg) translateY(${distance}vh) rotate(45deg);
-            }
-            
 
-            100% {
-                transform: rotate(${startingAngle + 360}deg) translateY(${distance}vh) rotate(45deg);
+    // Check if the styleSheet is available
+    if (styleSheet) {
+        const keyframes = `
+            @keyframes orbitAsteroid-${elem.id} {
+                0% {
+                    transform: rotate(${startingAngle}deg) translateY(${distance}vh) rotate(45deg);
+                }
+                100% {
+                    transform: rotate(${startingAngle + 360}deg) translateY(${distance}vh) rotate(45deg);
+                }
             }
+        `;
+
+        // Insert the keyframes rule if the stylesheet is defined
+        styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
+
+        elem.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
+        elemSelected.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
+    } else {
+        console.error("No stylesheet found in the document.");
+    }
+
+    window.addEventListener('resize', () => {
+        distance = calculateDistance(); // Recalculate the distance
+        console.log(distance, "distance");
+        console.log(duration, "duration");
+        if (styleSheet) {
+            // Update keyframes with new distance
+            const newKeyframes = `
+                @keyframes orbitAsteroid-${elem.id} {
+                    0% {
+                        transform: rotate(${startingAngle}deg) translateY(${distance}vh) rotate(45deg);
+                    }
+                    100% {
+                        transform: rotate(${startingAngle + 360}deg) translateY(${distance}vh) rotate(45deg);
+                    }
+                }
+            `;
+
+            // Remove the old keyframe rule
+            const index = Array.from(styleSheet.cssRules).findIndex((rule) => {
+                // Check if the rule is a CSSKeyframesRule and if it has the correct name
+                return (rule instanceof CSSKeyframesRule) && rule.name === `orbitAsteroid-${elem.id}`;
+            });
+
+            if (index !== -1) {
+                styleSheet.deleteRule(index);
+            }
+
+            // Add new keyframe with updated distance
+            styleSheet.insertRule(newKeyframes, styleSheet.cssRules.length);
+
+            // Re-apply the animation with the updated distance
+            elem.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
+            elemSelected.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
+        } else {
+            console.error("No stylesheet found in the document.");
         }
-    `;
-
-    console.log(keyframes);
-
-    styleSheet?.insertRule(keyframes, styleSheet.cssRules.length);
-    elem.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
-    elemSelected.style.animation = `orbitAsteroid-${elem.id} ${duration}s linear infinite`;
+    });
 }
+
 
 
 async function getFireballData() {
     try {
-        const res = await fetch(fireballTarget.resolve({'date-min': getDateMinusMonth(), 'req-loc': true}));
-        console.log(res, "res, fireballapi");
+        const res = await fetch(fireballTarget.resolve({ 'date-min': getDateMinusMonth(), 'req-loc': true }));
+        //console.log(res, "res, fireballapi");
 
         const fireballData = await res.json();
-        console.log(fireballData, "fireballData");
+        //console.log(fireballData, "fireballData");
         processFireballData(fireballData);
     } catch (error) {
-        console.log("Error fetching fireball data: " + error)
+        //console.log("Error fetching fireball data: " + error)
     }
 }
 
