@@ -211,11 +211,11 @@ export function createText(divContainer: HTMLDivElement, text: string) {
 
 export function createFooter(divContainer: HTMLDivElement) {
     const footer = document.createElement("footer");
-
+    console.log(footer, footer);
     // Create a list of names
     const names = ["DeValdi", "Gnkgo", "Nick20500"];
 
-    const footerText = document.createTextNode("© 2023 by ");
+    const footerText = document.createTextNode("© 2024 by ");
     footer.appendChild(footerText);
     // Create an anchor element for each name and append it to the footer
     names.forEach(name => {

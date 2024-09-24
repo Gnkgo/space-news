@@ -6,7 +6,7 @@ import earth from '../../img/earth.png';
 import asteroid from '../../img/asteroid.png';
 import { cadTarget } from '../../../common/api';
 import { fireballTarget } from '../../../common/api';
-
+import { createFooter } from '../base';
 //Close approach parameters
 
 //const cadApiUrl = `/nasa-cad-api?date-min=${cadMinDate}&date-max=${cadMaxDate}&min-dist-max=${cadMinDistMax}`;
@@ -57,6 +57,8 @@ neo.src = earth;
 
 // Append cadContainer to neoContainer or wherever you want it to be
 if (neoContainer) {
+    createFooter(neoContainer);
+
     neoContainer.appendChild(cadContainer);
     neoContainer.appendChild(neo);
     neoContainer.appendChild(fireballContainer);
@@ -65,6 +67,7 @@ if (neoContainer) {
 
     // Add back to the home page button
     createSunBackButton(neoContainer);
+
 }
 async function getCloseApproachData() {
     try {

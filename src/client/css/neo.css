@@ -26,15 +26,32 @@
     }
 }
 
-
+footer {
+    grid-area: footer;
+    position: absolute;
+    bottom: 0;
+    left: 50%; /* Move the footer to the center */
+    transform: translateX(-50%); /* Adjust by 50% of the footer's width to perfectly center it */
+    width: max-content; /* Adjust width based on the content, or you can set a specific width */
+    z-index: 10; /* Ensure the footer is on top */
+    background-color: rgba(0, 0, 0, 0.8); /* Optional: To make it more visible */
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
 div#neo-container {
+
     display: none;
-    height: 100vh;
     overflow: hidden;
     /* Add this to prevent scrolling */
     grid-template-columns: 1fr 2fr 1fr;
-    grid-template-areas: '. neo fireball-container';
+    grid-template-areas:
+        '. neo fireball-container'
+        'footer footer footer';
+    /* Adjust this to ensure the footer is visible */
     color: white;
+
+
 
     & img.cad-elem-img {
         align-self: center;
@@ -129,7 +146,9 @@ div#neo-container {
 
 @media screen and (max-width: 530px) {
     div#neo-container {
-        grid-template-areas: 'neo';
+        grid-template-areas:
+            'neo'
+            'footer';
 
         & div.cad-elem-info {
             display: none;
@@ -146,7 +165,9 @@ div#neo-container {
 
 @media screen and (max-width: 660px) {
     div#neo-container {
-        grid-template-areas: '. neo .';
+        grid-template-areas:
+            '. neo .'
+            'footer footer footer';
 
         & img.cad-elem-img {
             align-self: center;
