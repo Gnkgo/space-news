@@ -4,60 +4,28 @@
     --orbit-radius: 10px;
 }
 
-/* Base CSS for all screen sizes */
-:root {
-    --distance-min: 36vh;
-    --distance-max: 48vh;
-}
 
-/* For small screens (like mobile devices) */
-@media screen and (max-width: 600px) {
-    :root {
-        --distance-min: 20vh;
-        --distance-max: 30vh;
-    }
-}
-
-/* For medium screens (like tablets) */
-@media screen and (min-width: 601px) and (max-width: 1024px) {
-    :root {
-        --distance-min: 28vh;
-        --distance-max: 40vh;
-    }
-}
-
-footer {
-    grid-area: footer;
-    position: absolute;
-    bottom: 0;
-    left: 50%; /* Move the footer to the center */
-    transform: translateX(-50%); /* Adjust by 50% of the footer's width to perfectly center it */
-    width: max-content; /* Adjust width based on the content, or you can set a specific width */
-    z-index: 10; /* Ensure the footer is on top */
-    background-color: rgba(0, 0, 0, 0.8); /* Optional: To make it more visible */
-    color: white;
-    text-align: center;
-    padding: 10px;
-}
-div#neo-container {
-
-    display: none;
-    overflow: hidden;
+#neo-container {
+    margin: 0;
+    padding-left: 3vw;
+    padding-right: 3vw;
     /* Add this to prevent scrolling */
     grid-template-columns: 1fr 2fr 1fr;
     grid-template-areas:
-        '. neo fireball-container'
+        '. sun .'
+        'cad-container neo fireball-container'
         'footer footer footer';
-    /* Adjust this to ensure the footer is visible */
+    grid-template-rows: 50px auto 50px;
+    height: 100vh;
+    /* Set the height to the full viewport */
     color: white;
-
-
+    overflow: hidden;
 
     & img.cad-elem-img {
         align-self: center;
         justify-self: center;
         position: absolute;
-        width: 10vh;
+        width: 4vw;
         /* Default size for desktop */
         z-index: 1;
     }
@@ -66,21 +34,24 @@ div#neo-container {
         align-self: center;
         justify-self: center;
         position: absolute;
-        width: 10vh;
+        width: 4vw;
         opacity: 0;
         z-index: 0;
     }
 
     & img#neo {
+        grid-area: neo;
         align-self: center;
         justify-self: center;
-        height: 75vh;
+        height: 40vh;
     }
 
-    & img#sun-button {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
+    & div#cad-container {
+        grid-area: cad-container;
+    }
+
+    & div#fireball-container {
+        grid-area: fireball-container;
     }
 
     & div#cad-container,
@@ -88,8 +59,6 @@ div#neo-container {
         display: flex;
         flex-direction: column;
         align-self: center;
-        overflow-y: auto;
-        height: inherit;
         -ms-overflow-style: none;
         /* Hide scrollbar for IE and Edge */
         scrollbar-width: none;
@@ -132,78 +101,36 @@ div#neo-container {
     }
 }
 
-@keyframes orbitAsteroid {
-    0% {
-        transform: rotate(var(--rotate-start)) rotate(45deg);
-        /* Hardcode the value to test */
-    }
 
-    100% {
-        transform: rotate(var(--rotate-end)) rotate(45deg);
-        /* Hardcode the value to test */
-    }
-}
-
-@media screen and (max-width: 530px) {
-    div#neo-container {
-        grid-template-areas:
-            'neo'
-            'footer';
-
-        & div.cad-elem-info {
-            display: none;
-        }
-
-
-
-
-
-
-    }
-}
 
 
 @media screen and (max-width: 660px) {
-    div#neo-container {
+    #neo-container {
         grid-template-areas:
-            '. neo .'
-            'footer footer footer';
+            'sun'
+            'neo'
+            'footer';
+
+
+        grid-template-columns: 1fr;
+        grid-template-rows: 40px auto 40px;
 
         & img.cad-elem-img {
-            align-self: center;
-            justify-self: center;
-            position: absolute;
-            width: 5vh;
-            /* Default size for desktop */
-            z-index: 1;
+            width: 5vw;
         }
 
         & img.cad-elem-img-selected {
-            align-self: center;
-            justify-self: center;
-            position: absolute;
-            width: 5vh;
-            opacity: 0;
-            z-index: 0;
+            width: 5vw;
         }
 
 
-
-
         & img#neo {
-            align-self: center;
-            justify-self: center;
-            height: 35vh;
+            height: 27vh;
             /* Reduce size for smaller screens */
         }
 
 
         & div#cad-container,
-        div#fireball-container {
-            overflow-y: hidden;
-            /* Disable scroll for smaller screens */
-        }
-
         div#fireball-container {
             display: none;
         }

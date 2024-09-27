@@ -57,13 +57,13 @@ neo.src = earth;
 
 // Append cadContainer to neoContainer or wherever you want it to be
 if (neoContainer) {
-    createFooter(neoContainer);
 
     neoContainer.appendChild(cadContainer);
     neoContainer.appendChild(neo);
     neoContainer.appendChild(fireballContainer);
     getCloseApproachData();
     getFireballData();
+    createFooter(neoContainer);
 
     // Add back to the home page button
     createSunBackButton(neoContainer);
@@ -82,9 +82,6 @@ async function getCloseApproachData() {
     }
 }
 
-
-let auDistance = 0.0026;
-let velocity = 0.0003;
 
 
 function processCloseApproachData(cadJson: CadJson) {
@@ -217,8 +214,8 @@ function hideCadInfo(elemName?: string) {
 
 function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLImageElement, auDistance: number, velocity: number): void {
     const velocityMin = 5;
-    const velocityMax = 30;
-    const durationMin = 50;
+    const velocityMax = 20;
+    const durationMin = 20;
     const durationMax = 181;
 
     const duration = durationMax + ((velocity - velocityMin) / (velocityMax - velocityMin)) * (durationMin - durationMax);
@@ -230,11 +227,11 @@ function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLIma
 
     function calculateDistance(): number {
         if (window.innerWidth < 660) {
+            distanceMin = 13;
+            distanceMax = 18;
+        } else {
             distanceMin = 20;
             distanceMax = 30;
-        } else {
-            distanceMin = 36;
-            distanceMax = 48;
         }
 
         const distance = distanceMin + ((auDistance - auMin) / (auMax - auMin)) * (distanceMax - distanceMin);
