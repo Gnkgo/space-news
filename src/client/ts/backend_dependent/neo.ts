@@ -111,16 +111,33 @@ function processCloseApproachData(cadJson: CadJson) {
         addVariableOrbitAnimation(cadElemImg, cadElemImgSelected, auDistance, velocity);
 
 
-        //add eventlistener to asteroid image
-        cadElemImg.addEventListener('mouseover', () => showCadInfo(elemName));
-        cadElemImg.addEventListener('click', () => showPermanentCadInfo(elemName));
-        cadElemImg.addEventListener('mouseleave', () => hideCadInfo(elemName));
+        // Add event listener to asteroid image
+        cadElemImg.addEventListener('mouseover', () => {
+            console.log(`Mouse over on ${elemName}`);  // Log when mouseover happens
+            showCadInfo(elemName);
+        });
 
-        //add eventlistener to selected_astroid image
-        cadElemImgSelected.addEventListener('click', () => showPermanentCadInfo(elemName));
+        cadElemImg.addEventListener('click', () => {
+            console.log(`Clicked on ${elemName}`);  // Log when click happens
+            showPermanentCadInfo(elemName);
+        });
 
+        cadElemImg.addEventListener('mouseleave', () => {
+            console.log(`Mouse leave on ${elemName}`);  // Log when mouse leaves
+            hideCadInfo(elemName);
+        });
+
+        // Add event listener to selected asteroid image
+        cadElemImgSelected.addEventListener('click', () => {
+            console.log(`Selected asteroid clicked: ${elemName}`);  // Log when selected asteroid image is clicked
+
+            showPermanentCadInfo(elemName);
+        });
+
+        // Append asteroid images to container
         neoContainer?.appendChild(cadElemImg);
         neoContainer?.appendChild(cadElemImgSelected);
+
 
         //Create Info Box
         const cadElemInfo = document.createElement('div');
@@ -149,7 +166,7 @@ function processCloseApproachData(cadJson: CadJson) {
 function showCadInfo(elemName: string, switchCadInfo?: boolean) {
     const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
     //console.log(cadElemInfo, "cadElemInfo");
-    if (cadElemInfo && (!cadAsteroidSelected || switchCadInfo) && screen.width > 550) {
+    if (cadElemInfo && (!cadAsteroidSelected || switchCadInfo)) {
         hideCadInfo();
         cadElemInfo.style.display = 'flex';
     } else if (!cadElemInfo) {
@@ -208,7 +225,7 @@ function hideCadInfo(elemName?: string) {
             }
         }
     } else if (!cadElemInfo) {
-        //console.log('Error hiding the cad info box for: ' + elemName);
+        console.log('Error hiding the cad info box for: ' + elemName);
     }
 }
 
