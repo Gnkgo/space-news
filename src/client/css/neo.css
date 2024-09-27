@@ -7,6 +7,7 @@
 
 #neo-container {
     margin: 0;
+    position: relative;
     padding-left: 3vw;
     padding-right: 3vw;
     /* Add this to prevent scrolling */
@@ -40,7 +41,8 @@
     }
 
     & img#neo {
-        grid-area: neo;
+        align-self: center;
+        position: absolute;
         align-self: center;
         justify-self: center;
         height: 40vh;
@@ -104,16 +106,20 @@
 
 
 
-@media screen and (max-width: 660px) {
+@media screen and (max-width: 550px) {
     #neo-container {
+        flex-direction: column; /* Stack elements on smaller screens */
+        justify-content: center;
+        align-items: center;
         grid-template-areas:
             'sun'
+            'cad-container'
             'neo'
             'footer';
 
 
         grid-template-columns: 1fr;
-        grid-template-rows: 40px auto 40px;
+        grid-template-rows: 40px 1fr 2fr 40px;
 
         & img.cad-elem-img {
             width: 5vw;
@@ -130,8 +136,7 @@
         }
 
 
-        & div#cad-container,
-        div#fireball-container {
+        & div#fireball-container {
             display: none;
         }
     }

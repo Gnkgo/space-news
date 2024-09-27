@@ -149,7 +149,7 @@ function processCloseApproachData(cadJson: CadJson) {
 function showCadInfo(elemName: string, switchCadInfo?: boolean) {
     const cadElemInfo = document.getElementById(`cad-elem-info-${elemName}`);
     //console.log(cadElemInfo, "cadElemInfo");
-    if (cadElemInfo && (!cadAsteroidSelected || switchCadInfo) && screen.width > 660) {
+    if (cadElemInfo && (!cadAsteroidSelected || switchCadInfo) && screen.width > 550) {
         hideCadInfo();
         cadElemInfo.style.display = 'flex';
     } else if (!cadElemInfo) {
@@ -226,7 +226,7 @@ function addVariableOrbitAnimation(elem: HTMLImageElement, elemSelected: HTMLIma
     let distanceMin: number, distanceMax: number;
 
     function calculateDistance(): number {
-        if (window.innerWidth < 660) {
+        if (window.innerWidth < 550) {
             distanceMin = 13;
             distanceMax = 18;
         } else {
