@@ -118,6 +118,14 @@ Document here the major milestones of your code and future planned steps.\
 - Different Layout
 
 
+### 15.Dezember 2023 - 01.November 2024
+#### Gnkgo:
+
+- Host website locally on a raspberry pi
+- Change Mars layout for displaying images, such that the user can chose the rover
+- Change to 2D earth again with proportional speed
+- Security updates
+
 
 ## Versioning
 
@@ -132,6 +140,9 @@ Document here the major milestones of your code and future planned steps.\
 [15. December 2023, v1.1.1](https://github.com/Gnkgo/space-news/releases/tag/v1.1.1)
 
 [19. December 2023, v2.1.0](https://github.com/Gnkgo/space-news/releases/tag/v2.1.0)
+
+[01. November 2024, v3.0.0](https://github.com/Gnkgo/space-news/releases/tag/v3.0.0)
+
 
 
 
