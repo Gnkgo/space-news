@@ -1,0 +1,38 @@
+name: Deploy space-news site to Docker
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: "docker-deployment"
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Build Docker image
+        run: |
+          docker build -t space-news:latest .
+
+
+      - name: Stop and remove existing container
+        run: |
+          docker compose down
+
+      - name: Build and start services using Docker Compose
+        run: |
+          docker compose up --build -d
+

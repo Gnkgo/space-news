@@ -1,0 +1,15 @@
+services:
+  space-news:
+    image: "space-news:latest"
+    container_name: "space-news-container"
+    restart: "always"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.space-news.rule=Host(`space-news.ch`) || Host(`www.space-news.ch`)"
+      - "traefik.http.routers.space-news.entrypoints=websecure"
+      - "traefik.http.routers.space-news.tls.certresolver=myresolver"
+    networks:
+      - "proxy"
+networks:
+  proxy:
+    external: "true"
