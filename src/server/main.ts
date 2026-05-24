@@ -9,10 +9,6 @@ import { Cache, cacheCreateDaily, cacheCreateMinutely, cacheGetOrFetch } from ".
 import { Log, logCreate } from "./log";
 
 /**
- * Key for the NASA rover API.
- */
-const marsRoverApiKey = 'ZuW891bZkaap2ZJ9L1tJHldstVbEZfWZef1WpSHX';
-/**
  * Key for the NASA moon API.
  */
 const moonApiKey = 'TANA3BSE43X9AFK3TDSPXST5P';
@@ -176,14 +172,26 @@ const marsWeatherApi = regUrlApi<MarsWeatherReq, MarsWeatherRes>({
 cacheCreateDaily("mars_weather", marsWeatherApi, [() => { return {}; }]);
 
 // Mars Rover Photos API
+// NASA's mars-photos service (api.nasa.gov/mars-photos) was decommissioned and
+// now returns a Heroku "No such app" HTML 404. We use the NASA Image and Video
+// Library (images-api.nasa.gov) as a replacement — public, key-less, and still
+// serves curated rover imagery for all three rovers.
 const marsRoverPhotosApi = regUrlApi<MarsRoverPhotosReq, MarsRoverPhotosRes>({
   apiName: "Mars Rover Photos Data",
   target: marsRoverPhotosTarget.raw(),
-  genReq: async (req) => {
-    const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${req.rover}?api_key=${marsRoverApiKey}`).then((data) => data.json());
-    return `https://api.nasa.gov/mars-photos/api/v1/rovers/${req.rover}/photos?sol=${manifest.photo_manifest.max_sol}&api_key=${marsRoverApiKey}`
+  genReq: async (req) =>
+    `https://images-api.nasa.gov/search?q=${encodeURIComponent(`mars rover ${req.rover}`)}&media_type=image&page_size=50`,
+  genRes: async (res) => {
+    const items: any[] = res?.collection?.items ?? [];
+    const photos: any[] = [];
+    for (const item of items) {
+      const link = (item.links ?? []).find((l: any) => l.render === 'image');
+      if (!link?.href) continue;
+      const meta = item.data?.[0] ?? {};
+      photos.push({ img_src: link.href, title: meta.title, earth_date: meta.date_created });
+    }
+    return { photos };
   },
-  genRes: async (res) => res as MarsRoverPhotosRes,
   log: logCreate("mars_rover_photos")
 });
 cacheCreateDaily("mars_rover_photos", marsRoverPhotosApi);

@@ -1,4 +1,4 @@
-import { displayRoverOptions, getRoverPhotos, renderRoverPhotos } from "./mars/roverPhotos";
+import { displayRoverOptions, renderRoverPhotos } from "./mars/roverPhotos";
 import sunUrl from '../img/sun.png';
 import blueMoon from '../img/blueMoon.png'
 
@@ -110,9 +110,7 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
 
         roverButtonCuriosity.addEventListener('click', () => {
             chosenRover = "curiosity";
-            getRoverPhotos();
             renderRoverPhotos();
-            console.log("clicked curiosity");
         });
 
 
@@ -123,8 +121,6 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
 
         roverButtonOpportunity.addEventListener('click', () => {
             chosenRover = "opportunity";
-            console.log(chosenRover);
-            getRoverPhotos();
             renderRoverPhotos();
         });
 
@@ -135,8 +131,6 @@ export function createImage(container: HTMLElement, imagePath: string, descripti
 
         roverButtonSpirit.addEventListener('click', () => {
             chosenRover = "spirit";
-            console.log(chosenRover);
-            getRoverPhotos();
             renderRoverPhotos();
         });
 
